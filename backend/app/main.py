@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware 
 from datetime import datetime
 
-app = FastAPI(openapi_url="/openapi.json", docs_url="/documentation")
+app = FastAPI()
 
 origins = [
   "http://localhost:3001",
@@ -23,7 +23,11 @@ async def main():
 
 @app.get("/day", tags=["Dates"])
 def get_day_of_week():
-    """
-    Get the current day of week
-    """
-    return datetime.now().strftime("%A")
+  """
+  Get the current day of week
+  """
+  return datetime.now().strftime("%A")
+
+@app.get("/items/{item_id}")
+async def read_item(item_id):
+  return {"item_id": item_id}
