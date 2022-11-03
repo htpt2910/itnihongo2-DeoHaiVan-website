@@ -1,24 +1,27 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import React from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { Home } from "./user/pages/Home";
+import { About } from "./user/pages/About";
+import { Signup } from "./user/pages/Signup";
+import { Login } from "./user/pages/Login";
+import { Footer } from "./user/components/Footer";
+import { Navbar } from "./user/components/Navbar";
 
-function App () {
-
-  const [ day, setDay ] = useState("");
- 
-  useEffect(() => {
-    axios.get(`http://localhost:8000/day`)
-    .then(res => {
-        const day = res.data;
-        setDay(day);
-    })
-    .catch(error => console.log(error));
-  
-  }, [])
-  
-
+function App() {
   return (
-    <h1>Hey!  It's {day}</h1>
-  )
+    <>
+      <Router>
+        <Navbar />
+        <Routes>
+          <Route path="/" exact="true" element={<Home />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/signup" element={<Signup />} />
+          <Route path="/login" element={<Login />} />
+        </Routes>
+        <Footer />
+      </Router>
+    </>
+  );
 }
 
 export default App;
