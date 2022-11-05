@@ -1,0 +1,20 @@
+.hihi {
+    color: white;
+    size: 30px;
+    padding-top: 8px;
+}
+.logo{
+    padding-left:20px ;
+    width: 60px;
+    height: 40px;
+}
+.trigger{
+    padding-left: 10px;
+    font-size: 25px;
+    color: white;
+}
+.LogoAdmin{
+    display: flex;
+    padding: 10px;
+    justify-content: center;
+}

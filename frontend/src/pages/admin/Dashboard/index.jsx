@@ -4,7 +4,7 @@ const Dashboard = () => {
     return (
         <>
             <AdminLayout />
-            <p>abc</p>
+            
         </>
     )
 }

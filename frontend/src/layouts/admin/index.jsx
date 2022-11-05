@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import 'antd/dist/antd.css';
 import './layout.css';
+import logo from '../../assets/mountain.png'
 import {
   MenuFoldOutlined,
   MenuUnfoldOutlined,
-  UploadOutlined,
+  LogoutOutlined,
   UserOutlined,
   VideoCameraOutlined,
 } from '@ant-design/icons';
@@ -19,7 +20,10 @@ const AdminLayout = () => {
   return (
     <Layout>
       <Sider trigger={null} collapsible collapsed={collapsed}>
-        <div className="logo" />
+        <div className='LogoAdmin'>
+          <p className='hihi'>Deo Hai Van</p>
+          <img src={logo} alt="logo" className='logo'/>
+        </div>
         <Menu
           theme="dark"
           mode="inline"
@@ -37,25 +41,26 @@ const AdminLayout = () => {
             },
             {
               key: '3',
-              icon: <UploadOutlined />,
+              icon: <LogoutOutlined  />,
               label: 'Logout',
             },
           ]}
         />
       </Sider>
       <Layout className="site-layout">
-        <Header className="site-layout-background" style={{ padding: 0 }}>
+        <Header className="site-layout-background" style={{ padding: 0, height:67, backgroundColor: 'black' }}>
           {React.createElement(collapsed ? MenuUnfoldOutlined : MenuFoldOutlined, {
             className: 'trigger',
             onClick: () => setCollapsed(!collapsed),
           })}
+
         </Header>
         <Content
           className="site-layout-background"
           style={{
             margin: '24px 16px',
             padding: 24,
-            minHeight: 280,
+            minHeight: 720,
           }}
         >
           Content
