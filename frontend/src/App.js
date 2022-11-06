@@ -1,24 +1,27 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { Home } from "./user/pages/Home";
-import { About } from "./user/pages/About";
-import { Signup } from "./user/pages/Signup";
-import { Login } from "./user/pages/Login";
-import { Footer } from "./user/components/Footer";
-import { Navbar } from "./user/components/Navbar";
+import {Navbar} from "./components/user/Navbar";
+import {Home} from "./pages/user/Home";
+import {Logout} from "./pages/admin/Logout";
+import {Posts} from "./pages/admin/Posts";
+import {User} from "./pages/admin/User";
+import {Footer} from "./components/user/Footer";
+import Dashboard from "./pages/admin/Dashboard";
+import AdminLayout from "./layouts/admin";
 
 function App() {
   return (
     <>
       <Router>
-        <Navbar />
+       <Navbar/>
         <Routes>
-          <Route path="/" exact="true" element={<Home />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/signup" element={<Signup />} />
-          <Route path="/login" element={<Login />} />
+          <Route path="/" exact="true" element={} />
+          <Route path="/user" element={<User />} />
+          <Route path="/post" element={<Posts />} />
+          <Route path="/logout" element={<Logout />} />
+          <Route path="/admin" exact="true" element={<Dashboard />} />
         </Routes>
-        <Footer />
+       <Footer/>
       </Router>
     </>
   );
