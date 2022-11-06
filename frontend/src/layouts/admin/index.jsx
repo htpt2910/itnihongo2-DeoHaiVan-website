@@ -20,8 +20,8 @@ const AdminLayout = () => {
   return (
     <Layout>
       <Sider trigger={null} collapsible collapsed={collapsed}>
-        <div className='LogoAdmin'>
-          <p className='hihi'>Deo Hai Van</p>
+        <div className='logo-admin'>
+          <p className='mount'>Deo Hai Van</p>
           <img src={logo} alt="logo" className='logo'/>
         </div>
         <Menu
