@@ -48,7 +48,7 @@ const AdminLayout = () => {
         />
       </Sider>
       <Layout className="site-layout">
-        <Header className="site-layout-background" style={{ padding: 0, height:67, backgroundColor: 'black' }}>
+        <Header className="site-layout-background" style={{ padding: 0, height:67 }}>
           {React.createElement(collapsed ? MenuUnfoldOutlined : MenuFoldOutlined, {
             className: 'trigger',
             onClick: () => setCollapsed(!collapsed),
