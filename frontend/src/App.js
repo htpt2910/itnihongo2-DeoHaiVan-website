@@ -1,7 +1,7 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import {Navbar} from "./components/user/Navbar";
-//import {Home} from "./pages/user/Home";
+import {Home} from "./pages/user/Home";
 import {Logout} from "./pages/admin/Logout";
 import {Posts} from "./pages/admin/Posts";
 import {User} from "./pages/admin/User";
@@ -15,13 +15,13 @@ function App() {
       <Router>
        <Navbar/>
         <Routes>
-          <Route path="/" exact="true" element={<AdminLayout />} />
+          <Route path="/" exact="true" element={} />
           <Route path="/user" element={<User />} />
           <Route path="/post" element={<Posts />} />
           <Route path="/logout" element={<Logout />} />
           <Route path="/admin" exact="true" element={<Dashboard />} />
         </Routes>
-       < Footer/>
+       <Footer/>
       </Router>
     </>
   );
