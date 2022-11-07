@@ -1,6 +1,6 @@
-export const User = () => {
+export const UserManagement = () => {
     return (
-      <div className="home-container">
+      <div className="">
         <h1>User page</h1>
       </div>
     );

@@ -1,22 +1,24 @@
-import React, { useState } from 'react';
-import 'antd/dist/antd.css';
-import './layout.css';
-import logo from '../../assets/mountain.png'
 import {
-  MenuFoldOutlined,
-  MenuUnfoldOutlined,
-  LogoutOutlined,
-  UserOutlined,
-  VideoCameraOutlined,
+  LogoutOutlined, UserOutlined,
+  VideoCameraOutlined
 } from '@ant-design/icons';
 import { Layout, Menu } from 'antd';
+import 'antd/dist/antd.css';
+import React, { useState } from 'react';
+import logo from '../../assets/mountain.png';
+import { AdminHeader } from '../../components/admin/header/Header';
+import './layout.css';
 
+const { Sider } = Layout;
 
-const { Header, Sider, Content } = Layout;
-
-const AdminLayout = () => {
+const AdminLayout = ({ component }) => {
   const [collapsed, setCollapsed] = useState(false);
+  const [ selectedKey, setSelectedKey ] = useState(['1'])
 
+  function handleSelectKey(key) {
+    setSelectedKey([`${key}`])
+  }
+  
   return (
     <Layout>
       <Sider trigger={null} collapsible collapsed={collapsed}>
@@ -27,45 +29,32 @@ const AdminLayout = () => {
         <Menu
           theme="dark"
           mode="inline"
-          defaultSelectedKeys={['1']}
+          defaultSelectedKeys={selectedKey}
           items={[
             {
               key: '1',
               icon: <UserOutlined />,
-              label: 'User Management',
+              label: 'Dashboard',
             },
             {
               key: '2',
+              icon: <UserOutlined />,
+              label: 'User Management',
+            },
+            {
+              key: '3',
               icon: <VideoCameraOutlined />,
               label: 'Posts Management',
             },
             {
-              key: '3',
+              key: '4',
               icon: <LogoutOutlined  />,
               label: 'Logout',
             },
           ]}
         />
       </Sider>
-      <Layout className="site-layout">
-        <Header className="site-layout-background" style={{ padding: 0, height:67 }}>
-          {React.createElement(collapsed ? MenuUnfoldOutlined : MenuFoldOutlined, {
-            className: 'trigger',
-            onClick: () => setCollapsed(!collapsed),
-          })}
-
-        </Header>
-        <Content
-          className="site-layout-background"
-          style={{
-            margin: '24px 16px',
-            padding: 24,
-            minHeight: 720,
-          }}
-        >
-          Content
-        </Content>
-      </Layout>
+      <AdminHeader collapsed={collapsed} setCollapsed={setCollapsed} component={component} />
     </Layout>
   );
 };
