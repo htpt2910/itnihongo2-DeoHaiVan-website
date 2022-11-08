@@ -10,6 +10,15 @@ services:
       - '8000:8000'
     volumes:
       - ./backend:/app
+    environment:
+      POSTGRES_SERVER: db
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_DB: postgres_db
+      POSTGRES_PORT: 5432
+    depends_on:
+      - db
+    restart: always
 
   frontend:
     build:
@@ -21,7 +30,21 @@ services:
       - ./frontend:/usr/src/app
     environment:
       WATCHPACK_POLLING: 'true'
-
     depends_on:
       - backend
+    restart: always
+
+  db:
+    image: postgres:alpine
+    ports:
+      - '5432:5432'
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_DB: postgres_db
+      POSTGRES_PORT: 5432
+    env_file:
+      - ./backend/.env
+    volumes:
+      - ./postgres-data:/var/lib/postgresql/data
     restart: always
