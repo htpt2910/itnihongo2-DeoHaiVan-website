@@ -1,7 +1,4 @@
-import {
-  LogoutOutlined, UserOutlined,
-  VideoCameraOutlined
-} from '@ant-design/icons';
+import { HomeOutlined, LogoutOutlined, UserOutlined, VideoCameraOutlined } from '@ant-design/icons';
 import { Layout, Menu } from 'antd';
 import 'antd/dist/antd.css';
 import React, { useState } from 'react';
@@ -33,7 +30,7 @@ const AdminLayout = ({ component }) => {
           items={[
             {
               key: '1',
-              icon: <UserOutlined />,
+              icon: <HomeOutlined />,
               label: 'Dashboard',
             },
             {
