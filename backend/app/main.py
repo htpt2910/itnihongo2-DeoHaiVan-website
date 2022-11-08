@@ -19,15 +19,4 @@ app.add_middleware(
 
 @app.get("/")
 async def main():
-  return "Hello"
-
-@app.get("/day", tags=["Dates"])
-def get_day_of_week():
-  """
-  Get the current day of week
-  """
-  return datetime.now().strftime("%A")
-
-@app.get("/items/{item_id}")
-async def read_item(item_id):
-  return {"item_id": item_id}
+  return "Helloooo"
