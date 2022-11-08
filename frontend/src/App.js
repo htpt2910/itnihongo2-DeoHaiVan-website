@@ -10,7 +10,7 @@ import { NotFound } from './pages/NotFound'
 import { About } from './pages/user/About'
 import { Home } from './pages/user/Home'
 
-function App({ Component, pageProps }) {
+function App() {
   const role = 2
   return (
     <BrowserRouter>
