@@ -8,6 +8,7 @@ import { Posts } from './pages/admin/Posts'
 import { User } from './pages/admin/User'
 import { Home } from './pages/user/Home'
 import Signup from './pages/user/Signup'
+import { Login } from './pages/user/Login'
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
           <Route path="/logout" element={<Logout />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/admin" exact="true" element={<Dashboard />} />
+          <Route path="/login" exact="true" element={<Login />} />
         </Routes>
         <Footer />
       </Router>
