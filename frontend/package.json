@@ -10,7 +10,10 @@
     "antd": "^4.24.0",
     "axios": "^1.1.3",
     "bootstrap": "^5.2.2",
+<<<<<<< HEAD
     "formik": "^2.2.9",
+=======
+>>>>>>> 1bc1c45 (create data usserFake of profile User)
     "http-proxy-middleware": "^2.0.6",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",

@@ -58,13 +58,10 @@ def create_user(user: user_schema.UserCreate, db: Session = Depends(get_db)):
         raise HTTPException(status_code=400, detail="Username already registered")
     
     return crud_user.create_user(db=db, user=user)
-
-
 @app.get("/users/", response_model=List[user_schema.User])
 def read_users(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     users = crud_user.get_users(db, skip=skip, limit=limit)
     return users
-
 
 @app.get("/users/{user_id}", response_model=user_schema.User)
 def read_user(user_id: int, db: Session = Depends(get_db)):
@@ -72,7 +69,6 @@ def read_user(user_id: int, db: Session = Depends(get_db)):
     if db_user is None:
         raise HTTPException(status_code=404, detail="User not found")
     return db_user
-    
 @app.patch("/user/{user_id}", response_model=user_schema.User)
 def update_user(user_id: int, _user: user_schema.UserUpdate, db: Session = Depends(get_db)):
       db_user = db.get(User, user_id)
@@ -92,6 +88,12 @@ def read_posts(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     posts = crud_post.get_posts(db, skip=skip, limit=limit)
     return posts
 
-@app.post("/post/", response_model=post_schema.Post)
-def create_post(post: post_schema.PostCreate, db: Session = Depends(get_db)):
-    return crud_post.create_post(db=db, post=post)
+
+
+@app.get("/posts/{post_id}", response_model=post_schema.post)
+def read_post(post_id: int, db: Session = Depends(get_db)):
+    db_post = crud_post.get_post(db, post_id=post_id)
+    if db_post is None:
+        raise HTTPException(status_code=404, detail="post not found")
+    return db_post
+
