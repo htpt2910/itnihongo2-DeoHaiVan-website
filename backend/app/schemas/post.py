@@ -23,6 +23,9 @@ class Post(PostBase):
     comments: List[Comment] = []
     likes : List[Like] = []
 
+    class Config:
+        orm_mode = True
+
 
 class postBase(BaseModel):
     email: str
@@ -32,9 +35,3 @@ class postDelete(postBase):
     password: str
 
 
-class post(postBase):
-    id: int
-    is_active: bool
-
-    class Config:
-        orm_mode = True
