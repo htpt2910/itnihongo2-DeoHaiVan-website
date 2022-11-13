@@ -1,20 +1,16 @@
-import React from 'react'
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'
-import { Footer } from './components/user/Footer'
-import { Navbar } from './components/user/Navbar'
-import Dashboard from './pages/admin/Dashboard'
-import { Logout } from './pages/admin/Logout'
-import { Posts } from './pages/admin/Posts'
-import { User } from './pages/admin/User'
-import { Home } from './pages/user/Home'
-import Signup from './pages/user/Signup'
-import { Login } from './pages/user/Login'
+import React from "react";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import Dashboard from "./pages/admin/Dashboard";
+import { Logout } from "./pages/admin/Logout";
+import { Posts } from "./pages/admin/Posts";
+import { User } from "./pages/admin/User";
+import { Home } from "./pages/user/Home";
+import { Login } from "./pages/user/Login";
 
 function App() {
   return (
     <>
       <Router>
-        <Navbar />
         <Routes>
           <Route path="/" exact="true" element={<Home />} />
           <Route path="/user" element={<User />} />
@@ -24,10 +20,9 @@ function App() {
           <Route path="/admin" exact="true" element={<Dashboard />} />
           <Route path="/login" exact="true" element={<Login />} />
         </Routes>
-        <Footer />
       </Router>
     </>
-  )
+  );
 }
 
-export default App
+export default App;

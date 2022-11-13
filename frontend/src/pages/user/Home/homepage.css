@@ -1,9 +1,2 @@
 .home-container {
-  display: flex;
-  background-image: url("image1.jpeg");
-  background-repeat: no-repeat;
-  width: 100%;
-  height: calc(100vh - 100px);
-  align-items: center;
-  justify-content: center;
 }
