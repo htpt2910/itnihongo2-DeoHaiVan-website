@@ -8,7 +8,6 @@ class Place(Base):
   id = Column(Integer, primary_key=True, index=True)
   address = Column(String)
   name = Column(String)
-  is_active = Column(Boolean, default=True)
 
   posts = relationship("Post", back_populates='place')
 
