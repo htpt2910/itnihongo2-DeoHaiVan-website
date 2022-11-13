@@ -7,6 +7,7 @@ import { User } from './pages/admin/User'
 import { Home } from './pages/user/Home'
 import { Login } from './pages/user/Login'
 import { PostControl } from './pages/admin/PostControl'
+import ProfilePage from "./pages/user/profile";
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
           <Route path="/admin" exact="true" element={<Dashboard />} />
           <Route path="/login" exact="true" element={<Login />} />
           <Route path="/postcontrol" exact="true" element={<PostControl />} />
+          <Route path="/profile" exact="true" element={<ProfilePage/>}/>
         </Routes>
       </Router>
     </>
@@ -27,3 +29,4 @@ function App() {
 }
 
 export default App;
+
