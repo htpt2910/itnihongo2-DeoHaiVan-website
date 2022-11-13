@@ -6,10 +6,13 @@ from sqlalchemy.orm import Session
 
 from app.crud import crud_user
 from app.db.databases import SessionLocal, engine
-from app.models import user
-from app.schemas import user as user_schema
+from app.models import user, post, comment, place
+from app.schemas import schemas as user_schema
 
 user.Base.metadata.create_all(bind=engine)
+comment.Base.metadata.create_all(bind=engine)
+post.Base.metadata.create_all(bind=engine)
+place.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
 
@@ -43,6 +46,9 @@ def create_user(user: user_schema.UserCreate, db: Session = Depends(get_db)):
     db_user = crud_user.get_user_by_email(db, email=user.email)
     if db_user:
         raise HTTPException(status_code=400, detail="Email already registered")
+    db_user = crud_user.get_user_by_username(db, username=user.username)
+    if db_user:
+        raise HTTPException(status_code=400, detail="Username already registered")
     return crud_user.create_user(db=db, user=user)
 
 
