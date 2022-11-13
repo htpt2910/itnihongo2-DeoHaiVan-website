@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import 'antd/dist/antd.css';
-import './layout.css';
-import logo from '../../assets/mountain.png'
+import './styles.css';
+import logo from '../../../assets/mountain.png'
 import {
   MenuFoldOutlined,
   MenuUnfoldOutlined,
@@ -10,11 +10,10 @@ import {
   VideoCameraOutlined,
 } from '@ant-design/icons';
 import { Layout, Menu } from 'antd';
-
+import { PostControlComponent } from './PostControlComponent';
 
 const { Header, Sider, Content } = Layout;
-
-const AdminLayout = () => {
+export const PostControl = () => {
   const [collapsed, setCollapsed] = useState(false);
 
   return (
@@ -29,6 +28,9 @@ const AdminLayout = () => {
           theme="dark"
           mode="inline"
           defaultSelectedKeys={['1']}
+          // onClick={({key})} =>{
+
+          // }
           items={[
             {
               key: '1',
@@ -64,11 +66,9 @@ const AdminLayout = () => {
             minHeight: 720,
           }}
         >
-          Content
+          <PostControlComponent/>
         </Content>
       </Layout>
     </Layout>
   );
 };
-
-export default AdminLayout;
