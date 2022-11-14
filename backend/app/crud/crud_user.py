@@ -1,5 +1,5 @@
 from app.models import user as user_model
-from app.schemas import schemas as user_schema
+from app.schemas import user as user_schema
 from sqlalchemy.orm import Session
 
 
@@ -24,3 +24,4 @@ def create_user(db: Session, user: user_schema.UserCreate):
     db.commit()
     db.refresh(db_user)
     return db_user
+    

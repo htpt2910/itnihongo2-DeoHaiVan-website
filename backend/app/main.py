@@ -7,7 +7,7 @@ from sqlalchemy.orm import Session
 from app.crud import crud_user
 from app.db.databases import SessionLocal, engine
 from app.models import user, post, comment, place
-from app.schemas import schemas as user_schema
+from app.schemas import user as user_schema
 
 user.Base.metadata.create_all(bind=engine)
 comment.Base.metadata.create_all(bind=engine)
