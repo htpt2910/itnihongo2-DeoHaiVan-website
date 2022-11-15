@@ -1,9 +1,9 @@
 from pydantic import BaseModel
-
+from datetime import datetime
 
 class CommentBase(BaseModel):
     content : str
-    comment_time : str
+    comment_time : datetime
     comment_user_id: int
     post_id: int
 
