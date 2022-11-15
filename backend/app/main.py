@@ -8,11 +8,17 @@ from app.crud import crud_user
 from app.db.databases import SessionLocal, engine
 from app.models import user, post, comment, place
 from app.schemas import user as user_schema
+from app.seed import Seed_db
 
 user.Base.metadata.create_all(bind=engine)
 comment.Base.metadata.create_all(bind=engine)
 post.Base.metadata.create_all(bind=engine)
 place.Base.metadata.create_all(bind=engine)
+
+try:
+    Seed_db (SessionLocal)
+except:
+    print("Already seeded!!!")
 
 app = FastAPI()
 
