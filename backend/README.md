@@ -1,6 +1,6 @@
 # Để kiểm tra xem kết nối db được chưa: 
 - docker ps: xem các container đang chạy
-- docker exec -it itnihongo2-deohaivan-website_db_1 /bin/bash (truy cập vào db)
+- docker exec -it itnihongo2-deohaivan-website-db-1 /bin/bash (truy cập vào db)
 - psql -U postgres (truy cập vào postgres)
 - \l hoặc \list (xem tất cả databases)
 - \c postgres_db (truy cập vào db của project)
