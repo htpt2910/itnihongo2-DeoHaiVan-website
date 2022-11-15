@@ -5,14 +5,14 @@ class PostBase(BaseModel):
     content : str
     post_time : str
     image : str
-    rating : str
+    rating : int
+    user_id: int
+    place_id: int
 class PostCreate(PostBase):
     pass
 
 class Post(PostBase):
     id: int
-    user_id: int
-    place_id: int
     is_active: bool
     comments: List[Comment] = []
 
