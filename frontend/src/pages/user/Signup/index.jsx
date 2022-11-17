@@ -1,7 +1,7 @@
 import * as Yup from 'yup';
 import { useFormik } from 'formik';
 import './signup.css'
-const Signup = () => {
+const SignupForm = () => {
     const formik = useFormik({
       initialValues: {
         firstName: '',
@@ -30,6 +30,7 @@ const Signup = () => {
             <input
               id="firstName"
               name="firstName"
+              placeholder="First Name"
               type="text"
               className='registerInput'
               onChange={formik.handleChange}
@@ -44,6 +45,7 @@ const Signup = () => {
             <input
               id="lastName"
               name="lastName"
+              placeholder="Last Name"
               type="text"
               className='registerInput'
               onChange={formik.handleChange}
@@ -58,6 +60,7 @@ const Signup = () => {
             <input
               id="email"
               name="email"
+              placeholder="abc@gmail.com"
               type="email"
               className='registerInput'
               onChange={formik.handleChange}
@@ -72,6 +75,7 @@ const Signup = () => {
             <input
               id="password"
               name="password"
+              placeholder="Password"
               type="password"
               className='registerInput'
               onChange={formik.handleChange}
@@ -88,4 +92,4 @@ const Signup = () => {
     );
   };
 
-export default Signup;
+export default SignupForm;

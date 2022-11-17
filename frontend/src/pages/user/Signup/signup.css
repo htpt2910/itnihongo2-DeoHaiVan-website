@@ -1,5 +1,5 @@
 .register {
-    height: calc(100vh - 50px);
+    height: 100vh;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -20,6 +20,9 @@ font-size: 50px;
 margin-top: 20px;
 display: flex;
 flex-direction: column;
+width: 300px;
+background-color: #fff;
+padding: 20px 40px;
 }
 
 .registerForm > label {
@@ -29,8 +32,8 @@ margin: 10px 0;
 .registerInput {
 padding: 10px;
 background-color: white;
-border: none;
-border-radius: 10px;
+border: 1px solid #ccc;
+border-radius: 4px;
 }
 
 .registerInput:focus {
@@ -44,7 +47,7 @@ background-color: teal;
 color: white;
 padding: 10px;
 border: none;
-border-radius: 10px;
+border-radius: 4px;
 text-align: center;
 }
 
