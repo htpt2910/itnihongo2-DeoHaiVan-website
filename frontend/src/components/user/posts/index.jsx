@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Post } from "../post";
+import ButtonCreate from "./ButtonPost";
 import "./posts.css";
 
-const posts = [
+const sampledata = [
   {
     id: 1,
     name: "John Doe",
@@ -41,10 +42,39 @@ const posts = [
   },
 ];
 
+const userDefault = {
+  userId: 1,
+  name: "John Doe",
+  profilePic:
+    "https://images.pexels.com/photos/1036623/pexels-photo-1036623.jpeg?auto=compress&cs=tinysrgb&w=1600",
+};
+
 export const Posts = () => {
+  const [posts, setPosts] = useState([]);
+  sessionStorage.setItem("user", JSON.stringify(userDefault));
+
+  const getPosts = JSON.parse(sessionStorage.getItem("posts"));
+  useEffect(() => {
+    if (getPosts == null) {
+      sessionStorage.setItem("posts", JSON.stringify([]));
+    } else {
+      setPosts(getPosts);
+    }
+  }, []);
+
   return (
     <div className="posts">
-      {posts.map((post) => (
+      <div
+        style={{
+          margin: "0px 20%",
+          display: "flex",
+          justifyContent: "flex-end",
+        }}
+      >
+        <ButtonCreate />
+      </div>
+      {posts && posts.map((post) => <Post post={post} key={post.id} />)}
+      {sampledata.map((post) => (
         <Post post={post} key={post.id} />
       ))}
     </div>

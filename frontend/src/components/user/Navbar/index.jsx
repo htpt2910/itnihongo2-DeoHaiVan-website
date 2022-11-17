@@ -1,4 +1,4 @@
-import { SearchOutlined } from '@ant-design/icons';
+import { SearchOutlined } from "@ant-design/icons";
 import { useState } from "react";
 import "./navbar.css";
 
@@ -27,11 +27,11 @@ export const Navbar = () => {
     <div className="nav__wrapper">
       <div className="container">
         <nav className="nav">
-          <a href="/" className="nav__brand">
-            Hai Van Quan
+          <a href="/" className="nav__brand" style={{ textDecoration: "none" }}>
+            Deo Hai Van
           </a>
           <div className="inputSearch">
-            <input className='input' type="text" placeholder='Search...' />
+            <input className="input" type="text" placeholder="Search..." />
             <div className="btnSearch">
               <SearchOutlined />
             </div>
@@ -39,7 +39,11 @@ export const Navbar = () => {
           <ul className={collapse}>
             {navItems.map((item) => (
               <li key={item.id} className="nav__item">
-                <a href={item.href} className="nav__link">
+                <a
+                  href={item.href}
+                  className="nav__link"
+                  style={{ textDecoration: "none" }}
+                >
                   {item.label}
                 </a>
               </li>
