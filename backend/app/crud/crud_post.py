@@ -16,7 +16,7 @@ def create_post(db: Session, post: post_schema.PostCreate):
     return db_post
 
 def get_post(db: Session, post_id: int):
-    return db.query(post_model.post).filter(post_model.post.id == post_id).first()
+    return db.query(post_model.Post).filter(post_model.Post.id == post_id).first()
 def get_posts(db: Session, skip: int = 0, limit: int = 100):
     return db.query(post_model.post).offset(skip).limit(limit).all()
 def delete_post(db: Session, post: post_schema.postDelete):
@@ -25,3 +25,7 @@ def delete_post(db: Session, post: post_schema.postDelete):
     db.commit()
     db.refresh(db_post)
     return db_post
+#     return db.query(post_model.Post).offset(skip).limit(limit).all()
+# def delete_post(db: Session, post_id):
+#     return db.query(post_model.Post).filter(post_model.Post.id==post_id).delete()
+    

@@ -7,9 +7,13 @@ from app.models.user import User
 from app.schemas import post as post_schema
 from app.schemas import user as user_schema
 from app.seed import Seed_db
-from fastapi import Depends, FastAPI, HTTPException
+from fastapi import Depends, status, FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
+
+from app.crud import crud_user
+from app.crud import crud_post
+from app.db.databases import SessionLocal, engine
 
 user.Base.metadata.create_all(bind=engine)
 comment.Base.metadata.create_all(bind=engine)
@@ -88,12 +92,23 @@ def read_posts(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     posts = crud_post.get_posts(db, skip=skip, limit=limit)
     return posts
 
-
-
-@app.get("/posts/{post_id}", response_model=post_schema.post)
+@app.post("/post/", response_model=post_schema.Post)
+def create_post(post: post_schema.PostCreate, db: Session = Depends(get_db)):
+    return crud_post.create_post(db=db, post=post)
+    
+@app.get("/posts/{post_id}", response_model=post_schema.Post)
 def read_post(post_id: int, db: Session = Depends(get_db)):
     db_post = crud_post.get_post(db, post_id=post_id)
     if db_post is None:
         raise HTTPException(status_code=404, detail="post not found")
     return db_post
 
+@app.delete("/post/{post_id}")
+def delete_post(post_id:int,  db: Session = Depends(get_db)):
+   
+    return crud_post.delete_post(db=db, post_id=post_id)
+
+@app.delete("/user/{user_id}")
+def delete_user(user_id:int,  db: Session = Depends(get_db)):
+   
+    return crud_user.delete_user(db=db, user_id=user_id)

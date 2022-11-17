@@ -36,3 +36,5 @@ class post(postBase):
 
     class Config:
         orm_mode = True
+#class postDelete(PostBase):
+#     id: int
