@@ -5,6 +5,7 @@ import { Logout } from './pages/admin/Logout'
 import { Posts } from './pages/admin/Posts'
 import { User } from './pages/admin/User'
 import { Home } from './pages/user/Home'
+import Signup from './pages/user/Signup'
 import { Login } from './pages/user/Login'
 import { PostControl } from './pages/admin/PostControl'
 import ProfilePage from "./pages/user/profile";
@@ -18,6 +19,7 @@ function App() {
           <Route path="/user" element={<User />} />
           <Route path="/post" element={<Posts />} />
           <Route path="/logout" element={<Logout />} />
+          <Route path="/signup" element={<Signup />} />
           <Route path="/admin" exact="true" element={<Dashboard />} />
           <Route path="/login" exact="true" element={<Login />} />
           <Route path="/postcontrol" exact="true" element={<PostControl />} />
