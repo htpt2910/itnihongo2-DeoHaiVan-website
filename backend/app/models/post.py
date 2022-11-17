@@ -1,5 +1,4 @@
 from app.db.databases import Base
-<<<<<<< HEAD
 from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, Boolean
 from sqlalchemy.orm import relationship
 
@@ -22,12 +21,3 @@ class Post(Base):
   comments = relationship("Comment", back_populates='post')
   likes = relationship("Like", back_populates='post')
 
-=======
-from sqlalchemy import  Column, Integer
-
-
-class post(Base):
-  __tablename__ = "posts"
-
-  id = Column(Integer, primary_key=True, index=True)
->>>>>>> 1bc1c45 (create data usserFake of profile User)

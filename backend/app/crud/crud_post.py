@@ -19,6 +19,7 @@ def get_post(db: Session, post_id: int):
     return db.query(post_model.Post).filter(post_model.Post.id == post_id).first()
 def get_posts(db: Session, skip: int = 0, limit: int = 100):
     return db.query(post_model.post).offset(skip).limit(limit).all()
+
 def delete_post(db: Session, post: post_schema.postDelete):
     db_post = post_model.post(id=post.id)
     db.delete(db_post)
