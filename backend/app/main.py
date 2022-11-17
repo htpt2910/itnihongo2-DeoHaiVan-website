@@ -1,16 +1,15 @@
 from typing import List
 
+from app.crud import crud_post, crud_user
+from app.db.databases import SessionLocal, engine
+from app.models import comment, place, post, user
+from app.models.user import User
+from app.schemas import post as post_schema
+from app.schemas import user as user_schema
+from app.seed import Seed_db
 from fastapi import Depends, FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
-
-from app.crud import crud_user
-from app.crud import crud_post
-from app.db.databases import SessionLocal, engine
-from app.models import user, post, comment, place
-from app.schemas import user as user_schema
-from app.schemas import post as post_schema
-from app.seed import Seed_db
 
 user.Base.metadata.create_all(bind=engine)
 comment.Base.metadata.create_all(bind=engine)
@@ -57,6 +56,7 @@ def create_user(user: user_schema.UserCreate, db: Session = Depends(get_db)):
     db_user = crud_user.get_user_by_username(db, username=user.username)
     if db_user:
         raise HTTPException(status_code=400, detail="Username already registered")
+    
     return crud_user.create_user(db=db, user=user)
 
 
@@ -72,6 +72,20 @@ def read_user(user_id: int, db: Session = Depends(get_db)):
     if db_user is None:
         raise HTTPException(status_code=404, detail="User not found")
     return db_user
+    
+@app.patch("/user/{user_id}", response_model=user_schema.User)
+def update_user(user_id: int, _user: user_schema.UserUpdate, db: Session = Depends(get_db)):
+      db_user = db.get(User, user_id)
+      if not db_user:
+          raise HTTPException(status_code=404, detail="User not found")
+      user_data = _user.dict(exclude_unset=True)
+      for key, value in user_data.items():
+          setattr(db_user, key, value)
+
+      db.add(db_user)
+      db.commit()
+      db.refresh(db_user)
+      return db_user    
 
 @app.post("/post/", response_model=post_schema.Post)
 def create_post(post: post_schema.PostCreate, db: Session = Depends(get_db)):
