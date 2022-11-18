@@ -1,11 +1,9 @@
-import {  Space, Table } from 'antd';
-import React, { useState } from 'react';
 import {
-    EditTwoTone ,
-    DeleteTwoTone,
-    SearchOutlined
-  } from '@ant-design/icons';
-  import "./styles.css";
+  DeleteTwoTone, EditTwoTone, SearchOutlined
+} from '@ant-design/icons';
+import { Space, Table } from 'antd';
+import React, { useState } from 'react';
+import "./styles.css";
 const data = [
   {
     key: '1',
@@ -44,7 +42,7 @@ export const PostControlComponent = () => {
     setFilteredInfo(filters);
     setSortedInfo(sorter);
   };
-  
+
   const columns = [
     {
       title: 'id',
@@ -88,33 +86,32 @@ export const PostControlComponent = () => {
       sortOrder: sortedInfo.columnKey === 'status' ? sortedInfo.order : null,
       ellipsis: true,
       width: "15%"
-      },
-      {
-        title: 'Action',
-        key: 'action',
-        render: (_, record) => (
-          <Space size="middle">
-            <a><EditTwoTone /></a>
-            <a><DeleteTwoTone /></a>
-          </Space>
-        ),
-        width: "10%"
-      },
+    },
+    {
+      title: 'Action',
+      key: 'action',
+      render: (_, record) => (
+        <Space size="middle">
+          <a><EditTwoTone /></a>
+          <a><DeleteTwoTone /></a>
+        </Space>
+      ),
+      width: "10%"
+    },
   ];
   return (
     <>
-    <div className="postContainer">
-      <div className="inputSearch">
-        <input className='input' type="text" placeholder='Search...'/>
-        <div className="btnSearch">
-        <SearchOutlined />
+      <div className="postContainer">
+        <div className="inputSearch">
+          <input className='input' type="text" placeholder='Search...' />
+          <div className="btnSearch">
+            <SearchOutlined />
+          </div>
+        </div>
+        <div className="tableContainer">
+          <Table columns={columns} dataSource={data} onChange={handleChange} className="table" />
         </div>
       </div>
-      <div className="tableContainer">
-        <Table columns={columns} dataSource={data} onChange={handleChange} className="table"/>
-      </div>
-    </div>
     </>
   );
 };
- 

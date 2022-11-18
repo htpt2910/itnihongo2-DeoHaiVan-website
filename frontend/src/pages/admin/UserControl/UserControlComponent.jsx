@@ -57,12 +57,13 @@ const UserControlComponent = () => {
 
   const columns = [
     {
-      title: 'Id',
+      title: 'id',
       dataIndex: 'id',
       key: 'id',
       sorter: (a, b) => a.id - b.id,
       sortOrder: sortedInfo.columnKey === 'id' ? sortedInfo.order : null,
       ellipsis: true,
+      width: "5%"
     },
     {
       title: 'Username',
@@ -73,6 +74,7 @@ const UserControlComponent = () => {
       sorter: (a, b) => a.username.length - b.username.length,
       sortOrder: sortedInfo.columnKey === 'username' ? sortedInfo.order : null,
       ellipsis: true,
+      width: "40%"
     },
     {
       title: 'Mail',
@@ -83,6 +85,7 @@ const UserControlComponent = () => {
       sorter: (a, b) => a.mail.length - b.mail.length,
       sortOrder: sortedInfo.columnKey === 'mail' ? sortedInfo.order : null,
       ellipsis: true,
+      width: "45%"
     },
     {
       title: 'Action',
@@ -93,7 +96,7 @@ const UserControlComponent = () => {
           <a><DeleteTwoTone /></a>
         </Space>
       ),
-      width: "15%"
+      width: "10%"
     },
   ];
   return (
