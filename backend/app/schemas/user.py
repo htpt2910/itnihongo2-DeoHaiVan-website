@@ -1,7 +1,10 @@
-from pydantic import BaseModel
-from typing import List
+from typing import List, Optional
+
 from app.schemas.comment import Comment
 from app.schemas.post import Post
+from pydantic import BaseModel
+
+
 class UserBase(BaseModel):
     email: str
     username : str
@@ -10,15 +13,30 @@ class UserBase(BaseModel):
     age : int
     image : str
 
+    class Config:
+        orm_mode = True
+
 class UserCreate(UserBase):
     password: str
 
-
+    class Config:
+        orm_mode = True
 class User(UserBase):
-    id: int
-    is_active: bool
+    id: Optional[int] = None
+    is_active: Optional[bool] = None
     comments: List[Comment] = []
     posts: List[Post] = []
+
+    class Config:
+        orm_mode = True
+
+class UserUpdate(UserBase):
+    username: Optional[str] = None
+    email: Optional[str] = None
+    name: Optional[str] = None
+    gender: Optional[bool] = None
+    age: Optional[int] = None
+    image: Optional[str] = None
 
     class Config:
         orm_mode = True
