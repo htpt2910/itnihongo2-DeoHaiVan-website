@@ -10,6 +10,13 @@ from app.seed import Seed_db
 from fastapi import Depends, FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
+import fastapi.security as _security
+import jwt
+from app.core.hasing import Hasher
+
+oauth2schema = _security.OAuth2PasswordBearer(tokenUrl="/api/token")
+
+JWT_SECRET = "myjwtsecret"
 
 user.Base.metadata.create_all(bind=engine)
 comment.Base.metadata.create_all(bind=engine)
@@ -59,6 +66,36 @@ def create_user(user: user_schema.UserCreate, db: Session = Depends(get_db)):
     
     return crud_user.create_user(db=db, user=user)
 
+# api login
+async def authenticate_user(email: str, password: str, db: Session = Depends(get_db)):
+    user = await crud_user.get_user_by_email(db, email)
+
+    if not user:
+        return False
+
+    if not user.password == Hasher.verify_password(password):
+        return False
+
+    return user
+
+async def create_token(user: User):
+    user_obj = User.from_orm(user)
+
+    token = jwt.encode(user_obj.dict(), JWT_SECRET)
+
+    return dict(access_token=token, token_type="bearer")
+
+@app.post("/api/token")
+async def generate_token(
+    form_data: _security.OAuth2PasswordRequestForm = Depends(),
+    db: Session = Depends(get_db),
+):
+    user = await authenticate_user(form_data.username, form_data.password, db)
+
+    if not user:
+        raise HTTPException(status_code=401, detail="Invalid Credentials")
+
+    return await create_token(user)
 
 @app.get("/users/", response_model=List[user_schema.User])
 def read_users(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
