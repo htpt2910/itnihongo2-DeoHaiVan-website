@@ -12,7 +12,8 @@ class Post(Base):
   place_id = Column(Integer, ForeignKey("places.id"))
   image = Column(String)
   rating = Column(Integer)
-  is_active = Column(Boolean, default=True)
+  is_active = Column(Boolean, default=False)
+  is_verify = Column(Boolean, default=False)
 
   user = relationship("User", back_populates="posts")
   place = relationship("Place", back_populates="posts")

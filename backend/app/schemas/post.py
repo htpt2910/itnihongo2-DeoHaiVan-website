@@ -17,6 +17,7 @@ class PostCreate(PostBase):
 class Post(PostBase):
     id: int
     is_active: bool
+    is_verify: bool
     comments: List[Comment] = []
     likes : List[Like] = []
 
