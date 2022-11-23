@@ -3,6 +3,7 @@ from typing import List
 from app.schemas.comment import Comment
 from app.schemas.like import Like
 from datetime import datetime
+
 class PostBase(BaseModel):
     title : str
     content : str
@@ -21,6 +22,19 @@ class Post(PostBase):
     is_verify: bool
     comments: List[Comment] = []
     likes : List[Like] = []
+
+
+class postBase(BaseModel):
+    email: str
+
+
+class postDelete(postBase):
+    password: str
+
+
+class post(postBase):
+    id: int
+    is_active: bool
 
     class Config:
         orm_mode = True
