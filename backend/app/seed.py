@@ -2,6 +2,7 @@ from app.models.user import User
 from app.models.post import Post
 from app.models.comment import Comment
 from app.models.place import Place
+from app.models.like import Like
 
 def Seed_db(SessionLocal):
     # Seed db
@@ -71,6 +72,17 @@ def Seed_db(SessionLocal):
     comment3.post_id = 1
     comment3.content = 'uk'
     comment3.comment_time = '2022-05-13 18:38:00'
+
+    # Like
+
+    like1 = Like()
+    like1.like_user_id = 1
+    like1.post_id = 1
+
+    like2 = Like()
+    like2.like_user_id = 2
+    like2.post_id = 1
+
     s.add(user1)
     s.add(user2)
     s.add(place1)
@@ -80,6 +92,8 @@ def Seed_db(SessionLocal):
     s.add(comment1)
     s.add(comment2)
     s.add(comment3)
+    s.add(like1)
+    s.add(like2)
     s.commit()
     s.close()
 

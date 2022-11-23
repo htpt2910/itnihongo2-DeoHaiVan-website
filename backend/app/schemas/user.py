@@ -1,9 +1,8 @@
+from pydantic import BaseModel
 from typing import List, Optional
-
 from app.schemas.comment import Comment
 from app.schemas.post import Post
-from pydantic import BaseModel
-
+from app.schemas.like import Like
 
 class UserBase(BaseModel):
     email: str
@@ -26,6 +25,7 @@ class User(UserBase):
     is_active: Optional[bool] = None
     comments: List[Comment] = []
     posts: List[Post] = []
+    likes: List[Like] = []
 
     class Config:
         orm_mode = True
