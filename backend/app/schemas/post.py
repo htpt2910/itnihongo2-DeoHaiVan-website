@@ -26,6 +26,7 @@ class Post(PostBase):
         orm_mode = True
 
 class PostUpdate(PostBase):
+    title: Optional[str] = None
     content: Optional[str] = None
     post_time: Optional[datetime] = None
     place_id: Optional[int] = None
