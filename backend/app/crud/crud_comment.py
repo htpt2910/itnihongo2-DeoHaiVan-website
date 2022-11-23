@@ -19,7 +19,12 @@ def get_comment(db: Session, comment_id: int):
 def get_comments(db: Session, skip: int = 0, limit: int = 100):
     return db.query(comment_model.Comment).offset(skip).limit(limit).all()
 
-def delete_comment(db: Session,post_id):
+def delete_comment(db:Session, comment_id: int):
+    db.query(comment_model.Comment).filter(comment_model.Comment.id==comment_id).delete()
+    db.commit()
+    return None
+
+def delete_comments(db: Session,post_id):
     db.query(comment_model.Comment).filter(comment_model.Comment.post_id==post_id).delete()
     db.commit()
     return None

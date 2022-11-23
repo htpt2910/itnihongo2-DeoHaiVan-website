@@ -22,8 +22,8 @@ def get_posts(db: Session, skip: int = 0, limit: int = 100):
     return db.query(post_model.Post).offset(skip).limit(limit).all()
 
 def delete_post(db: Session, post_id):
-    crud_comment.delete_comment(db=db, post_id=post_id)
-    crud_like.delete_like(db=db,post_id=post_id)
+    crud_comment.delete_comments(db=db, post_id=post_id)
+    crud_like.delete_likes(db=db,post_id=post_id)
     db.query(post_model.Post).filter(post_model.Post.id==post_id).delete()
     db.commit()
     return None
