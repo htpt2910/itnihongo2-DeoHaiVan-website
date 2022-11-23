@@ -26,7 +26,6 @@ def delete_post(db: Session, post: post_schema.postDelete):
     db.commit()
     db.refresh(db_post)
     return db_post
-#     return db.query(post_model.Post).offset(skip).limit(limit).all()
 
 def delete_post(db: Session, post_id):
     db.query(post_model.Post).filter(post_model.Post.id==post_id).delete()

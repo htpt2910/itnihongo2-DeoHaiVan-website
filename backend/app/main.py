@@ -107,6 +107,8 @@ def delete_post(post_id:int,  db: Session = Depends(get_db)):
    
     return crud_post.delete_post(db=db, post_id=post_id)
 
+# @app.delete("/user/posts/{post_id}")
+
 @app.delete("/user/{user_id}")
 def delete_user(user_id:int,  db: Session = Depends(get_db)):
    
