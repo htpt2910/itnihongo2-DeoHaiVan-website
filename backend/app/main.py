@@ -11,9 +11,8 @@ from fastapi import Depends, status, FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 
-from app.crud import crud_user
-from app.crud import crud_post
-from app.db.databases import SessionLocal, engine
+from app.crud import crud_comment
+from app.schemas import comment as comment_schema
 
 user.Base.metadata.create_all(bind=engine)
 comment.Base.metadata.create_all(bind=engine)
@@ -108,7 +107,14 @@ def delete_post(post_id:int,  db: Session = Depends(get_db)):
    
     return crud_post.delete_post(db=db, post_id=post_id)
 
+# @app.delete("/user/posts/{post_id}")
+
 @app.delete("/user/{user_id}")
 def delete_user(user_id:int,  db: Session = Depends(get_db)):
    
     return crud_user.delete_user(db=db, user_id=user_id)
+
+@app.delete("/comment/{comment_id}")
+def delete_comment(comment_id:int,  db: Session = Depends(get_db)):
+   
+    return crud_comment.delete_comment(db=db, comment_id=comment_id)
