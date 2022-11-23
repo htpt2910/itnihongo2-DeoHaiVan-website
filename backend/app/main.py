@@ -1,11 +1,16 @@
+import json
 from typing import List
 
-from app.crud import crud_post, crud_user
+from app.crud import crud_post, crud_user, crud_comment, crud_like
 from app.db.databases import SessionLocal, engine
 from app.models import comment, place, post, user
 from app.models.user import User
+from app.models.comment import Comment
+from app.models.like import Like
 from app.schemas import post as post_schema
+from app.schemas import comment as comment_schema
 from app.schemas import user as user_schema
+from app.schemas import like as like_schema
 from app.seed import Seed_db
 from fastapi import Depends, status, FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
@@ -118,3 +123,8 @@ def delete_user(user_id:int,  db: Session = Depends(get_db)):
 def delete_comment(comment_id:int,  db: Session = Depends(get_db)):
    
     return crud_comment.delete_comment(db=db, comment_id=comment_id)
+
+@app.delete("/like/{like_id}")
+def delete_like(like_id:int,  db: Session = Depends(get_db)):
+   
+    return crud_like.delete_like(db=db, like_id=like_id)
