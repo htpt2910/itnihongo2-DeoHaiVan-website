@@ -3,6 +3,7 @@ from typing import List
 from app.schemas.comment import Comment
 from app.schemas.post import Post
 from app.schemas.like import Like
+
 class UserBase(BaseModel):
     email: str
     username : str
