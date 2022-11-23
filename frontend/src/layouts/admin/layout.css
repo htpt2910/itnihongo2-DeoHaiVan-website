@@ -3,18 +3,40 @@
     size: 30px;
     padding-top: 8px;
 }
-.logo{
-    padding-left:20px ;
+
+.logo {
+    padding-left: 20px;
     width: 60px;
     height: 40px;
 }
-.trigger{
+
+.trigger {
     padding-left: 10px;
     font-size: 25px;
     color: white;
 }
-.logo-admin{
+
+.logo-admin {
     display: flex;
     padding: 10px;
     justify-content: center;
+}
+
+.header-menu {
+    margin-top: 0;
+}
+
+
+.ant-menu {
+    font-variant: tabular-nums;
+    font-feature-settings: 'tnum', "tnum";
+    font-size: 14px;
+    text-align: left;
+    transition: background 0.3s, width 0.3s cubic-bezier(0.2, 0, 0, 1) 0s;
+    background: #001529;
+    color: rgba(255, 255, 255, 1);
+}
+
+.ant-menu-vertical {
+    border-right: 0px solid #f0f0f0;
 }
