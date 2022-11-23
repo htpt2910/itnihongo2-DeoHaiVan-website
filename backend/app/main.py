@@ -4,6 +4,7 @@ from app.crud import crud_post, crud_user
 from app.db.databases import SessionLocal, engine
 from app.models import comment, place, post, user
 from app.models.user import User
+from app.models.post import Post
 from app.schemas import post as post_schema
 from app.schemas import user as user_schema
 from app.seed import Seed_db
@@ -90,3 +91,17 @@ def update_user(user_id: int, _user: user_schema.UserUpdate, db: Session = Depen
 @app.post("/post/", response_model=post_schema.Post)
 def create_post(post: post_schema.PostCreate, db: Session = Depends(get_db)):
     return crud_post.create_post(db=db, post=post)
+
+@app.patch("/post/{post_id}", response_model=post_schema.Post)
+def update_post(post_id: int, _post: post_schema.PostUpdate, db: Session = Depends(get_db)):
+      db_post = db.get(Post, post_id)
+      if not db_post:
+          raise HTTPException(status_code=404, detail="Post not found")
+      post_data = _post.dict(exclude_unset=True)
+      for key, value in post_data.items():
+          setattr(db_post, key, value)
+
+      db.add(db_post)
+      db.commit()
+      db.refresh(db_post)
+      return db_post

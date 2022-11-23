@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from typing import List
+from typing import List, Optional
 from app.schemas.comment import Comment
 from app.schemas.like import Like
 from datetime import datetime
@@ -21,6 +21,16 @@ class Post(PostBase):
     is_verify: bool
     comments: List[Comment] = []
     likes : List[Like] = []
+
+    class Config:
+        orm_mode = True
+
+class PostUpdate(PostBase):
+    content: Optional[str] = None
+    post_time: Optional[datetime] = None
+    place_id: Optional[int] = None
+    image: Optional[str] = None
+    rating: Optional[int] = None
 
     class Config:
         orm_mode = True
