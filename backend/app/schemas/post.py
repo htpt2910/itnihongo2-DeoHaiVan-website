@@ -4,6 +4,7 @@ from app.schemas.comment import Comment
 from app.schemas.like import Like
 from datetime import datetime
 class PostBase(BaseModel):
+    title : str
     content : str
     post_time : datetime
     image : str

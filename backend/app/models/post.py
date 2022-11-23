@@ -6,6 +6,7 @@ class Post(Base):
   __tablename__ = "posts"
 
   id = Column(Integer, primary_key=True, index=True)
+  title = Column(String)
   user_id = Column(Integer, ForeignKey("users.id"))
   content = Column(String)
   post_time = Column(DateTime)
