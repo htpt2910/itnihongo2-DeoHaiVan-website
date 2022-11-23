@@ -16,5 +16,6 @@ class User(Base):
   is_active = Column(Boolean, default=True)
 
   comments = relationship("Comment", back_populates='user')
+  likes = relationship("Like", back_populates='user')
   posts = relationship("Post", back_populates='user')
 
