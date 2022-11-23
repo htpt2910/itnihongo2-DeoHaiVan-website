@@ -4,6 +4,7 @@ from app.schemas.comment import Comment
 from app.schemas.like import Like
 from datetime import datetime
 class PostBase(BaseModel):
+    title : str
     content : str
     post_time : datetime
     image : str
@@ -17,6 +18,7 @@ class PostCreate(PostBase):
 class Post(PostBase):
     id: int
     is_active: bool
+    is_verify: bool
     comments: List[Comment] = []
     likes : List[Like] = []
 
