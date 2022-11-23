@@ -1,20 +1,19 @@
-import React, { useState } from 'react';
-import 'antd/dist/antd.css';
-import './layout.css';
-import logo from '../../assets/mountain.png'
 import {
   MenuFoldOutlined,
-  MenuUnfoldOutlined,
-  LogoutOutlined,
-  UserOutlined,
-  VideoCameraOutlined,
+  MenuUnfoldOutlined
 } from '@ant-design/icons';
 import { Layout, Menu } from 'antd';
+import 'antd/dist/antd.css';
+import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
+import logo from '../../assets/mountain.png';
+import './layout.css';
+// import { PostControlComponent } from './pages/admin/PostControl';
+// import { UserControlComponent } from './pages/admin/UserControl';
 
 
 const { Header, Sider, Content } = Layout;
-
-const AdminLayout = () => {
+const AdminLayout = ({ childcomp }) => {
   const [collapsed, setCollapsed] = useState(false);
 
   return (
@@ -22,33 +21,25 @@ const AdminLayout = () => {
       <Sider trigger={null} collapsible collapsed={collapsed}>
         <div className='logo-admin'>
           <p className='mount'>Deo Hai Van</p>
-          <img src={logo} alt="logo" className='logo'/>
+          <img src={logo} alt="logo" className='logo' />
         </div>
         <Menu
-          theme="dark"
-          mode="inline"
-          defaultSelectedKeys={['1']}
-          items={[
-            {
-              key: '1',
-              icon: <UserOutlined />,
-              label: 'User Management',
-            },
-            {
-              key: '2',
-              icon: <VideoCameraOutlined />,
-              label: 'Posts Management',
-            },
-            {
-              key: '3',
-              icon: <LogoutOutlined  />,
-              label: 'Logout',
-            },
-          ]}
-        />
+          className="header-menu"
+        >
+          <Menu.Item key="1">
+            <Link to={"/admin/usercontrol"}>UserManagement</Link>
+          </Menu.Item>
+          <Menu.Item key="2">
+            <Link to="/admin/postcontrol">PostManagement</Link>
+          </Menu.Item>
+          <Menu.Item key="3">
+            Logout
+          </Menu.Item>
+        </Menu>
+
       </Sider>
       <Layout className="site-layout">
-        <Header className="site-layout-background" style={{ padding: 0, height:67 }}>
+        <Header className="site-layout-background" style={{ padding: 0, height: 67 }}>
           {React.createElement(collapsed ? MenuUnfoldOutlined : MenuFoldOutlined, {
             className: 'trigger',
             onClick: () => setCollapsed(!collapsed),
@@ -63,7 +54,7 @@ const AdminLayout = () => {
             minHeight: 720,
           }}
         >
-          Content
+          {childcomp}
         </Content>
       </Layout>
     </Layout>
