@@ -38,6 +38,7 @@ def Seed_db(SessionLocal):
     # Post
 
     post1 = Post()
+    post1.title = 'Cầu Rồng đẹp quá ta!!! :>'
     post1.user_id = 2
     post1.content = 'Đẹp'
     post1.post_time = '2022-05-15 18:00:00'
@@ -47,6 +48,7 @@ def Seed_db(SessionLocal):
 
     post2 = Post()
     post2.user_id = 1
+    post2.title = 'No cap'
     post2.content = 'Đẹp'
     post2.post_time = '2022-05-13 15:32:00'
     post2.place_id = 1

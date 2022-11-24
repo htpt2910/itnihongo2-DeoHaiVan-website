@@ -2,7 +2,7 @@ from app.core.hasing import Hasher
 from app.models import user as user_model
 from app.schemas import user as user_schema
 from sqlalchemy.orm import Session
-
+from app.crud import crud_post
 
 def get_user(db: Session, user_id: int):
     return db.query(user_model.User).filter(user_model.User.id == user_id).first()
@@ -23,3 +23,10 @@ def create_user(db: Session, user: user_schema.UserCreate):
     db.commit()
     db.refresh(db_user)
     return db_user
+    
+def delete_user(db: Session, user_id):
+    crud_post.delete_all_posts(db=db, user_id=user_id)
+    db.query(user_model.User).filter(user_model.User.id==user_id).delete()
+    db.commit()
+    return None
+
