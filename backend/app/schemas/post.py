@@ -3,6 +3,7 @@ from typing import List, Optional
 from app.schemas.comment import Comment
 from app.schemas.like import Like
 from datetime import datetime
+
 class PostBase(BaseModel):
     title : str
     content : str
@@ -35,3 +36,9 @@ class PostUpdate(PostBase):
 
     class Config:
         orm_mode = True
+
+class postBase(BaseModel):
+    email: str
+
+class postDelete(postBase):
+    password: str

@@ -1,16 +1,24 @@
+import json
 from typing import List
 
-from app.crud import crud_post, crud_user
+from app.crud import crud_post, crud_user, crud_comment, crud_like
 from app.db.databases import SessionLocal, engine
 from app.models import comment, place, post, user
 from app.models.user import User
 from app.models.post import Post
+from app.models.comment import Comment
+from app.models.like import Like
 from app.schemas import post as post_schema
+from app.schemas import comment as comment_schema
 from app.schemas import user as user_schema
+from app.schemas import like as like_schema
 from app.seed import Seed_db
-from fastapi import Depends, FastAPI, HTTPException
+from fastapi import Depends, status, FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
+
+from app.crud import crud_comment
+from app.schemas import comment as comment_schema
 
 user.Base.metadata.create_all(bind=engine)
 comment.Base.metadata.create_all(bind=engine)
@@ -59,13 +67,10 @@ def create_user(user: user_schema.UserCreate, db: Session = Depends(get_db)):
         raise HTTPException(status_code=400, detail="Username already registered")
     
     return crud_user.create_user(db=db, user=user)
-
-
 @app.get("/users/", response_model=List[user_schema.User])
 def read_users(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     users = crud_user.get_users(db, skip=skip, limit=limit)
     return users
-
 
 @app.get("/users/{user_id}", response_model=user_schema.User)
 def read_user(user_id: int, db: Session = Depends(get_db)):
@@ -73,7 +78,6 @@ def read_user(user_id: int, db: Session = Depends(get_db)):
     if db_user is None:
         raise HTTPException(status_code=404, detail="User not found")
     return db_user
-    
 @app.patch("/user/{user_id}", response_model=user_schema.User)
 def update_user(user_id: int, _user: user_schema.UserUpdate, db: Session = Depends(get_db)):
       db_user = db.get(User, user_id)
@@ -87,6 +91,11 @@ def update_user(user_id: int, _user: user_schema.UserUpdate, db: Session = Depen
       db.commit()
       db.refresh(db_user)
       return db_user    
+
+@app.get("/posts/", response_model = List[post_schema.Post])
+def read_posts(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    posts = crud_post.get_posts(db, skip=skip, limit=limit)
+    return posts
 
 @app.post("/post/", response_model=post_schema.Post)
 def create_post(post: post_schema.PostCreate, db: Session = Depends(get_db)):
@@ -105,3 +114,32 @@ def update_post(post_id: int, _post: post_schema.PostUpdate, db: Session = Depen
       db.commit()
       db.refresh(db_post)
       return db_post
+    
+@app.get("/posts/{post_id}", response_model=post_schema.Post)
+def read_post(post_id: int, db: Session = Depends(get_db)):
+    db_post = crud_post.get_post(db, post_id=post_id)
+    if db_post is None:
+        raise HTTPException(status_code=404, detail="post not found")
+    return db_post
+
+@app.delete("/post/{post_id}")
+def delete_post(post_id:int,  db: Session = Depends(get_db)):
+   
+    return crud_post.delete_post(db=db, post_id=post_id)
+
+# @app.delete("/user/posts/{post_id}")
+
+@app.delete("/user/{user_id}")
+def delete_user(user_id:int,  db: Session = Depends(get_db)):
+   
+    return crud_user.delete_user(db=db, user_id=user_id)
+
+@app.delete("/comment/{comment_id}")
+def delete_comment(comment_id:int,  db: Session = Depends(get_db)):
+   
+    return crud_comment.delete_comment(db=db, comment_id=comment_id)
+
+@app.delete("/like/{like_id}")
+def delete_like(like_id:int,  db: Session = Depends(get_db)):
+   
+    return crud_like.delete_like(db=db, like_id=like_id)
