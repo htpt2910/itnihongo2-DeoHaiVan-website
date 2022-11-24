@@ -10,6 +10,13 @@ from app.seed import Seed_db
 from fastapi import Depends, FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
+import jwt
+from pydantic import BaseModel
+from datetime import datetime, timedelta
+from typing import Union, Any
+from app.core.hasing import Hasher
+SECURITY_ALGORITHM = 'HS256'
+SECRET_KEY = '123456'
 
 user.Base.metadata.create_all(bind=engine)
 comment.Base.metadata.create_all(bind=engine)
@@ -43,6 +50,46 @@ def get_db():
       yield db
     finally:
       db.close()
+
+class LoginRequest(BaseModel):
+    email: str
+    password: str
+    class Config:
+        orm_mode = True
+
+def authenticate_user(email: str, password: str):
+    db = SessionLocal()
+    user = crud_user.get_user_by_email(db, email=email)
+    if not user:
+        return False
+
+    # if not Hasher.verify_password(password, user.hashed_password) == password:
+    #     return False
+    if not password == user.hashed_password:
+        return False
+
+    return True
+
+def generate_token(username: Union[str, Any]) -> str:
+    expire = datetime.utcnow() + timedelta(
+        seconds=60 * 60 * 24 * 3  # Expired after 3 days
+    )
+    to_encode = {
+        "exp": expire, "username": username
+    }
+    encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=SECURITY_ALGORITHM)
+    return encoded_jwt
+
+@app.post('/login')
+def login(request_data: LoginRequest):
+    print(f'[x] request_data: {request_data.__dict__}')
+    if authenticate_user(email=request_data.email, password=request_data.password):
+        token = generate_token(request_data.email)
+        return {
+            'token': token
+        }
+    else:
+        raise HTTPException(status_code=404, detail="User not found")
 
 @app.get("/")
 async def main():
