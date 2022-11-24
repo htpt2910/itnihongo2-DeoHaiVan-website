@@ -15,7 +15,7 @@ def Seed_db(SessionLocal):
     user1.name = 'John Connor'
     user1.age = 25
     user1.image = 'https://upload.wikimedia.org/wikipedia/en/e/e8/John_Connor_%28Edward_Furlong%29.jpg'
-    user1.hashed_password = '12345678'
+    user1.hashed_password = '$2b$12$6i1S28RGXFBwXx.1oCv0qehF7Wf5QKcRmtiwgkdoF2uzb9qq1pmEu'
 
     user2 = User()
     user2.username = 'Sarah'
@@ -23,7 +23,7 @@ def Seed_db(SessionLocal):
     user2.name = 'Sarah Connor'
     user2.age = 23
     user2.image = 'https://upload.wikimedia.org/wikipedia/en/thumb/8/81/Sarah_Connor_%28Linda_Hamilton%29.jpg/220px-Sarah_Connor_%28Linda_Hamilton%29.jpg'
-    user2.hashed_password = '87654321'
+    user2.hashed_password = '$2b$12$6i1S28RGXFBwXx.1oCv0qehF7Wf5QKcRmtiwgkdoF2uzb9qq1pmEu'
 
     # Place
 

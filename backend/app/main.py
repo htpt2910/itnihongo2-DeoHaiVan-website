@@ -6,17 +6,18 @@ from app.models import comment, place, post, user
 from app.models.user import User
 from app.schemas import post as post_schema
 from app.schemas import user as user_schema
+from app.schemas import login as login_schema
 from app.seed import Seed_db
+from app.security import validate_token, reusable_oauth2
 from fastapi import Depends, FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 import jwt
-from pydantic import BaseModel
 from datetime import datetime, timedelta
 from typing import Union, Any
 from app.core.hasing import Hasher
 SECURITY_ALGORITHM = 'HS256'
-SECRET_KEY = '123456'
+SECRET_KEY = '09d25e094faa6ca2556c818166b7a9563b93f7099f6f0f4caa6cf63b88e8d3e7'
 
 user.Base.metadata.create_all(bind=engine)
 comment.Base.metadata.create_all(bind=engine)
@@ -51,23 +52,15 @@ def get_db():
     finally:
       db.close()
 
-class LoginRequest(BaseModel):
-    email: str
-    password: str
-    class Config:
-        orm_mode = True
-
 def authenticate_user(email: str, password: str):
     db = SessionLocal()
     user = crud_user.get_user_by_email(db, email=email)
     if not user:
         return False
 
-    # if not Hasher.verify_password(password, user.hashed_password) == password:
-    #     return False
-    if not password == user.hashed_password:
+    if not Hasher.verify_password(password, user.hashed_password):
         return False
-
+    
     return True
 
 def generate_token(username: Union[str, Any]) -> str:
@@ -81,7 +74,7 @@ def generate_token(username: Union[str, Any]) -> str:
     return encoded_jwt
 
 @app.post('/login')
-def login(request_data: LoginRequest):
+def login(request_data: login_schema.LoginRequest):
     print(f'[x] request_data: {request_data.__dict__}')
     if authenticate_user(email=request_data.email, password=request_data.password):
         token = generate_token(request_data.email)
@@ -89,7 +82,7 @@ def login(request_data: LoginRequest):
             'token': token
         }
     else:
-        raise HTTPException(status_code=404, detail="User not found")
+        raise HTTPException(status_code=404, detail="Wrong email or password")
 
 @app.get("/")
 async def main():
@@ -139,6 +132,6 @@ def read_posts(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     posts = crud_post.get_posts(db, skip=skip, limit=limit)
     return posts
 
-@app.post("/post/", response_model=post_schema.Post)
+@app.post("/post/", response_model=post_schema.Post, dependencies=[Depends(validate_token)])
 def create_post(post: post_schema.PostCreate, db: Session = Depends(get_db)):
     return crud_post.create_post(db=db, post=post)
