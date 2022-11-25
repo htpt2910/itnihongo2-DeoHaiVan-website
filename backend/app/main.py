@@ -1,24 +1,16 @@
-import json
 from typing import List
 
-from app.crud import crud_post, crud_user, crud_comment, crud_like
+from app.crud import crud_comment, crud_like, crud_post, crud_user
 from app.db.databases import SessionLocal, engine
 from app.models import comment, place, post, user
-from app.models.user import User
 from app.models.post import Post
-from app.models.comment import Comment
-from app.models.like import Like
+from app.models.user import User
 from app.schemas import post as post_schema
-from app.schemas import comment as comment_schema
 from app.schemas import user as user_schema
-from app.schemas import like as like_schema
 from app.seed import Seed_db
-from fastapi import Depends, status, FastAPI, HTTPException
+from fastapi import Depends, FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
-
-from app.crud import crud_comment
-from app.schemas import comment as comment_schema
 
 user.Base.metadata.create_all(bind=engine)
 comment.Base.metadata.create_all(bind=engine)
@@ -39,7 +31,7 @@ origins = [
 
 app.add_middleware(
   CORSMiddleware,
-  allow_origins=origins,
+  allow_origins=['*'],
   allow_credentials=True,
   allow_methods=["*"],
   allow_headers=["*"],
@@ -78,7 +70,8 @@ def read_user(user_id: int, db: Session = Depends(get_db)):
     if db_user is None:
         raise HTTPException(status_code=404, detail="User not found")
     return db_user
-@app.patch("/user/{user_id}", response_model=user_schema.User)
+    
+@app.patch("/users/{user_id}", response_model=user_schema.User)
 def update_user(user_id: int, _user: user_schema.UserUpdate, db: Session = Depends(get_db)):
       db_user = db.get(User, user_id)
       if not db_user:
