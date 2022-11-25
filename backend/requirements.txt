@@ -6,3 +6,7 @@ alembic
 databases[postgresql]
 passlib[bcrypt]
 PyJWT
+Pillow
+python-multipart
+python-dotenv
+psycopg2
