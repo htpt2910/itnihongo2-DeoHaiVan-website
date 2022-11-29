@@ -1,4 +1,7 @@
 from datetime import datetime
+from app.models.user import User
+from app.db.databases import SessionLocal, engine
+from app.crud import crud_comment, crud_like, crud_post, crud_user
 
 import jwt
 from fastapi import Depends, HTTPException
@@ -19,7 +22,9 @@ def validate_token(http_authorization_credentials=Depends(reusable_oauth2)) -> s
     """
     try:
         payload = jwt.decode(http_authorization_credentials.credentials, SECRET_KEY, algorithms=[SECURITY_ALGORITHM])
-        if payload.get('username') < datetime.now():
+        date = datetime.fromtimestamp(payload.get('exp'))
+        print(date)
+        if date < datetime.now():
             raise HTTPException(status_code=403, detail="Token expired")
         return payload.get('username')
     except(jwt.PyJWTError, ValidationError):
@@ -27,3 +32,22 @@ def validate_token(http_authorization_credentials=Depends(reusable_oauth2)) -> s
             status_code=403,
             detail=f"Could not validate credentials",
         )
+
+async def get_current_user(http_authorization_credentials=Depends(reusable_oauth2)) -> str:
+    payload = jwt.decode(http_authorization_credentials.credentials, SECRET_KEY, algorithms=[SECURITY_ALGORITHM])
+    email = payload.get('email')
+    db = SessionLocal()
+    user = crud_user.get_user_by_email(db, email=email)
+    if not user:
+        raise HTTPException(
+            status_code=401,
+            detail="Invalid authentication credentials",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    return user
+
+
+async def get_current_active_user(current_user: User = Depends(get_current_user)):
+    if not current_user.is_active:
+        raise HTTPException(status_code=400, detail="Inactive user")
+    return current_user

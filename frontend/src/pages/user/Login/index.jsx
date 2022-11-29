@@ -1,72 +1,77 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
+import { LockOutlined, UserOutlined } from '@ant-design/icons';
+import { Button, Checkbox, Form, Input } from 'antd';
 
-import "./styles.css";
+import './styles.css'
 
-export const Login = () => {
-  const [errorMessages, setErrorMessages] = useState({});
-  const [isSubmitted, setIsSubmitted] = useState(false);
-  const database = [
-    {
-      username: "user1",
-      password: "pass1"
+async function loginUser(credentials) {
+  return fetch('http://localhost:8000/login', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
     },
-    {
-      username: "user2",
-      password: "pass2"
-    }
-  ];
+    body: JSON.stringify(credentials)
+  })
+    .then(data => data.json())
+ }
 
-  const errors = {
-    uname: "invalid username",
-    pass: "invalid password"
+export const Login = ({ setToken }) =>  {
+  const [email, setEmail] = useState();
+  const [password, setPassword] = useState();
+  const onFinish = async (values) => {
+      const token = await loginUser({
+        email,
+        password
+      });
+      setToken(token);
   };
-
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    var { uname, pass } = document.forms[0];
-    const userData = database.find((user) => user.username === uname.value);
-    if (userData) {
-      if (userData.password !== pass.value) {
-        setErrorMessages({ name: "pass", message: errors.pass });
-      } else {
-        setIsSubmitted(true);
-      }
-    } else {
-      setErrorMessages({ name: "uname", message: errors.uname });
-    }
-  };
-
-  
-  const renderErrorMessage = (name) =>
-    name === errorMessages.name && (
-      <div className="error">{errorMessages.message}</div>
-    );
-
-  const renderForm = (
-    <div className="form">
-      <form onSubmit={handleSubmit}>
-        <div className="login-container">
-          <label className="labeltext">Username </label>
-          <input type="text" name="uname" required />
-          {renderErrorMessage("uname")}
-        </div>
-        <div className="login-container">
-          <label className="labeltext">Password </label>
-          <input type="password" name="pass" required />
-          {renderErrorMessage("pass")}
-        </div>
-        <div className="button-container">
-          <input type="submit" />
-        </div>
-      </form>
-    </div>
-  );
   return (
-    <div className="app">
-      <div className="login-form">
-        <div className="title">Sign In</div>
-        {isSubmitted ? <div>User is successfully logged in</div> : renderForm}
-      </div>
+  <div className="app">
+    <div className="login-form">
+    <div className="title">Login</div>
+      <Form
+        name="normal_login"
+        className="login-form"
+        initialValues={{ remember: true }}
+        onFinish={onFinish}
+      >
+        <Form.Item
+          name="email"
+          rules={[{ required: true, message: 'Please input your Email!' }]}
+        >
+          <Input prefix={<UserOutlined className="site-form-item-icon" />} placeholder="Email" onChange={e => setEmail(e.target.value)}/>
+        </Form.Item>
+        <Form.Item
+          name="password"
+          rules={[{ required: true, message: 'Please input your Password!' }]}
+        >
+          <Input
+            prefix={<LockOutlined className="site-form-item-icon" />}
+            type="password"
+            placeholder="Password"
+            onChange={e => setPassword(e.target.value)}
+          />
+        </Form.Item>
+        <Form.Item>
+          <Form.Item name="remember" valuePropName="checked" noStyle>
+            <Checkbox>Remember me</Checkbox>
+          </Form.Item>
+
+          <a className="login-form-forgot" href="">
+            Forgot password
+          </a>
+        </Form.Item>
+
+        <Form.Item>
+          <Button type="primary" htmlType="submit" className="login-form-button">
+            Log in
+          </Button>
+          Or <a href="\signup">register now!</a>
+        </Form.Item>
+      </Form>
     </div>
+  </div>
   );
 };
+
+export default Login;
