@@ -5,6 +5,7 @@ from app.crud import crud_comment, crud_like
 
 def create_post(db: Session, post: post_schema.PostCreate):
     db_post = post_model.Post(
+        title=post.title,
         user_id=post.user_id,
         content=post.content, 
         post_time = post.post_time, 

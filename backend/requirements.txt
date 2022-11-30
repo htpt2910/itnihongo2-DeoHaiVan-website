@@ -5,3 +5,4 @@ SQLAlchemy
 alembic
 databases[postgresql]
 passlib[bcrypt]
+PyJWT
