@@ -1,9 +1,11 @@
 import axios from "axios"
 import "bootstrap/dist/css/bootstrap.css"
 import { useEffect, useState } from "react"
+import { useNavigate } from "react-router-dom"
+import useToken from "../../../useToken"
 import AppButton from "./Button"
-import useToken from '../../../useToken';
 const Profile = () => {
+  let navigate = useNavigate()
   const [profile, setProfile] = useState({
     name: "",
     email: "",
@@ -12,8 +14,12 @@ const Profile = () => {
     age: 0,
     image: "",
   })
-  const { token } = useToken();
+  const { token, setToken } = useToken()
+
   const [editMode, setEditMode] = useState(false)
+  const [imagebase64, setImage] = useState()
+  const [userID, setUserID] = useState(0)
+  const [hajimete_email, setHajimete_email] = useState("")
 
   function handleChange(event) {
     const { name, value } = event.target
@@ -26,41 +32,80 @@ const Profile = () => {
     })
   }
 
+  let base64String = ""
+
+  function imageUploaded() {
+    var file = document.querySelector("input[type=file]")["files"][0]
+
+    var reader = new FileReader()
+    console.log("next", reader)
+
+    reader.onload = function () {
+      base64String = reader.result.replace("data:", "").replace(/^.+,/, "")
+      setImage(base64String)
+      console.log("hihhhhhhh", imagebase64)
+    }
+
+    reader.readAsDataURL(file)
+  }
+
   function handleSaveChanges(event) {
     setEditMode(false)
-
+    console.log("user id: ", userID)
     axios
-      .patch("http://localhost:8000/users/1", {
-        email: profile.email,
-        username: profile.name,
-        name: profile.name,
-        gender: profile.gender === "Nữ" ? true : false,
-        age: profile.age,
+      .patch(
+        `http://localhost:8000/users/${userID}`,
+        {
+          email: profile.email,
+          username: profile.name,
+          name: profile.name,
+          gender: profile.gender === "Nữ" ? false : true,
+          age: profile.age,
+          image: imagebase64,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: " Bearer " + token,
+          },
+        }
+      )
+      .then(async (res) => {
+        console.los(res)
       })
-      .then((res) => res)
+
       .catch((err) => console.log("err: ", err))
+      .finally(() => {
+        if (profile.email !== hajimete_email) {
+          setToken("")
+          navigate("/")
+        }
+      })
   }
 
   useEffect(() => {
     axios
       .get("http://localhost:8000/users/me", {
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': ' Bearer ' + token
-        }
+          "Content-Type": "application/json",
+          Authorization: " Bearer " + token,
+        },
       })
-      .then((res) => {
+      .then(async (res) => {
         const dt = res.data
         console.log("data: ", dt)
+        setUserID(dt.id)
         setProfile({
           name: dt.name,
           email: dt.email,
-          phone: "0123456789",
           gender: dt.gender ? "Nam" : "Nữ",
           age: dt.age,
           image: dt.image,
         })
+        setImage(dt.image)
+        setHajimete_email(dt.email)
       })
+
       .catch((err) => console.log(err))
   }, [])
 
@@ -70,8 +115,16 @@ const Profile = () => {
         <div className="col-lg-4">
           <div className="card mb-4">
             <div className="card-body text-center">
-              <img src={"data:image/png;base64,"+profile.image} alt="avatar" className="img-fluid" />
-              <input type={"file"} />
+              <img
+                src={"data:image/png;base64," + imagebase64}
+                alt="avatar"
+                className="img-fluid"
+              />
+              {editMode ? (
+                <input type={"file"} onChange={imageUploaded} />
+              ) : (
+                <></>
+              )}
               <h5 className="my-3">{profile.name}</h5>
             </div>
           </div>
@@ -109,24 +162,6 @@ const Profile = () => {
                       name="email"
                       className="text-muted mb-0"
                       value={profile.email}
-                      onChange={handleChange}
-                    />
-                  )}
-                </div>
-              </div>
-              <hr />
-              <div className="row">
-                <div className="col-sm-3">
-                  <p className="mb-0">Phone</p>
-                </div>
-                <div className="col-sm-9">
-                  {!editMode ? (
-                    <p className="text-muted mb-0">{profile.phone}</p>
-                  ) : (
-                    <input
-                      name="phone"
-                      className="text-muted mb-0"
-                      value={profile.phone}
                       onChange={handleChange}
                     />
                   )}

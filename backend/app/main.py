@@ -1,23 +1,22 @@
-from typing import List
+from datetime import datetime, timedelta
+from typing import Any, List, Union
 
+import jwt
+from app.core.hasing import Hasher
 from app.crud import crud_comment, crud_like, crud_post, crud_user
 from app.db.databases import SessionLocal, engine
 from app.models import comment, place, post, user
 from app.models.post import Post
 from app.models.user import User
+from app.schemas import login as login_schema
 from app.schemas import post as post_schema
 from app.schemas import user as user_schema
-from app.schemas import login as login_schema
-from app.security import validate_token, reusable_oauth2, get_current_active_user
-from app.schemas import like as like_schema
+from app.security import get_current_active_user, validate_token
 from app.seed import Seed_db
 from fastapi import Depends, FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
-import jwt
-from datetime import datetime, timedelta
-from typing import Union, Any
-from app.core.hasing import Hasher
+
 SECURITY_ALGORITHM = 'HS256'
 SECRET_KEY = '09d25e094faa6ca2556c818166b7a9563b93f7099f6f0f4caa6cf63b88e8d3e7'
 

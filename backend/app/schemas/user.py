@@ -1,8 +1,10 @@
-from pydantic import BaseModel
 from typing import List, Optional
+
 from app.schemas.comment import Comment
-from app.schemas.post import Post
 from app.schemas.like import Like
+from app.schemas.post import Post
+from pydantic import BaseModel
+
 
 class UserBase(BaseModel):
     email: str
