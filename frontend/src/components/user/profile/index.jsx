@@ -38,6 +38,7 @@ const Profile = () => {
     reader.onload = function () {
       base64String = reader.result.replace("data:", "").replace(/^.+,/, "")
       setImage(base64String)
+      console.log("hihhhhhhh", imagebase64)
     }
 
     reader.readAsDataURL(file)
@@ -48,7 +49,7 @@ const Profile = () => {
 
     axios
       .patch(
-        "http://localhost:8000/users/2",
+        "http://localhost:8000/users/me",
         {
           email: profile.email,
           username: profile.name,
@@ -63,7 +64,7 @@ const Profile = () => {
           },
         }
       )
-      .then((res) => res)
+      .then(async (res) => res)
       .catch((err) => console.log("err: ", err))
   }
 
@@ -75,7 +76,7 @@ const Profile = () => {
           Authorization: " Bearer " + token,
         },
       })
-      .then((res) => {
+      .then(async (res) => {
         const dt = res.data
         console.log("data: ", dt)
         setProfile({
@@ -86,7 +87,6 @@ const Profile = () => {
           age: dt.age,
           image: dt.image,
         })
-        setImage(dt.image)
       })
 
       .catch((err) => console.log(err))
