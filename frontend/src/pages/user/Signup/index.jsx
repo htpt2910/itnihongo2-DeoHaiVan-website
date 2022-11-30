@@ -1,95 +1,235 @@
-import * as Yup from 'yup';
-import { useFormik } from 'formik';
+import React, { useState } from 'react';
+import {
+  Button,
+  Checkbox,
+  Form,
+  Input,
+  Select,
+} from 'antd';
 import './signup.css'
-const SignupForm = () => {
-    const formik = useFormik({
-      initialValues: {
-        firstName: '',
-        lastName: '',
-        email: '',
-        password:'',
-      },
-      validationSchema: Yup.object({
-        firstName: Yup.string()
-          .max(15, 'Must be 15 characters or less')
-          .required('Required'),
-        lastName: Yup.string()
-          .max(20, 'Must be 20 characters or less')
-          .required('Required'),
-        email: Yup.string().email('Invalid email address').required('Required'),
-        password: Yup.string().required('Required'),
-      }),
-      onSubmit: values => {
-        alert(JSON.stringify(values, null, 2));
-      },
-    });
-    return (
-      <div className="register">
-          <form className='registerForm' onSubmit={formik.handleSubmit}>
-            <label htmlFor="firstName">First Name</label>
-            <input
-              id="firstName"
-              name="firstName"
-              placeholder="First Name"
-              type="text"
-              className='registerInput'
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              value={formik.values.firstName}
-            />
-            {formik.touched.firstName && formik.errors.firstName ? (
-              <div className='err'>{formik.errors.firstName}</div>
-            ) : null}
-      
-            <label htmlFor="lastName">Last Name</label>
-            <input
-              id="lastName"
-              name="lastName"
-              placeholder="Last Name"
-              type="text"
-              className='registerInput'
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              value={formik.values.lastName}
-            />
-            {formik.touched.lastName && formik.errors.lastName ? (
-              <div className='err'>{formik.errors.lastName}</div>
-            ) : null}
-      
-            <label htmlFor="email">Email Address</label>
-            <input
-              id="email"
-              name="email"
-              placeholder="abc@gmail.com"
-              type="email"
-              className='registerInput'
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              value={formik.values.email}
-            />
-            {formik.touched.email && formik.errors.email ? (
-              <div className='err'>{formik.errors.email}</div>
-            ) : null}
+import axios from 'axios';
+const { Option } = Select;
 
-            <label htmlFor="password">Password</label>
-            <input
-              id="password"
-              name="password"
-              placeholder="Password"
-              type="password"
-              className='registerInput'
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              value={formik.values.password}
-            />
-            {formik.touched.password && formik.errors.password ? (
-              <div className='err'>{formik.errors.password}</div>
-            ) : null}
-      
-            <button className='registerButton' type="submit">Submit</button>
-          </form>
-      </div>
-    );
+const formItemLayout = {
+  labelCol: {
+    xs: { span: 24 },
+    sm: { span: 8 },
+  },
+  wrapperCol: {
+    xs: { span: 24 },
+    sm: { span: 16 },
+  },
+};
+const tailFormItemLayout = {
+  wrapperCol: {
+    xs: {
+      span: 24,
+      offset: 0,
+    },
+    sm: {
+      span: 16,
+      offset: 8,
+    },
+  },
+};
+
+const SignupForm = () => {
+  const [form] = Form.useForm();
+  const [ imagebase64, setImage] = useState();
+
+  const onFinish = (values) => {
+    console.log('Received values of form: ', values);
+    axios
+      .post("http://localhost:8000/user/", {
+        'email': values.email,
+        'username': values.nickname,
+        'name': values.realname,
+        'gender': (values.gender==='male')?true:false,
+        'age': values.age,
+        'image': imagebase64,
+        'password': values.password
+      },{
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      })
+      .then((res) => {
+        (res.data.username)?(window.location = "/login"):(alert('Sign Up Failed !!!'))
+      })
+      .catch((err) => {
+      alert(err.response.data.detail)
+    })
   };
+
+  let base64String = "";
+  
+  function imageUploaded() {
+      var file = document.querySelector(
+          'input[type=file]')['files'][0];
+    
+      var reader = new FileReader();
+      console.log("next");
+        
+      reader.onload = function () {
+          base64String = reader.result.replace("data:", "")
+              .replace(/^.+,/, "");
+              setImage(base64String)
+      }
+      reader.readAsDataURL(file);
+  }
+
+  const prefixSelector = (
+    <Form.Item name="prefix" noStyle>
+      <Select style={{ width: 70 }}>
+        <Option value="86">+86</Option>
+        <Option value="87">+87</Option>
+      </Select>
+    </Form.Item>
+  );
+
+  return (
+    <div className='register'>
+    <Form
+      {...formItemLayout}
+      form={form}
+      name="register"
+      onFinish={onFinish}
+      initialValues={{
+        prefix: '86',
+      }}
+      scrollToFirstError
+    >
+      <Form.Item
+        name="email"
+        label="E-mail"
+        rules={[
+          {
+            type: 'email',
+            message: 'The input is not valid E-mail!',
+          },
+          {
+            required: true,
+            message: 'Please input your E-mail!',
+          },
+        ]}
+      >
+        <Input />
+      </Form.Item>
+
+      <Form.Item
+        name="password"
+        label="Password"
+        rules={[
+          {
+            required: true,
+            message: 'Please input your password!',
+          },
+        ]}
+        hasFeedback
+      >
+        <Input.Password />
+      </Form.Item>
+
+      <Form.Item
+        name="confirm"
+        label="Confirm Password"
+        dependencies={['password']}
+        hasFeedback
+        rules={[
+          {
+            required: true,
+            message: 'Please confirm your password!',
+          },
+          ({ getFieldValue }) => ({
+            validator(_, value) {
+              if (!value || getFieldValue('password') === value) {
+                return Promise.resolve();
+              }
+              return Promise.reject(new Error('The two passwords that you entered do not match!'));
+            },
+          }),
+        ]}
+      >
+        <Input.Password />
+      </Form.Item>
+
+      <Form.Item
+        name="nickname"
+        label="Nickname"
+        tooltip="What do you want others to call you?"
+        rules={[{ required: true, message: 'Please input your nickname!', whitespace: true }]}
+      >
+        <Input />
+      </Form.Item>
+
+      <Form.Item
+        name="realname"
+        label="Realname"
+        tooltip="Your real name?"
+        rules={[{ required: true, message: 'Please input your realname!', whitespace: true }]}
+      >
+        <Input />
+      </Form.Item>
+
+      <Form.Item
+        name="age"
+        label="Age"
+        rules={[{ required: true, message: 'Please input your age!', whitespace: true }]}
+      >
+        <Input type="number"/>
+      </Form.Item>
+
+      <Form.Item
+        name="phone"
+        label="Phone Number"
+        rules={[{ required: true, message: 'Please input your phone number!' }]}
+      >
+        <Input type='number' addonBefore={prefixSelector} style={{ width: '100%' }} />
+      </Form.Item>
+
+      <Form.Item
+        name="gender"
+        label="Gender"
+        rules={[{ required: true, message: 'Please select gender!' }]}
+      >
+        <Select placeholder="select your gender">
+          <Option value="male">Male</Option>
+          <Option value="female">Female</Option>
+          <Option value="other">Other</Option>
+        </Select>
+      </Form.Item>
+
+      <Form.Item
+        name="image"
+        label="Image"
+      >
+        <Input type='file' onChange={imageUploaded}/>
+      </Form.Item>
+
+      <Form.Item
+        name="agreement"
+        valuePropName="checked"
+        rules={[
+          {
+            validator: (_, value) =>
+              value ? Promise.resolve() : Promise.reject(new Error('Should accept agreement')),
+          },
+        ]}
+        {...tailFormItemLayout}
+      >
+        <Checkbox>
+          I have read the <a href="">agreement</a>
+        </Checkbox>
+      </Form.Item>
+      <Form.Item {...tailFormItemLayout}>
+        <Button type="primary" htmlType="submit">
+          Register
+        </Button>
+        Or <a href="\login">Login now!</a>
+      </Form.Item>
+    </Form>
+    </div>
+  );
+};
 
 export default SignupForm;

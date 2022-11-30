@@ -56,7 +56,7 @@ const Profile = () => {
           name: dt.name,
           email: dt.email,
           phone: "0123456789",
-          gender: dt.gender ? "Nữ" : "Nam",
+          gender: dt.gender ? "Nam" : "Nữ",
           age: dt.age,
           image: dt.image,
         })
@@ -70,7 +70,7 @@ const Profile = () => {
         <div className="col-lg-4">
           <div className="card mb-4">
             <div className="card-body text-center">
-              <img src={profile.image} alt="avatar" className="img-fluid" />
+              <img src={"data:image/png;base64,"+profile.image} alt="avatar" className="img-fluid" />
               <input type={"file"} />
               <h5 className="my-3">{profile.name}</h5>
             </div>

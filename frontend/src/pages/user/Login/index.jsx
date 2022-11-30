@@ -28,7 +28,7 @@ export const Login = ({ setToken }) =>  {
   return (
   <div className="app">
     <div className="login-form">
-    <div className="title">Login</div>
+    <a className='title' href='\'>Hải Vân Quán</a>
       <Form
         name="normal_login"
         className="login-form"

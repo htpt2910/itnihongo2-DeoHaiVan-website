@@ -15,10 +15,6 @@ import useToken from './useToken';
 
 function App() {
   const { token, setToken } = useToken();
-
-  if(!token) {
-    return <Login setToken={setToken} />
-  }
   
   return (
     <>
@@ -32,8 +28,8 @@ function App() {
           <Route path="/admin" exact="true" element={<Dashboard />} />
           <Route path="/admin/usercontrol" exact="true" element={<AdminLayout childcomp={<UserControlComponent />} />} />
           <Route path="/admin/postcontrol" exact="true" element={<AdminLayout childcomp={<PostControlComponent />} />} />
-          <Route path="/login" exact="true" element={token? (<Navigate replace to={"/"} />):(<Login />)} />
-          <Route path="/profile" exact="true" element={<ProfilePage />} />
+          <Route path="/login" exact="true" element={token? (<Navigate replace to={"/"} />):(<Login setToken={setToken}/>)} />
+          <Route path="/profile" exact="true" element={token? (<ProfilePage />):(<Login setToken={setToken}/>)} />
         </Routes>
       </Router>
     </>
