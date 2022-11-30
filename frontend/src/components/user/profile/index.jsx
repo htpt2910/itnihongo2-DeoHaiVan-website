@@ -14,6 +14,7 @@ const Profile = () => {
   })
   const { token } = useToken()
   const [editMode, setEditMode] = useState(false)
+  const [imagebase64, setImage] = useState()
 
   function handleChange(event) {
     const { name, value } = event.target
@@ -26,18 +27,42 @@ const Profile = () => {
     })
   }
 
+  let base64String = ""
+
+  function imageUploaded() {
+    var file = document.querySelector("input[type=file]")["files"][0]
+
+    var reader = new FileReader()
+    console.log("next", reader)
+
+    reader.onload = function () {
+      base64String = reader.result.replace("data:", "").replace(/^.+,/, "")
+      setImage(base64String)
+    }
+
+    reader.readAsDataURL(file)
+  }
+
   function handleSaveChanges(event) {
     setEditMode(false)
 
     axios
-      .patch("http://localhost:8000/users/1", {
-        email: profile.email,
-        username: profile.name,
-        name: profile.name,
-        gender: profile.gender === "Nữ" ? true : false,
-        age: profile.age,
-        image: profile.image,
-      })
+      .patch(
+        "http://localhost:8000/users/2",
+        {
+          email: profile.email,
+          username: profile.name,
+          name: profile.name,
+          gender: profile.gender === "Nữ" ? true : false,
+          age: profile.age,
+          image: imagebase64,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      )
       .then((res) => res)
       .catch((err) => console.log("err: ", err))
   }
@@ -61,7 +86,9 @@ const Profile = () => {
           age: dt.age,
           image: dt.image,
         })
+        setImage(dt.image)
       })
+
       .catch((err) => console.log(err))
   }, [])
 
@@ -72,11 +99,15 @@ const Profile = () => {
           <div class="card mb-4">
             <div class="card-body text-center">
               <img
-                src={"data:image/png;base64," + profile.image}
+                src={"data:image/png;base64," + imagebase64}
                 alt="avatar"
                 class="img-fluid"
               />
-              <input type={"file"} />
+              {editMode ? (
+                <input type={"file"} onChange={imageUploaded} />
+              ) : (
+                <></>
+              )}
               <h5 class="my-3">{profile.name}</h5>
             </div>
           </div>
