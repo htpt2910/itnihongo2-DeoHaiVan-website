@@ -1,2 +1,50 @@
-.home-container {
+.selectAddress {
+    margin-bottom: 10px;
+}
+
+.selectAddress .ant-select-selector {
+    border-radius: 20px !important;
+
+}
+
+.title {
+    padding: 10px 10px !important;
+    font-size: 15px !important;
+    margin-bottom: 5px !important;
+    border-color: #c8c3c3 !important;
+}
+
+.input-post{
+    width: 80%;
+}
+
+.ant-form-item-label{
+    width: 20%;
+    text-align: left ;
+}
+
+.content {
+    font-size: 15px !important;
+    font-weight: 300;
+    margin-bottom: 20px !important;
+    margin-top: 0px !important;
+}
+
+.createPost {
+    display: flex;
+    margin: 0px 20%;
+    justify-content: right;
+}
+
+.createPost .postContainer {
+    padding: 0;
+}
+
+.postContainer .btnCreate {
+    background: teal;
+    color: white;
+    border: none;
+}
+.submitButton{
+    margin-left: 83%;
 }
