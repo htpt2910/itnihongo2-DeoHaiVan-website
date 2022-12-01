@@ -42,7 +42,7 @@ const onFinish = (values) => {
     console.log('Received values of form: ', values);
     axios
       .post("http://localhost:8000/post/", {
-        "title": "123",
+        "title": values.title,
         "content": values.content,
         "post_time": dateCurrent,
         "image": imagebase64,
@@ -118,17 +118,23 @@ const onFinish = (values) => {
         scrollToFirstError
       >   
       <Form.Item
+          name="title"
+          label="Title"
+        >
+          <Input placeholder="Title..." className="title input-post" /> 
+        </Form.Item>
+      <Form.Item
           name="content"
           label="Content"
         >
-          <TextArea rows={4} placeholder="Content..." className="content" /> 
+          <TextArea rows={4} placeholder="Content..." className="content input-post" /> 
         </Form.Item>
         
         <Form.Item
         name="image"
         label="Image"
       >
-        <Input type='file' onChange={imageUploaded}/>
+        <Input type='file' onChange={imageUploaded} className="content input-post"/>
       </Form.Item>
       <Form.Item>
         <Button type="primary" htmlType="submit" className="submitButton">
