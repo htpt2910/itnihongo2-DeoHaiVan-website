@@ -33,6 +33,8 @@ class PostUpdate(PostBase):
     place_id: Optional[int] = None
     image: Optional[str] = None
     rating: Optional[int] = None
+    is_active: Optional[bool] = False
+    is_verify: Optional[bool] = False
 
     class Config:
         orm_mode = True
