@@ -151,7 +151,7 @@ export const PostControlComponent = () => {
       render: (_, record) => {
         return (
           <div>
-            <a
+            <p
               style={{color: "#3383FF"}}
               onClick={() => {
                 setModalData(record);
@@ -159,7 +159,7 @@ export const PostControlComponent = () => {
               }}
             >
               View
-            </a>
+            </p>
           </div>
         );
       },
@@ -202,7 +202,7 @@ export const PostControlComponent = () => {
       width: "10%",
     },
     {
-      title: "",
+      title: "Delete",
       key: "action",
       render: (_, record) =>
         data.length >= 1 ? (

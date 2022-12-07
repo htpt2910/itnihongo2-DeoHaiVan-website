@@ -1,12 +1,14 @@
 import {
   DeleteTwoTone, SearchOutlined
 } from '@ant-design/icons';
-import {Modal, Space, Table} from "antd";
+import {Modal, Popconfirm, Table} from 'antd';
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import "./styles.css";
+import useToken from '../../../useToken';
 
 const UserControlComponent = () => {
+  const {token} = useToken()
   const [filteredInfo, setFilteredInfo] = useState({});
   const [sortedInfo, setSortedInfo] = useState({});
   const [users, setUsers] = useState([]);
@@ -19,8 +21,44 @@ const UserControlComponent = () => {
     setFilteredInfo(filters);
     setSortedInfo(sorter);
   };
+  const handleDelete = (id) => {
+    axios
+      .delete(`http://localhost:8000/user/${id}`, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: " Bearer " + token,
+        },
+      })
+      .then(() => setData((preData) => preData.filter((m) => m.id !== id)))
+      .catch((err) => console.log(err));
+  };
+  useEffect(() => {
+    axios
+      .get("http://localhost:8000/users",{
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: " Bearer " + token,
+        },
+      })
+      .then(async (res) => {
+        const dt = await res.data
+        setData(dt)
+        dt.map((user, index) => setUsers((prevValue) => 
+          [...prevValue, {
+            id: user.id,
+            username: user.username,
+            email: user.email,
+            gender: user.gender,
+            age: user.age,
+            image: user.image
+          }]
+        ))
+        
+        console.log("users: ", users)
+      })
+      .catch((err) => console.log(err))
+  }, []);
 
-  var current_user
   const columns = [
     {
       title: 'id',
@@ -63,9 +101,6 @@ const UserControlComponent = () => {
             <p
               style={{color: "#3383FF"}}
               onClick={() => {
-                // console.log("record id: ", record.id)
-                // current_user = users.filter((user) => user.id === record.id )
-                // console.log("current user: ", current_user)
                 setModalData(record);
                 setIsModalVisible(true);
               }}
@@ -78,38 +113,22 @@ const UserControlComponent = () => {
       width: "7%",
     },
     {
-      title: 'Action',
+      title: 'Delete',
       key: 'action',
-      render: (_, record) => (
-        <Space size="middle">
-          <a href="/"><DeleteTwoTone /></a>
-        </Space>
-      ),
-      width: "10%"
+      render: (_, record) => 
+        data.length >= 1 ? 
+          (
+            <Popconfirm
+              title="Sure to delete?"
+              onConfirm={() => handleDelete(record.id)}
+            >
+              <DeleteTwoTone />
+            </Popconfirm>
+          ) : null
+      ,
+      width: "10%",
     },
   ];
-  
-  useEffect(() => {
-    axios
-      .get("http://localhost:8000/users")
-      .then(async (res) => {
-        const dt = await res.data
-        console.log("data: ", dt)
-        dt.map((user, index) => setUsers((prevValue) => 
-          [...prevValue, {
-            id: user.id,
-            username: user.username,
-            email: user.email,
-            gender: user.gender,
-            age: user.age,
-            image: user.image
-          }]
-        ))
-        
-        console.log("users: ", users)
-      })
-      .catch((err) => console.log(err))
-  }, [])
 
   return (
     <>
@@ -121,7 +140,12 @@ const UserControlComponent = () => {
           </div>
         </div>
         <div className="tableContainer">
-          <Table columns={columns} dataSource={users} onChange={handleChange} className="table" />
+          <Table 
+          columns={columns} 
+          dataSource={data} 
+          onChange={handleChange} 
+          className="table" 
+          />
         </div>
       <Modal
           mask={false}
