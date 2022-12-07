@@ -90,6 +90,12 @@ def read_posts(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     posts = crud_post.get_posts(db, skip=skip, limit=limit)
     return posts
 
+@app.get("/postssearch/{value}", response_model = List[post_schema.Post])
+def read_posts_search(value:str, db: Session = Depends(get_db)):
+    posts = crud_post.get_posts_search(db, value = value )
+    return posts
+
+
 @app.post("/post/", response_model=post_schema.Post)
 def create_post(post: post_schema.PostCreate, db: Session = Depends(get_db)):
     return crud_post.create_post(db=db, post=post)

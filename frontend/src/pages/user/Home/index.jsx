@@ -7,7 +7,6 @@ import "./homepage.css";
 export const Home = () => {
   return (
     <div>
-      <Navbar />
       <Stories />
       <Posts />
       <Footer />
