@@ -7,7 +7,6 @@ from sqlalchemy.orm import Session
 
 def create_post(db: Session, post: post_schema.PostCreate):
     db_post = post_model.Post(
-        title = post.title,
         user_id=post.user_id,
         title=post.title.lower(),
         content=post.content, 
