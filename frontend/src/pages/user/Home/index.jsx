@@ -91,7 +91,6 @@ const onFinish = (values) => {
   
   return (
     <div>
-      <Navbar />
       <Stories />
       <>
       <div className="createPost">
