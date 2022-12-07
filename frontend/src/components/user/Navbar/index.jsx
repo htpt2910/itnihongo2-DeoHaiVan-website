@@ -1,42 +1,53 @@
 import { SearchOutlined } from '@ant-design/icons';
-import { useEffect, useState } from "react";
 import "./navbar.css";
-import useToken from '../../../useToken';
-import axios from 'axios';
+import { useEffect, useState } from "react";
+import { useNavigate } from 'react-router-dom';
+import axios from "axios";
 
-export const Navbar = () => {
+export const Navbar = ({postsSearch,setPostsSearch}) => {
+  const [collapse, setCollapse] = useState("nav__menu")
+  const [toggleIcon, setToggleIcon] = useState("toggler__icon")
+  const [posts, setPost] = useState([])
+  const [valueInput, setValueInput] = useState([])
+  const navigate = useNavigate();
+  const [oldPosts, setOldPosts] = useState("")
   const { token } = useToken();
   const [ navItems, setNavItems ]= useState([]);
-
-    useEffect(() => {
+  useEffect(() => {
+    if (oldPosts!=posts){
+      setOldPosts(postsSearch)
+      setPostsSearch(posts)
+      navigate("/postssearch")
+      console.log(postsSearch)
+    }
+  },[postsSearch]);
+ 
+  useEffect(() => {
+    setNavItems([
+      { id: 1, label: "Home", href: "/" },
+      { id: 2, label: "About us", href: "/about" },
+      { id: 3, label: "Login", href: "/login" },
+      { id: 4, label: "Signup", href: "/signup" },
+    ]);
+  axios
+    .get("http://localhost:8000/users/me", {
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': ' Bearer ' + token
+      }
+    })
+    .then((res) => {
+      const dt = res.data
       setNavItems([
-        { id: 1, label: "Home", href: "/" },
-        { id: 2, label: "About us", href: "/about" },
-        { id: 3, label: "Login", href: "/login" },
-        { id: 4, label: "Signup", href: "/signup" },
-      ]);
-    axios
-      .get("http://localhost:8000/users/me", {
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': ' Bearer ' + token
-        }
-      })
-      .then((res) => {
-        const dt = res.data
-        setNavItems([
-            { id: 1, label: "Home", href: "/" },
-            { id: 2, label: "About us", href: "/about" },
-            { id: 3, label: dt.name, href: "/profile" },
-            { id: 4, label: "Logout", href: "/logout" },
-          ]);
-      })
-      .catch((err) => console.log(err))
-  }, [])
-
-  const [collapse, setCollapse] = useState("nav__menu");
-  const [toggleIcon, setToggleIcon] = useState("toggler__icon");
-
+          { id: 1, label: "Home", href: "/" },
+          { id: 2, label: "About us", href: "/about" },
+          { id: 3, label: dt.name, href: "/profile" },
+          { id: 4, label: "Logout", href: "/logout" },
+        ]);
+    })
+    .catch((err) => console.log(err))
+}, [])
+  
   const onToggle = () => {
     collapse === "nav__menu"
       ? setCollapse("nav__menu nav__collapse")
@@ -46,7 +57,29 @@ export const Navbar = () => {
       ? setToggleIcon("toggler__icon toggle")
       : setToggleIcon("toggler__icon");
   };
+  
+  
+  
+  async function handleChange(event) {
+    const val = event.target.value;
+    setValueInput(val);
+    console.log(val);
+    
+  }
 
+  const postSearch = async () => {
+   
+    const data = await axios({
+      method:"get",
+      url:"http://localhost:8000/postssearch/"+ valueInput,
+    })
+    setPost(data.data);
+    setPostsSearch(posts)
+    
+  }
+
+
+  
   return (
     <div className="nav__wrapper">
       <div className="container">
@@ -55,10 +88,8 @@ export const Navbar = () => {
             Hai Van Quan
           </a>
           <div className="inputSearch">
-            <input className='input' type="text" placeholder='Search...' />
-            <div className="btnSearch">
-              <SearchOutlined />
-            </div>
+            <input className='input' type="text" placeholder='Search...' onChange={handleChange} />
+           <button className="btnSearch" onClick={postSearch} ><SearchOutlined /></button>
           </div>
           <ul className={collapse}>
             {navItems.map((item) => (
