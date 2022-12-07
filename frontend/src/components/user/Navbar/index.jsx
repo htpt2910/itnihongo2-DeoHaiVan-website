@@ -24,12 +24,25 @@ export const Navbar = () => {
       })
       .then((res) => {
         const dt = res.data
-        setNavItems([
+        if(dt.is_admin)
+        {
+          setNavItems([
+            { id: 1, label: "Home", href: "/" },
+            { id: 2, label: "About us", href: "/about" },
+            { id: 3, label: dt.name, href: "/profile" },
+            { id: 4, label: "Logout", href: "/logout" },
+            { id: 5, label: "Admin", href: "/admin/usercontrol"}
+          ]);
+        }
+        else
+        {
+          setNavItems([
             { id: 1, label: "Home", href: "/" },
             { id: 2, label: "About us", href: "/about" },
             { id: 3, label: dt.name, href: "/profile" },
             { id: 4, label: "Logout", href: "/logout" },
           ]);
+        }
       })
       .catch((err) => console.log(err))
   }, [])

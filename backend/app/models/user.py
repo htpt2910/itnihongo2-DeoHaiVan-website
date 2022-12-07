@@ -13,6 +13,7 @@ class User(Base):
   age = Column(Integer)
   image = Column(String)
   hashed_password = Column(String)
+  is_admin = Column(Boolean, default=False)
   is_active = Column(Boolean, default=True)
 
   comments = relationship("Comment", back_populates='user')

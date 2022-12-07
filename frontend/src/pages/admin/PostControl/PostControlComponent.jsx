@@ -131,7 +131,7 @@ export const PostControlComponent = () => {
       sorter: (a, b) => a.title.length - b.title.length,
       sortOrder: sortedInfo.columnKey === "rating" ? sortedInfo.order : null,
       ellipsis: true,
-      width: "7%",
+      width: "10%",
     },
     {
       title: "Title",
@@ -142,7 +142,7 @@ export const PostControlComponent = () => {
       sorter: (a, b) => a.title.length - b.title.length,
       sortOrder: sortedInfo.columnKey === "title" ? sortedInfo.order : null,
       ellipsis: true,
-      width: "20%",
+      width: "17%",
     },
     {
       title: "View",
@@ -249,7 +249,7 @@ export const PostControlComponent = () => {
           <div>
             <h4>{modalData.title}</h4>
             <img
-              src={modalData.image}
+              src={"data:image/png;base64," + modalData.image}
               alt=""
               style={{width: "100%", margin: "20px 0px"}}
             />

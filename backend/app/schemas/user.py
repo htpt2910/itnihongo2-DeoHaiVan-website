@@ -25,6 +25,7 @@ class UserCreate(UserBase):
 class User(UserBase):
     id: Optional[int] = None
     is_active: Optional[bool] = None
+    is_admin: Optional[bool] = None
     comments: List[Comment] = []
     posts: List[Post] = []
     likes: List[Like] = []
