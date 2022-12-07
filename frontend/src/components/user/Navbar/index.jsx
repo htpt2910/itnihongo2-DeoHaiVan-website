@@ -3,6 +3,7 @@ import "./navbar.css";
 import { useEffect, useState } from "react";
 import { useNavigate } from 'react-router-dom';
 import axios from "axios";
+import useToken from '../../../useToken';
 
 export const Navbar = ({postsSearch,setPostsSearch}) => {
   const [collapse, setCollapse] = useState("nav__menu")
