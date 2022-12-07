@@ -1,59 +1,63 @@
 import {
-  DeleteTwoTone, EditTwoTone, SearchOutlined
+  DeleteTwoTone, SearchOutlined
 } from '@ant-design/icons';
-import { Space, Table } from 'antd';
-import React, { useState } from 'react';
+import {Modal, Popconfirm, Table} from 'antd';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import "./styles.css";
-const data = [
-  {
-    key: '1',
-    name: 'Hoang Phu',
-    username: 'Hoang Phu',
-    password: 'phu1',
-    id: 1,
-    mail: 'hoangphu@gmail.com',
-    gender: 'Male',
-    age: '21',
-  },
-  {
-    key: '2',
-    name: 'Thanh Thanh',
-    username: 'Thanh Thanh',
-    password: 'thanh2',
-    id: 2,
-    mail: 'thanhthanh@gmail.com',
-    gender: 'Female',
-    age: '21',
-  },
-  {
-    key: '3',
-    name: 'Van Thuong',
-    username: 'Van Thuong',
-    password: 'thuong3',
-    id: 3,
-    mail: 'vanthuong@gmail.com',
-    gender: 'Male',
-    age: '21',
-  },
-  {
-    key: '4',
-    name: 'Minh Hung',
-    username: 'Minh Hung',
-    password: 'hung4',
-    id: 4,
-    mail: 'minhhung@gmail.com',
-    gender: 'Male',
-    age: '21',
-  },
-];
+import useToken from '../../../useToken';
+
 const UserControlComponent = () => {
+  const {token} = useToken()
   const [filteredInfo, setFilteredInfo] = useState({});
   const [sortedInfo, setSortedInfo] = useState({});
+  const [users, setUsers] = useState([]);
+  const [data, setData] = useState([]);
+  const [modalData, setModalData] = useState([]);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+
   const handleChange = (pagination, filters, sorter) => {
     console.log('Various parameters', pagination, filters, sorter);
     setFilteredInfo(filters);
     setSortedInfo(sorter);
   };
+  const handleDelete = (id) => {
+    axios
+      .delete(`http://localhost:8000/user/${id}`, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: " Bearer " + token,
+        },
+      })
+      .then(() => setData((preData) => preData.filter((m) => m.id !== id)))
+      .catch((err) => console.log(err));
+  };
+  useEffect(() => {
+    axios
+      .get("http://localhost:8000/users",{
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: " Bearer " + token,
+        },
+      })
+      .then(async (res) => {
+        const dt = await res.data
+        setData(dt)
+        dt.map((user, index) => setUsers((prevValue) => 
+          [...prevValue, {
+            id: user.id,
+            username: user.username,
+            email: user.email,
+            gender: user.gender,
+            age: user.age,
+            image: user.image
+          }]
+        ))
+        
+        console.log("users: ", users)
+      })
+      .catch((err) => console.log(err))
+  }, []);
 
   const columns = [
     {
@@ -77,28 +81,55 @@ const UserControlComponent = () => {
       width: "40%"
     },
     {
-      title: 'Mail',
-      dataIndex: 'mail',
-      key: 'mail',
-      filteredValue: filteredInfo.mail || null,
-      onFilter: (value, record) => record.mail.includes(value),
-      sorter: (a, b) => a.mail.length - b.mail.length,
-      sortOrder: sortedInfo.columnKey === 'mail' ? sortedInfo.order : null,
+      title: 'Email',
+      dataIndex: 'email',
+      key: 'email',
+      filteredValue: filteredInfo.email || null,
+      onFilter: (value, record) => record.email.includes(value),
+      sorter: (a, b) => a.email.length - b.email.length,
+      sortOrder: sortedInfo.columnKey === 'email' ? sortedInfo.order : null,
       ellipsis: true,
       width: "45%"
     },
     {
-      title: 'Action',
+      title: "View",
+      dataIndex: "view",
+      key: "view",
+      render: (_, record) => {
+        return (
+          <div>
+            <p
+              style={{color: "#3383FF"}}
+              onClick={() => {
+                setModalData(record);
+                setIsModalVisible(true);
+              }}
+              >
+                View
+              </p>
+          </div>
+        );
+      },
+      width: "7%",
+    },
+    {
+      title: 'Delete',
       key: 'action',
-      render: (_, record) => (
-        <Space size="middle">
-          <a><EditTwoTone /></a>
-          <a><DeleteTwoTone /></a>
-        </Space>
-      ),
-      width: "10%"
+      render: (_, record) => 
+        data.length >= 1 ? 
+          (
+            <Popconfirm
+              title="Sure to delete?"
+              onConfirm={() => handleDelete(record.id)}
+            >
+              <DeleteTwoTone />
+            </Popconfirm>
+          ) : null
+      ,
+      width: "10%",
     },
   ];
+
   return (
     <>
       <div className="userContainer">
@@ -109,10 +140,45 @@ const UserControlComponent = () => {
           </div>
         </div>
         <div className="tableContainer">
-          <Table columns={columns} dataSource={data} onChange={handleChange} className="table" />
+          <Table 
+          columns={columns} 
+          dataSource={data} 
+          onChange={handleChange} 
+          className="table" 
+          />
         </div>
-      </div>
-    </>
+      <Modal
+          mask={false}
+          title="Profile User Preview"
+          open={isModalVisible}
+          onCancel={() => setIsModalVisible(false)}
+          width="50%"
+          height="70%"
+          okButtonProps={{style: {display: "none"}}}
+          bodyStyle={{
+            overflowY: "auto",
+            maxHeight: "calc(100vh - 250px)",
+          }}
+        >
+          <div style={{ textAlign: 'center' }}>
+          {console.log("modalData: ", modalData)}
+          {(modalData.username === undefined) ? <></> : 
+          (<>
+            <p>Username: {modalData.username}</p>
+            <img
+              src={modalData.image}
+              alt="img"
+              style={{width: "50%", height: "50%", margin: "20px 0px"}}
+            /> 
+            <p>Email: {modalData.email}</p>
+            <p>Gender: {modalData.gender ? "Nam" : "Nữ"}</p>
+            <p>Age: {modalData.age}</p>
+          </>)}
+            
+          </div>
+        </Modal>
+    </div>
+  </>
   );
 };
 export default UserControlComponent;

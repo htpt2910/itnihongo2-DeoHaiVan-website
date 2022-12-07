@@ -5,7 +5,6 @@ import Dashboard from './pages/admin/Dashboard'
 import { Logout } from './pages/admin/Logout'
 import { PostControlComponent } from './pages/admin/PostControl/PostControlComponent'
 import { Posts } from './pages/admin/Posts'
-import { User } from './pages/admin/User'
 import UserControlComponent from './pages/admin/UserControl/UserControlComponent'
 import { Home } from './pages/user/Home'
 import Signup from './pages/user/Signup'
@@ -24,7 +23,6 @@ function App() {
         <Navbar postsSearch={postsSearch} setPostsSearch={setPostsSearch} />
         <Routes>
           <Route path="/" exact="true" element={<Home />} />
-          <Route path="/user" element={<User />} />
           <Route path="/post" element={<Posts />} />
           <Route path="/logout" element={<Logout />} />
           <Route path="/signup" element={token? (<Navigate replace to={"/"} />):(<Signup />)} />
