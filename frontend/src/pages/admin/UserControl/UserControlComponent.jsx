@@ -1,7 +1,7 @@
 import {
-  DeleteTwoTone,EyeTwoTone, EditTwoTone, SearchOutlined
+  DeleteTwoTone, SearchOutlined
 } from '@ant-design/icons';
-import {Modal, Popconfirm, Select, Space, Table} from "antd";
+import {Modal, Space, Table} from "antd";
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import "./styles.css";
@@ -62,11 +62,11 @@ const UserControlComponent = () => {
           <div>
             <p
               style={{color: "#3383FF"}}
-              onClick={ async () => {
-                console.log("record id: ", record.id)
-                current_user = users.filter((user) => user.id === record.id )
-                console.log("current user: ", current_user)
-                setModalData(current_user);
+              onClick={() => {
+                // console.log("record id: ", record.id)
+                // current_user = users.filter((user) => user.id === record.id )
+                // console.log("current user: ", current_user)
+                setModalData(record);
                 setIsModalVisible(true);
               }}
               >
@@ -82,7 +82,6 @@ const UserControlComponent = () => {
       key: 'action',
       render: (_, record) => (
         <Space size="middle">
-          <a href="/"><EditTwoTone /></a>
           <a href="/"><DeleteTwoTone /></a>
         </Space>
       ),
@@ -138,15 +137,19 @@ const UserControlComponent = () => {
           }}
         >
           <div style={{ textAlign: 'center' }}>
-          <p>Username: {modalData[0].username}</p>
+          {console.log("modalData: ", modalData)}
+          {(modalData.username === undefined) ? <></> : 
+          (<>
+            <p>Username: {modalData.username}</p>
             <img
-              src={modalData[0].image}
+              src={modalData.image}
               alt="img"
               style={{width: "50%", height: "50%", margin: "20px 0px"}}
             /> 
-            <p>Email: {modalData[0].email}</p>
-            <p>Gender: {modalData[0].gender ? "Nam" : "Nữ"}</p>
-            <p>Age: {modalData[0].age}</p>
+            <p>Email: {modalData.email}</p>
+            <p>Gender: {modalData.gender ? "Nam" : "Nữ"}</p>
+            <p>Age: {modalData.age}</p>
+          </>)}
             
           </div>
         </Modal>
