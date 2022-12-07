@@ -1,11 +1,13 @@
+from app.crud import crud_comment, crud_like
 from app.models import post as post_model
 from app.schemas import post as post_schema
 from sqlalchemy.orm import Session
-from app.crud import crud_comment, crud_like
+
 
 
 def create_post(db: Session, post: post_schema.PostCreate):
     db_post = post_model.Post(
+        title = post.title,
         user_id=post.user_id,
         title=post.title.lower(),
         content=post.content, 

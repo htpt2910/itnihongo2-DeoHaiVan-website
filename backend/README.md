@@ -5,7 +5,8 @@
 - \l hoặc \list (xem tất cả databases)
 - \c postgres_db (truy cập vào db của project)
 - \dt (xem tất cả các table)
-
+- drop table users,comments,likes,posts,places;
+- default pass 12345678
 ## Lưu ý:
 Đây t chỉ code mẫu cái api này để test connection giữa backend với db, ai làm api liên quan tới user thì nhớ làm rồi tạo lại cho đúng nghe
 
