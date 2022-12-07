@@ -1,30 +1,30 @@
-import {Footer} from "../../../components/user/Footer";
-import {Posts} from "../../../components/user/posts";
-import {Stories} from "../../../components/user/stories";
-import "./homepage.css";
-import React, {useState, useEffect} from "react";
-import {Button, Modal, Input, Form} from "antd";
-import axios from "axios";
-import useToken from "../../../useToken";
-import {useNavigate} from "react-router-dom";
-import useMyInfo from "../../../useMyInfo";
+import { Button, Form, Input, Modal } from "antd"
+import axios from "axios"
+import React, { useEffect, useState } from "react"
+import { useNavigate } from "react-router-dom"
+import { Footer } from "../../../components/user/Footer"
+import { Posts } from "../../../components/user/posts"
+import { Stories } from "../../../components/user/stories"
+import useMyInfo from "../../../useMyInfo"
+import useToken from "../../../useToken"
+import "./homepage.css"
 
-const {TextArea} = Input;
-const d = new Date();
-let month = d.getMonth() + 1;
-var date = d.getFullYear() + "-" + month + "-" + d.getDate();
-var time = d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds();
+const { TextArea } = Input
+const d = new Date()
+let month = d.getMonth() + 1
+var date = d.getFullYear() + "-" + month + "-" + d.getDate()
+var time = d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds()
 
 export const Home = () => {
-  const [userid, seUserid] = useState();
-  const navigate = useNavigate();
-  const {token} = useToken();
-  const {setMyInfo} = useMyInfo();
-  const [open, setOpen] = useState(false);
+  const [userid, seUserid] = useState()
+  const navigate = useNavigate()
+  const { token } = useToken()
+  const { setMyInfo } = useMyInfo()
+  const [open, setOpen] = useState(false)
 
-  const [form] = Form.useForm();
-  const [imagebase64, setImage] = useState();
-  var dateCurrent = date + " " + time;
+  const [form] = Form.useForm()
+  const [imagebase64, setImage] = useState()
+  var dateCurrent = date + " " + time
 
   useEffect(() => {
     axios
@@ -35,15 +35,15 @@ export const Home = () => {
         },
       })
       .then((res) => {
-        const dt = res.data;
-        setMyInfo(dt);
+        const dt = res.data
+        setMyInfo(dt)
         if (dt.is_admin) {
-          navigate("/admin");
+          navigate("/admin")
         }
-        seUserid(dt.id);
+        seUserid(dt.id)
       })
-      .catch((err) => console.log(err));
-  }, []);
+      .catch((err) => console.log(err))
+  }, [])
 
   const onFinish = (values) => {
     axios
@@ -66,58 +66,62 @@ export const Home = () => {
         }
       )
       .then((res) => {
-        window.location = "/";
+        window.location = "/"
       })
       .catch((err) => {
-        alert(err.response.data.detail);
-        console.log(err);
-      });
-    setOpen(false);
-  };
-  let base64String = "";
+        alert(err.response.data.detail)
+        console.log(err)
+      })
+    setOpen(false)
+  }
+  let base64String = ""
   function imageUploaded() {
-    var file = document.querySelector("input[type=file]")["files"][0];
+    var file = document.querySelector("input[type=file]")["files"][0]
 
-    var reader = new FileReader();
-    console.log("next");
+    var reader = new FileReader()
+    console.log("next")
 
     reader.onload = function () {
-      base64String = reader.result.replace("data:", "").replace(/^.+,/, "");
-      setImage(base64String);
-    };
-    reader.readAsDataURL(file);
+      base64String = reader.result.replace("data:", "").replace(/^.+,/, "")
+      setImage(base64String)
+    }
+    reader.readAsDataURL(file)
   }
 
   const showModal = () => {
-    setOpen(true);
-  };
+    setOpen(true)
+  }
   const handleCancel = () => {
-    setOpen(false);
-  };
+    setOpen(false)
+  }
   return (
     <div>
       <Stories />
       <>
         <div className="createPost">
           <div className="postContainer">
-            <Button className="btnCreate" onClick={showModal}>
-              Create Post
-            </Button>
+            {token ? (
+              <Button className="btnCreate" onClick={showModal}>
+                Create Post
+              </Button>
+            ) : (
+              <></>
+            )}
           </div>
         </div>
 
         <Modal
           open={open}
           title="Create post"
-          okButtonProps={{style: {display: "none"}}}
-          cancelButtonProps={{style: {display: "none"}}}
+          okButtonProps={{ style: { display: "none" } }}
+          cancelButtonProps={{ style: { display: "none" } }}
           onCancel={handleCancel}
         >
           <Form
             name="create_post"
             form={form}
             className="create_post_form"
-            initialValues={{remember: false}}
+            initialValues={{ remember: false }}
             onFinish={onFinish}
             scrollToFirstError
           >
@@ -150,5 +154,5 @@ export const Home = () => {
       <Posts />
       <Footer />
     </div>
-  );
-};
+  )
+}
