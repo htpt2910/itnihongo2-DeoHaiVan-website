@@ -33,7 +33,9 @@ export const Home = () => {
       })
       .then((res) => {
         const dt = res.data
-        if (dt.is_admin) navigate('/admin')
+        if (dt.is_admin) {
+          navigate('/admin')
+        }
         seUserid(dt.id)
       })
       .catch((err) => console.log(err))
@@ -90,7 +92,6 @@ const onFinish = (values) => {
   const handleCancel = () => {
     setOpen(false);
   };
-  
   return (
     <div>
       <Navbar />

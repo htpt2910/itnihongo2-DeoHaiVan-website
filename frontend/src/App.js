@@ -12,6 +12,7 @@ import Signup from './pages/user/Signup'
 import { Login } from './pages/user/Login'
 import ProfilePage from "./pages/user/profile"
 import useToken from './useToken';
+import NotFound from './components/user/NotFound';
 
 function App() {
   const { token, setToken } = useToken();
@@ -30,6 +31,7 @@ function App() {
           <Route path="/admin/postcontrol" exact="true" element={<AdminLayout childcomp={<PostControlComponent />} />} />
           <Route path="/login" exact="true" element={token? (<Navigate replace to={"/"} />):(<Login setToken={setToken}/>)} />
           <Route path="/profile" exact="true" element={token? (<ProfilePage />):(<Login setToken={setToken}/>)} />
+          <Route path='*' element={<NotFound />} />
         </Routes>
       </Router>
     </>

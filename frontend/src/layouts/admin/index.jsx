@@ -37,7 +37,7 @@ const AdminLayout = ({ childcomp }) => {
     })
     .catch((err) =>{ navigate("/");alert('Bạn không có quyền truy cập!!')})
   }, [])
-
+  if(admin)
   return (
     <Layout>
       <Sider trigger={null} collapsible collapsed={collapsed}>
