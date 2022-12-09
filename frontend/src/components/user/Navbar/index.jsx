@@ -30,21 +30,6 @@ export const Navbar = ({postsSearch,setPostsSearch}) => {
       { id: 3, label: "Login", href: "/login" },
       { id: 4, label: "Signup", href: "/signup" },
     ]);
-  axios
-    .get("http://localhost:8000/users/me", {
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': ' Bearer ' + token
-      }
-    })
-    .then((res) => {
-      const dt = res.data
-      setNavItems([
-        { id: 1, label: "Home", href: "/" },
-        { id: 2, label: "About us", href: "/about" },
-        { id: 3, label: "Login", href: "/login" },
-        { id: 4, label: "Signup", href: "/signup" },
-      ]);
     axios
       .get("http://localhost:8000/users/me", {
         headers: {
@@ -77,8 +62,6 @@ export const Navbar = ({postsSearch,setPostsSearch}) => {
       .catch((err) => console.log(err))
   }, [])
 
-  const [collapse, setCollapse] = useState("nav__menu");
-  const [toggleIcon, setToggleIcon] = useState("toggler__icon");
   const onToggle = () => {
     collapse === "nav__menu"
       ? setCollapse("nav__menu nav__collapse")
