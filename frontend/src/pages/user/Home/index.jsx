@@ -7,6 +7,7 @@ import React, { useState,useEffect } from 'react';
 import { Button, Modal,Input,Form } from 'antd';
 import axios from 'axios';
 import useToken from '../../../useToken';
+import { useNavigate } from "react-router-dom";
 
 const { TextArea } = Input;
 var datetime = new Date()
@@ -15,6 +16,7 @@ var time = datetime.getHours() +":"+ datetime.getMinutes() +":"+ datetime.getSec
 
 export const Home = () => {
   const [userid, seUserid] = useState()
+  const navigate = useNavigate()
   const { token } = useToken();
 
   const [form] = Form.useForm();
@@ -31,7 +33,9 @@ export const Home = () => {
       })
       .then((res) => {
         const dt = res.data
-        console.log("data: ", dt)
+        if (dt.is_admin) {
+          navigate('/admin')
+        }
         seUserid(dt.id)
       })
       .catch((err) => console.log(err))
@@ -88,7 +92,6 @@ const onFinish = (values) => {
   const handleCancel = () => {
     setOpen(false);
   };
-  
   return (
     <div>
       <Stories />
