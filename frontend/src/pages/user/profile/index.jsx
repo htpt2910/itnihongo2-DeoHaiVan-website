@@ -3,7 +3,6 @@ import Profile from "../../../components/user/profile"
 const ProfilePage = () => {
   return (
     <>
-      <Navbar />
       <Profile />
     </>
   )
