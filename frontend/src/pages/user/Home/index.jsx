@@ -8,6 +8,7 @@ import { Button, Modal,Input,Form } from 'antd';
 import axios from 'axios';
 import useToken from '../../../useToken';
 import { useNavigate } from "react-router-dom";
+import useMyInfo from "../../../useMyInfo";
 
 const { TextArea } = Input;
 var datetime = new Date()
@@ -18,6 +19,7 @@ export const Home = () => {
   const [userid, seUserid] = useState()
   const navigate = useNavigate()
   const { token } = useToken();
+  const {setMyInfo} = useMyInfo()
 
   const [form] = Form.useForm();
   const [ imagebase64, setImage] = useState();
@@ -33,6 +35,7 @@ export const Home = () => {
       })
       .then((res) => {
         const dt = res.data
+        setMyInfo(dt)
         if (dt.is_admin) {
           navigate('/admin')
         }

@@ -11,12 +11,18 @@ def create_like(db: Session, like: like_schema.LikeCreate):
     db.refresh(db_like)
     return db_like
 
+def handle_delete_like(db: Session, post_id, like_user_id):
+    db.query(like_model.Like).filter(like_model.Like.post_id==post_id, like_model.Like.like_user_id==like_user_id).delete()
+    db.commit()
+    return None
+
+
 def get_like(db: Session, like_id: int):
     return db.query(like_model.Like).filter(like_model.Like.id == like_id).first()
 
 def get_likes(db: Session, skip: int = 0, limit: int = 100):
-    return db.query(like_model.Comment).offset(skip).limit(limit).all()
-    
+    return db.query(like_model.Like).offset(skip).limit(limit).all()
+
 def delete_likes(db: Session,post_id):
     db.query(like_model.Like).filter(like_model.Like.post_id==post_id).delete()
     db.commit()
