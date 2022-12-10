@@ -108,7 +108,7 @@ def read_users(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
 async def read_users_me(current_user: User = Depends(get_current_active_user)):
     return current_user
 
-@app.get("/users/{user_id}", response_model=user_schema.User, dependencies=[Depends(validate_token)])
+@app.get("/users/{user_id}", response_model=user_schema.User)
 def read_user(user_id: int, db: Session = Depends(get_db)):
     db_user = crud_user.get_user(db, user_id=user_id)
     if db_user is None:
@@ -129,7 +129,7 @@ def update_user(user_id: int, _user: user_schema.UserUpdate, db: Session = Depen
       db.refresh(db_user)
       return db_user    
 
-@app.get("/posts/", response_model = List[post_schema.Post], dependencies=[Depends(validate_token)])
+@app.get("/posts/", response_model = List[post_schema.Post])
 def read_posts(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     posts = crud_post.get_posts(db, skip=skip, limit=limit)
     return posts

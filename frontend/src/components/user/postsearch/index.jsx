@@ -13,7 +13,7 @@ export const Post_Search = ({ post }) => {
       <div className="post-container">
         <div className="user">
           <div className="userInfo">
-            <img className="avatar" src={post.image} alt="" />
+            <img className="avatar" src={"data:image/png;base64," + post.image} alt="" />
             <div className="details">
               <span className="name">User</span>
               <span className="date">1 min ago</span>
@@ -23,7 +23,7 @@ export const Post_Search = ({ post }) => {
         </div>
         <div className="content">
           <p>{post.title}</p>
-          <img className="post-image" src={post.image} alt="" />
+          <img className="post-image" src={"data:image/png;base64," + post.image} alt="" />
         </div>
         {/* <div className="info">
           <div className="item">
