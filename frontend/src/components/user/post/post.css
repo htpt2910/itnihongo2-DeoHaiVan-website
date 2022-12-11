@@ -56,7 +56,19 @@
   font-size: 12px;
 }
 
+.action{
+  justify-content: right;
+}
+
+.ant-btn-compact-item{
+  border: none;
+}
+
 .content {
+}
+
+.content p{
+  margin: 15px 0px 0px;;
 }
 
 .post-image {
