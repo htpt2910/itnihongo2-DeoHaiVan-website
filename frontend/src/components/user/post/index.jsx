@@ -63,13 +63,6 @@ export const Post = ({post}) => {
     age: 0,
     image: "",
   });
-const errorModal = () => {
-  Modal.error({
-    title: 'Lỗi',
-    content: 'Bạn không thể chỉnh sửa bài đăng của người khác.',
-  });
-};
-
   useEffect(() => {
     if (myInfo) {
       post.likes.map((i) => {
@@ -251,11 +244,15 @@ const errorModal = () => {
               <span className="date">{moment(post.post_time).fromNow()}</span>
             </div>
           </div>
+          {(post.user_id == myId)? 
           <Dropdown.Button
             menu={{items, onClick: handleAction}}
             className="action"
             onClick={handleAction}
           />
+            :<></>
+        }
+          
           <Modal
             open={open}
             title="Edit post"
@@ -269,7 +266,7 @@ const errorModal = () => {
                 form={form}
                 className="create_post_form"
                 initialValues={{remember: false}}
-                onFinish={post.user_id == myId?  onFinish : errorModal}
+                onFinish={onFinish}
                 scrollToFirstError
               >
                 <Form.Item name="title" label="Title">
