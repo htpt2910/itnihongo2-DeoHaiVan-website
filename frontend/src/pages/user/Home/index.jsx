@@ -16,6 +16,8 @@ var time = datetime.getHours() +":"+ datetime.getMinutes() +":"+ datetime.getSec
 export const Home = () => {
   const [userid, seUserid] = useState()
   const { token } = useToken();
+  const [open, setOpen] = useState(false);
+
 
   const [form] = Form.useForm();
   const [ imagebase64, setImage] = useState();
@@ -31,7 +33,6 @@ export const Home = () => {
       })
       .then((res) => {
         const dt = res.data
-        console.log("data: ", dt)
         seUserid(dt.id)
       })
       .catch((err) => console.log(err))
@@ -39,7 +40,6 @@ export const Home = () => {
 
 
 const onFinish = (values) => {
-    console.log('Received values of form: ', values);
     axios
       .post("http://localhost:8000/post/", {
         "title": values.title,
@@ -81,7 +81,6 @@ const onFinish = (values) => {
   }
   
 
-  const [open, setOpen] = useState(false);
   const showModal = () => {
     setOpen(true);
   };
