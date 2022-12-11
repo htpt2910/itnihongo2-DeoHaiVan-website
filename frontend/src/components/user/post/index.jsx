@@ -1,6 +1,5 @@
 import {
   AliwangwangOutlined,
-  EllipsisOutlined,
   HeartFilled,
   HeartOutlined,
   ShareAltOutlined,
@@ -24,11 +23,14 @@ const items = [
     label: 'Delete',
   },
 ];
+
+const d = new Date();
+let month = d.getMonth() + 1;
+var date = d.getFullYear() + "-" + month + "-" + d.getDate()
+var time = d.getHours() +":"+ d.getMinutes() +":"+ d.getSeconds()
 export const Post = ({ post }) => {
   const {token} = useToken()
   const [imagebase64, setImage] = useState()
-  const [userID, setUserID] = useState(0)
-  const [hajimete_email, setHajimete_email] = useState("")
   const [profile, setProfile] = useState({
     name: "",
     email: "",
@@ -42,30 +44,18 @@ export const Post = ({ post }) => {
   const [open, setOpen] = useState(false);
   const [form] = Form.useForm();
   const [formData, setFormData] = useState({
-        title: "",
-        content: "",
-        post_time: "",
-        image: "",
-        rating: "",
-        user_id : "",
-        place_id: "",
+        title: null,
+        content: null,
+        post_time: null,
+        image: null,
+        rating: null,
+        user_id : null,
+        place_id: null,
   })
+  var dateCurrent = date +" "+ time;
 
   let base64String = "";
-  function imageUploaded() {
-      var file = document.querySelector(
-          'input[type=file]')['files'][0];
-    
-      var reader = new FileReader();
-      console.log("next");
-        
-      reader.onload = function () {
-          base64String = reader.result.replace("data:", "")
-              .replace(/^.+,/, "");
-              setImage(base64String)
-      }
-      reader.readAsDataURL(file);
-  }
+  
 
   const handleAction = async(e) => {
     if(e.key == 1){
@@ -78,7 +68,7 @@ export const Post = ({ post }) => {
         }
         }).then((res) => {
           setFormData(res.data)
-          console.log(formData);
+          console.log(res.data);
         })
       } catch (error) {
         console.log(error);
@@ -106,9 +96,32 @@ export const Post = ({ post }) => {
     setOpen(false)
   }
 
-  const onFinish = () =>{
-
-  }
+  const onFinish = (values) => {
+    console.log(imagebase64, formData.image);
+    axios
+      .patch(`http://localhost:8000/post/${post.id}`, {
+        "title": values.title ? values.title : formData.title,
+        "content": values.content ? values.content : formData.content,
+        "post_time": dateCurrent,
+        "image": imagebase64 ? imagebase64 : formData.image,
+        "rating": 1,
+        "user_id" : formData.user_id,
+        "place_id": 1,
+      },{
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': ' Bearer ' + token
+        }
+      })
+      .then((res) => {
+        window.location = "/"
+      })
+      .catch((err) => {
+      alert(err.response.data.detail)
+      console.log(err)
+    })
+    setOpen(false);
+  };
   
 
   useEffect(() => {
@@ -121,8 +134,6 @@ export const Post = ({ post }) => {
       })
       .then(async (res) => {
         const dt = res.data
-        console.log("data: ", dt)
-        setUserID(dt.id)
         setProfile({
           name: dt.name,
           email: dt.email,
@@ -131,11 +142,24 @@ export const Post = ({ post }) => {
           image: dt.image,
         })
         setImage(dt.image)
-        setHajimete_email(dt.email)
       })
-
       .catch((err) => console.log(err))
   }, [])
+
+  function imageUploaded() {
+    var file = document.querySelector(
+          'input[type=file]')['files'][0];
+    if(file){
+      var reader = new FileReader();  
+            reader.onload = function () {
+                base64String = reader.result.replace("data:", "")
+                    .replace(/^.+,/, "");
+                    setImage(base64String)
+            }
+            reader.readAsDataURL(file);
+    }
+      setImage(formData.image)
+  }
 
   return (
     <div className="post">
@@ -156,7 +180,7 @@ export const Post = ({ post }) => {
             cancelButtonProps={{style: {display: "none"}}}
             onCancel={handleCancel}
           >   
-            {formData && 
+            {(formData.title != null) && 
             <Form
               name="create_post"
               form={form}
@@ -169,20 +193,20 @@ export const Post = ({ post }) => {
                 name="title"
                 label="Title"
               >
-                <Input name="title" placeholder="Title..." className="title input-post" defaultValue={formData?.title}/> 
+                <Input name="title" placeholder="Title..." className="title input-post" defaultValue={formData.title}/> 
               </Form.Item>
               <Form.Item
                 name="content"
                 label="Content"
               >
-            <TextArea name="content" rows={4} placeholder="Content..." className="content input-post"  defaultValue={formData?.content}/> 
+              <TextArea name="content" rows={4} placeholder="Content..." className="content input-post"  defaultValue={formData.content}/> 
             </Form.Item>
           
             <Form.Item
               name="image"
               label="Image"
             >
-          <Input type='file' onChange={imageUploaded} className="content input-post"/>
+          <Input type='file' onChange={imageUploaded} className="content input-post" name='image'/>
           </Form.Item>
           <Form.Item>
             <Button type="primary" htmlType="submit" className="submitButton">

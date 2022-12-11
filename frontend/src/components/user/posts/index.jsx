@@ -10,14 +10,6 @@ export const Posts = () => {
   const [posts, setPosts] = useState([])
   const { token } = useToken();
 
-  const [open, setOpen] = useState(false);
-  const showModal = () => {
-    setOpen(true);
-  };
-  const handleCancel = () => {
-    setOpen(false);
-  };
-
   useEffect(() => {
     axios.get(`http://localhost:8000/posts?skip=0&limit=10`,{
       headers: {
@@ -25,7 +17,7 @@ export const Posts = () => {
           'Authorization': ' Bearer ' + token
         }
     }).then((res) =>{
-      setPosts(res.data)
+      setPosts(res.data.reverse())
       console.log(res.data);
     }).catch((error) => {
       console.log(error);

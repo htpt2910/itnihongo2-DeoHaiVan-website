@@ -1,5 +1,4 @@
 import { Footer } from "../../../components/user/Footer";
-import { Navbar } from "../../../components/user/Navbar";
 import { Posts } from "../../../components/user/posts";
 import { Stories } from "../../../components/user/stories";
 import "./homepage.css";
@@ -10,9 +9,10 @@ import useToken from '../../../useToken';
 import { useNavigate } from "react-router-dom";
 
 const { TextArea } = Input;
-var datetime = new Date()
-var day = datetime.getFullYear() + "-" + datetime.getMonth() + "-" + datetime.getDay()
-var time = datetime.getHours() +":"+ datetime.getMinutes() +":"+ datetime.getSeconds()
+const d = new Date();
+let month = d.getMonth() + 1;
+var date = d.getFullYear() + "-" + month + "-" + d.getDate()
+var time = d.getHours() +":"+ d.getMinutes() +":"+ d.getSeconds()
 
 export const Home = () => {
   const [userid, seUserid] = useState()
@@ -23,7 +23,7 @@ export const Home = () => {
 
   const [form] = Form.useForm();
   const [ imagebase64, setImage] = useState();
-    var dateCurrent = day +" "+ time;
+    var dateCurrent = date +" "+ time;
 
   useEffect(() => {
     axios
