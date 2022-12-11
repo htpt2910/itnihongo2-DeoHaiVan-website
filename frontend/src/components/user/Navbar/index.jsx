@@ -30,25 +30,38 @@ export const Navbar = ({postsSearch,setPostsSearch}) => {
       { id: 3, label: "Login", href: "/login" },
       { id: 4, label: "Signup", href: "/signup" },
     ]);
-  axios
-    .get("http://localhost:8000/users/me", {
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': ' Bearer ' + token
-      }
-    })
-    .then((res) => {
-      const dt = res.data
-      setNavItems([
-          { id: 1, label: "Home", href: "/" },
-          { id: 2, label: "About us", href: "/about" },
-          { id: 3, label: dt.name, href: "/profile" },
-          { id: 4, label: "Logout", href: "/logout" },
-        ]);
-    })
-    .catch((err) => console.log(err))
-}, [])
-  
+    axios
+      .get("http://localhost:8000/users/me", {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': ' Bearer ' + token
+        }
+      })
+      .then((res) => {
+        const dt = res.data
+        if(dt.is_admin)
+        {
+          setNavItems([
+            { id: 1, label: "Home", href: "/" },
+            { id: 2, label: "About us", href: "/about" },
+            { id: 3, label: dt.name, href: "/profile" },
+            { id: 4, label: "Logout", href: "/logout" },
+            { id: 5, label: "Admin", href: "/admin/usercontrol"}
+          ]);
+        }
+        else
+        {
+          setNavItems([
+            { id: 1, label: "Home", href: "/" },
+            { id: 2, label: "About us", href: "/about" },
+            { id: 3, label: dt.name, href: "/profile" },
+            { id: 4, label: "Logout", href: "/logout" },
+          ]);
+        }
+      })
+      .catch((err) => console.log(err))
+  }, [])
+
   const onToggle = () => {
     collapse === "nav__menu"
       ? setCollapse("nav__menu nav__collapse")

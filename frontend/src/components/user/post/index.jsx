@@ -5,9 +5,10 @@ import {
   HeartOutlined,
   ShareAltOutlined,
 } from "@ant-design/icons";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Dropdown, Modal,Form, Input, Button } from 'antd';
 import { Comments } from "../comment";
+import moment from 'moment';
 import "./post.css";
 import axios from "axios";
 import useToken from "../../../useToken";
@@ -24,11 +25,22 @@ const items = [
   },
 ];
 export const Post = ({ post }) => {
+  const {token} = useToken()
+  const [imagebase64, setImage] = useState()
+  const [userID, setUserID] = useState(0)
+  const [hajimete_email, setHajimete_email] = useState("")
+  const [profile, setProfile] = useState({
+    name: "",
+    email: "",
+    phone: "fake number",
+    gender: false,
+    age: 0,
+    image: "",
+  })
   const liked = false;
   const [commentOpen, setCommentOpen] = useState(false);
   const [open, setOpen] = useState(false);
   const [form] = Form.useForm();
-  const [ imagebase64, setImage] = useState();
   const [formData, setFormData] = useState({
         title: "",
         content: "",
@@ -38,8 +50,6 @@ export const Post = ({ post }) => {
         user_id : "",
         place_id: "",
   })
-
-  const { token } = useToken();
 
   let base64String = "";
   function imageUploaded() {
@@ -99,16 +109,43 @@ export const Post = ({ post }) => {
   const onFinish = () =>{
 
   }
+  
+
+  useEffect(() => {
+    axios
+      .get("http://localhost:8000/users/"+post.user_id, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: " Bearer " + token,
+        },
+      })
+      .then(async (res) => {
+        const dt = res.data
+        console.log("data: ", dt)
+        setUserID(dt.id)
+        setProfile({
+          name: dt.name,
+          email: dt.email,
+          gender: dt.gender ? "Nam" : "Nữ",
+          age: dt.age,
+          image: dt.image,
+        })
+        setImage(dt.image)
+        setHajimete_email(dt.email)
+      })
+
+      .catch((err) => console.log(err))
+  }, [])
 
   return (
     <div className="post">
       <div className="post-container" key={post.id}>
         <div className="user">
           <div className="userInfo">
-            <img className="avatar"  src={post.profilePic} alt="" />
+            <img className="avatar" src={"data:image/png;base64," + profile.image} alt="" />
             <div className="details">
-              <span className="name">{post.name}</span>
-              <span className="date">{((post.post_time).split('T')[1]) + " " + ((post.post_time).split('T')[0].split('-').reverse().join('/'))}</span>
+              <span className="name">{profile.name}</span>
+              <span className="date">{moment(post.post_time).fromNow()}</span>
             </div>
           </div>
           <Dropdown.Button menu={{ items , onClick: handleAction }} className='action' onClick={handleAction}/>
