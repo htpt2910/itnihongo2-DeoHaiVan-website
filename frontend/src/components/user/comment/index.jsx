@@ -10,20 +10,11 @@ export const Comments = ({comments, post_id}) => {
   const {token} = useToken();
   const [message, setMessage] = useState("");
 
-  var datetime = new Date();
-  var day =
-    datetime.getFullYear() +
-    "-" +
-    datetime.getMonth() +
-    "-" +
-    datetime.getDay();
-  var time =
-    datetime.getHours() +
-    ":" +
-    datetime.getMinutes() +
-    ":" +
-    datetime.getSeconds();
-  var dateCurrent = day + " " + time;
+  const d = new Date();
+  let month = d.getMonth() + 1;
+  var date = d.getFullYear() + "-" + month + "-" + d.getDate();
+  var time = d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds();
+  var dateCurrent = date + " " + time;
 
   const handleChange = (event) => {
     setMessage(event.target.value);

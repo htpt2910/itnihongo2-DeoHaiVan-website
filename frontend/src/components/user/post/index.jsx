@@ -324,10 +324,6 @@ export const Post = ({post}) => {
             <AliwangwangOutlined />
             {post.comments.length} Comments
           </div>
-          <div className="item">
-            <ShareAltOutlined />
-            Share
-          </div>
         </div>
         {commentOpen && <Comments comments={post.comments} post_id={post.id} />}
       </div>
