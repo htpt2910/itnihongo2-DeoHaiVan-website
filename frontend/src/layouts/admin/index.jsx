@@ -1,5 +1,6 @@
 import { MenuFoldOutlined, MenuUnfoldOutlined } from "@ant-design/icons"
 import { Layout, Menu } from "antd"
+import { UserOutlined, VideoCameraOutlined, LogoutOutlined } from "@ant-design/icons"
 import "antd/dist/antd.css"
 import axios from "axios"
 import React, { useEffect, useState } from "react"
@@ -27,7 +28,7 @@ const AdminLayout = ({ childcomp }) => {
       const dt = res.data
       if (dt.is_admin)
       {
-        setAdmin(dt.email)
+        setAdmin(dt.name)
       }
       else
       {
@@ -40,13 +41,16 @@ const AdminLayout = ({ childcomp }) => {
   if(admin)
   return (
     <Layout>
-      <Sider trigger={null} collapsible collapsed={collapsed}>
+      <Sider trigger={null} collapsible collapsed={collapsed} >
         <div className="logo-admin">
-          <a className="mount" href="/" style={{textDecoration:'None'}}>Deo Hai Van</a>
-          <img src={logo} alt="logo" className="logo" />
+          
         </div>
         <Menu className="header-menu">
-          <Menu.Item key="1">
+          {/* <Menu.Item key="1">
+            <img src={logo} alt="logo" className="logo" />
+            <a className="mount" href="/" style={{textDecoration:'None' , color:'white',fontSize:'15px'}}>Deo Hai Van</a>
+          </Menu.Item> */}
+          <Menu.Item key="1"><UserOutlined />
             <Link
               to={"/admin/usercontrol"}
               style={{ color: "white", textDecoration: "none" }}
@@ -54,7 +58,7 @@ const AdminLayout = ({ childcomp }) => {
               User Management
             </Link>
           </Menu.Item>
-          <Menu.Item key="2">
+          <Menu.Item key="2"><VideoCameraOutlined />
             <Link
               to="/admin/postcontrol"
               style={{ color: "white", textDecoration: "none" }}
@@ -62,7 +66,7 @@ const AdminLayout = ({ childcomp }) => {
               Post Management
             </Link>
           </Menu.Item>
-          <Menu.Item key="3" style={{ color: "gray" }}>
+          <Menu.Item key="3" style={{ color: "gray" }}><LogoutOutlined />
             <Link
               to="/logout"
               style={{ color: "white", textDecoration: "none" }}
@@ -84,7 +88,9 @@ const AdminLayout = ({ childcomp }) => {
               onClick: () => setCollapsed(!collapsed),
             }
           )}
-          {<span style={{color:'white',margin:'40%'}}>{admin}</span>}
+          <img src={logo} alt="logo" className="logo" />
+          <a className="mount" href="/" style={{textDecoration:'None'}}>Deo Hai Van</a>
+          {<span className="userlogin" style={{color:'white',marginLeft: '700px'}}>{admin}</span>}
         </Header>
         <Content  
           className="site-layout-background"
