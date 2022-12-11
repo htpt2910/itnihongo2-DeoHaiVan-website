@@ -1,24 +1,36 @@
 import {
   AliwangwangOutlined,
-  EllipsisOutlined,
   HeartFilled,
   HeartOutlined,
   ShareAltOutlined,
 } from "@ant-design/icons";
 import React, { useEffect, useState } from "react";
+import { Dropdown, Modal,Form, Input, Button } from 'antd';
 import { Comments } from "../comment";
 import moment from 'moment';
 import "./post.css";
-import useToken from "../../../useToken";
 import axios from "axios";
+import useToken from "../../../useToken";
 
+const { TextArea } = Input;
+const items = [
+  {
+    key: '1',
+    label: 'Edit',
+  },
+  {
+    key: '2',
+    label: 'Delete',
+  },
+];
+
+const d = new Date();
+let month = d.getMonth() + 1;
+var date = d.getFullYear() + "-" + month + "-" + d.getDate()
+var time = d.getHours() +":"+ d.getMinutes() +":"+ d.getSeconds()
 export const Post = ({ post }) => {
-  const liked = false;
-  const [commentOpen, setCommentOpen] = useState(false);
   const {token} = useToken()
   const [imagebase64, setImage] = useState()
-  const [userID, setUserID] = useState(0)
-  const [hajimete_email, setHajimete_email] = useState("")
   const [profile, setProfile] = useState({
     name: "",
     email: "",
@@ -27,6 +39,90 @@ export const Post = ({ post }) => {
     age: 0,
     image: "",
   })
+  const liked = false;
+  const [commentOpen, setCommentOpen] = useState(false);
+  const [open, setOpen] = useState(false);
+  const [form] = Form.useForm();
+  const [formData, setFormData] = useState({
+        title: null,
+        content: null,
+        post_time: null,
+        image: null,
+        rating: null,
+        user_id : null,
+        place_id: null,
+  })
+  var dateCurrent = date +" "+ time;
+
+  let base64String = "";
+  
+
+  const handleAction = async(e) => {
+    if(e.key == 1){
+      setOpen(true)
+      try {
+        await axios.get(`http://localhost:8000/posts/${post.id}`,{
+          headers: {
+          'Content-Type': 'application/json',
+          'Authorization': ' Bearer ' + token
+        }
+        }).then((res) => {
+          setFormData(res.data)
+          console.log(res.data);
+        })
+      } catch (error) {
+        console.log(error);
+      }
+    }else{
+      try {
+        console.log(post.id);
+        axios.delete(`http://localhost:8000/post/${post.id}`,{
+          headers: {
+          'Content-Type': 'application/json',
+          'Authorization': ' Bearer ' + token
+          }
+        }
+        ).then((res) => {
+        window.location = "/"
+      })
+      } catch (error) {
+        console.log(error);
+      }
+      
+    }
+  }
+
+  const handleCancel = () => {
+    setOpen(false)
+  }
+
+  const onFinish = (values) => {
+    console.log(imagebase64, formData.image);
+    axios
+      .patch(`http://localhost:8000/post/${post.id}`, {
+        "title": values.title ? values.title : formData.title,
+        "content": values.content ? values.content : formData.content,
+        "post_time": dateCurrent,
+        "image": imagebase64 ? imagebase64 : formData.image,
+        "rating": 1,
+        "user_id" : formData.user_id,
+        "place_id": 1,
+      },{
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': ' Bearer ' + token
+        }
+      })
+      .then((res) => {
+        window.location = "/"
+      })
+      .catch((err) => {
+      alert(err.response.data.detail)
+      console.log(err)
+    })
+    setOpen(false);
+  };
+  
 
   useEffect(() => {
     axios
@@ -38,8 +134,6 @@ export const Post = ({ post }) => {
       })
       .then(async (res) => {
         const dt = res.data
-        console.log("data: ", dt)
-        setUserID(dt.id)
         setProfile({
           name: dt.name,
           email: dt.email,
@@ -48,15 +142,28 @@ export const Post = ({ post }) => {
           image: dt.image,
         })
         setImage(dt.image)
-        setHajimete_email(dt.email)
       })
-
       .catch((err) => console.log(err))
   }, [])
 
+  function imageUploaded() {
+    var file = document.querySelector(
+          'input[type=file]')['files'][0];
+    if(file){
+      var reader = new FileReader();  
+            reader.onload = function () {
+                base64String = reader.result.replace("data:", "")
+                    .replace(/^.+,/, "");
+                    setImage(base64String)
+            }
+            reader.readAsDataURL(file);
+    }
+      setImage(formData.image)
+  }
+
   return (
     <div className="post">
-      <div className="post-container">
+      <div className="post-container" key={post.id}>
         <div className="user">
           <div className="userInfo">
             <img className="avatar" src={"data:image/png;base64," + profile.image} alt="" />
@@ -65,10 +172,52 @@ export const Post = ({ post }) => {
               <span className="date">{moment(post.post_time).fromNow()}</span>
             </div>
           </div>
-          <EllipsisOutlined />
+          <Dropdown.Button menu={{ items , onClick: handleAction }} className='action' onClick={handleAction}/>
+          <Modal
+            open={open}
+            title="Edit post"
+            okButtonProps={{style: {display: "none"}}}
+            cancelButtonProps={{style: {display: "none"}}}
+            onCancel={handleCancel}
+          >   
+            {(formData.title != null) && 
+            <Form
+              name="create_post"
+              form={form}
+              className="create_post_form"
+              initialValues={{ remember: false }}
+              onFinish={onFinish}
+              scrollToFirstError
+            >         
+              <Form.Item
+                name="title"
+                label="Title"
+              >
+                <Input name="title" placeholder="Title..." className="title input-post" defaultValue={formData.title}/> 
+              </Form.Item>
+              <Form.Item
+                name="content"
+                label="Content"
+              >
+              <TextArea name="content" rows={4} placeholder="Content..." className="content input-post"  defaultValue={formData.content}/> 
+            </Form.Item>
+          
+            <Form.Item
+              name="image"
+              label="Image"
+            >
+          <Input type='file' onChange={imageUploaded} className="content input-post" name='image'/>
+          </Form.Item>
+          <Form.Item>
+            <Button type="primary" htmlType="submit" className="submitButton">
+              Submit
+            </Button>
+          </Form.Item>
+        </Form> }
+      </Modal>
         </div>
         <div className="content">
-          <p>{post.desc}</p>
+          <p>{post.content}</p>
           <img className="post-image" src={"data:image/png;base64," + post.image} alt="" />
         </div>
         <div className="info">
@@ -87,6 +236,7 @@ export const Post = ({ post }) => {
         </div>
         {commentOpen && <Comments />}
       </div>
+      
     </div>
   );
 };
