@@ -20,6 +20,7 @@ export const Post = ({post}) => {
   const navigate = useNavigate();
   const {token} = useToken();
   const {myInfo} = useMyInfo();
+  const [myId, setMyId] = useState(false);
 
   const {TextArea} = Input;
   const items = [
@@ -32,6 +33,21 @@ export const Post = ({post}) => {
       label: "Delete",
     },
   ];
+
+  useEffect(() => {
+    axios
+      .get("http://localhost:8000/users/me", {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: " Bearer " + token,
+        },
+      })
+      .then((res) => {
+        const dt = res.data;
+        setMyId(dt.id);
+      })
+      .catch((err) => console.log(err));
+  }, []);
 
   const d = new Date();
   let month = d.getMonth() + 1;
@@ -47,6 +63,12 @@ export const Post = ({post}) => {
     age: 0,
     image: "",
   });
+const errorModal = () => {
+  Modal.error({
+    title: 'Lỗi',
+    content: 'Bạn không thể chỉnh sửa bài đăng của người khác.',
+  });
+};
 
   useEffect(() => {
     if (myInfo) {
@@ -114,34 +136,35 @@ export const Post = ({post}) => {
   };
 
   const onFinish = (values) => {
-    console.log(imagebase64, formData.image);
-    axios
-      .patch(
-        `http://localhost:8000/post/${post.id}`,
-        {
-          title: values.title ? values.title : formData.title,
-          content: values.content ? values.content : formData.content,
-          post_time: dateCurrent,
-          image: imagebase64 ? imagebase64 : formData.image,
-          rating: 1,
-          user_id: formData.user_id,
-          place_id: 1,
-        },
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: " Bearer " + token,
+    
+      axios
+        .patch(
+          `http://localhost:8000/post/${post.id}`,
+          {
+            title: values.title ? values.title : formData.title,
+            content: values.content ? values.content : formData.content,
+            post_time: dateCurrent,
+            image: imagebase64 ? imagebase64 : formData.image,
+            rating: 1,
+            user_id: formData.user_id,
+            place_id: 1,
           },
-        }
-      )
-      .then((res) => {
-        window.location = "/";
-      })
-      .catch((err) => {
-        alert(err.response.data.detail);
-        console.log(err);
-      });
-    setOpen(false);
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: " Bearer " + token,
+            },
+          }
+        )
+        .then((res) => {
+          window.location = "/";
+        })
+        .catch((err) => {
+          alert(err.response.data.detail);
+          console.log(err);
+        });
+      setOpen(false);
+
   };
 
   useEffect(() => {
@@ -246,7 +269,7 @@ export const Post = ({post}) => {
                 form={form}
                 className="create_post_form"
                 initialValues={{remember: false}}
-                onFinish={onFinish}
+                onFinish={post.user_id == myId?  onFinish : errorModal}
                 scrollToFirstError
               >
                 <Form.Item name="title" label="Title">
@@ -289,6 +312,7 @@ export const Post = ({post}) => {
           </Modal>
         </div>
         <div className="content">
+          <p className="title-p">{post.title}</p>
           <p>{post.content}</p>
           <img
             className="post-image"
