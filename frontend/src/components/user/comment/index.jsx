@@ -1,49 +1,74 @@
-import React from "react";
+import axios from "axios";
+import React, {useEffect, useState} from "react";
+import useMyInfo from "../../../useMyInfo";
+import useToken from "../../../useToken";
+import {Comment} from "./Comment";
 import "./comments.css";
 
-export const Comments = () => {
-  const comments = [
-    {
-      id: 1,
-      desc: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Autem nequeaspernatur ullam aperiam. Lorem ipsum dolor sit amet consectetur adipisicing elit. Autem nequeaspernatur ullam aperiam",
-      name: "John Doe",
-      userId: 1,
-      profilePicture:
-        "https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
-    },
-    {
-      id: 2,
-      desc: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Autem nequeaspernatur ullam aperiam",
-      name: "Jane Doe",
-      userId: 2,
-      profilePicture:
-        "https://images.pexels.com/photos/1036623/pexels-photo-1036623.jpeg?auto=compress&cs=tinysrgb&w=1600",
-    },
-  ];
+export const Comments = ({comments, post_id}) => {
+  const {myInfo} = useMyInfo();
+  const {token} = useToken();
+  const [message, setMessage] = useState("");
+
+  const d = new Date();
+  let month = d.getMonth() + 1;
+  var date = d.getFullYear() + "-" + month + "-" + d.getDate();
+  var time = d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds();
+  var dateCurrent = date + " " + time;
+
+  const handleChange = (event) => {
+    setMessage(event.target.value);
+  };
+
+  const handleComment = (postId, userId, content) => {
+    axios
+      .post(
+        "http://localhost:8000/comment/",
+        {
+          content: content,
+          comment_time: dateCurrent,
+          comment_user_id: userId,
+          post_id: postId,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: " Bearer " + token,
+          },
+        }
+      )
+      .then((res) => console.log(res.data))
+      .catch((err) => console.log(err));
+  };
+
   return (
     <div className="comments">
-      <div className="write">
-        <img
-          className="avatar"
-          src="https://images.pexels.com/photos/1036623/pexels-photo-1036623.jpeg?auto=compress&cs=tinysrgb&w=1600"
-          alt=""
-        />
-        <input
-          className="input-text"
-          type="text"
-          placeholder="write a comment"
-        />
-        <button>Send</button>
-      </div>
-      {comments.map((comment) => (
-        <div className="comment" key={comment.id}>
-          <img className="avatar" src={comment.profilePicture} alt="" />
-          <div className="info">
-            <span>{comment.name}</span>
-            <p>{comment.desc}</p>
-          </div>
-          <span className="date">1 hour ago</span>
+      {myInfo !== null && (
+        <div className="write">
+          <img
+            className="avatar"
+            src={"data:image/png;base64," + myInfo.image}
+            alt=""
+          />
+          <input
+            className="input-text"
+            type="text"
+            placeholder="write a comment"
+            onChange={handleChange}
+            value={message}
+          />
+          <button
+            onClick={() => {
+              handleComment(post_id, myInfo.id, message);
+              window.location.reload();
+            }}
+          >
+            Send
+          </button>
         </div>
+      )}
+      {comments.map((comment) => (
+        <Comment comment={comment} key={comment.id} />
       ))}
     </div>
   );

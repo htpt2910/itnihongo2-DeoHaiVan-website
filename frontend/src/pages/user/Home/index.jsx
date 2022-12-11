@@ -1,90 +1,92 @@
-import { Footer } from "../../../components/user/Footer";
-import { Posts } from "../../../components/user/posts";
-import { Stories } from "../../../components/user/stories";
+import {Footer} from "../../../components/user/Footer";
+import {Posts} from "../../../components/user/posts";
+import {Stories} from "../../../components/user/stories";
 import "./homepage.css";
-import React, { useState,useEffect } from 'react';
-import { Button, Modal,Input,Form } from 'antd';
-import axios from 'axios';
-import useToken from '../../../useToken';
-import { useNavigate } from "react-router-dom";
+import React, {useState, useEffect} from "react";
+import {Button, Modal, Input, Form} from "antd";
+import axios from "axios";
+import useToken from "../../../useToken";
+import {useNavigate} from "react-router-dom";
+import useMyInfo from "../../../useMyInfo";
 
-const { TextArea } = Input;
+const {TextArea} = Input;
 const d = new Date();
 let month = d.getMonth() + 1;
-var date = d.getFullYear() + "-" + month + "-" + d.getDate()
-var time = d.getHours() +":"+ d.getMinutes() +":"+ d.getSeconds()
+var date = d.getFullYear() + "-" + month + "-" + d.getDate();
+var time = d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds();
 
 export const Home = () => {
-  const [userid, seUserid] = useState()
-  const navigate = useNavigate()
-  const { token } = useToken();
+  const [userid, seUserid] = useState();
+  const navigate = useNavigate();
+  const {token} = useToken();
+  const {setMyInfo} = useMyInfo();
   const [open, setOpen] = useState(false);
 
-
   const [form] = Form.useForm();
-  const [ imagebase64, setImage] = useState();
-    var dateCurrent = date +" "+ time;
+  const [imagebase64, setImage] = useState();
+  var dateCurrent = date + " " + time;
 
   useEffect(() => {
     axios
       .get("http://localhost:8000/users/me", {
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': ' Bearer ' + token
-        }
+          "Content-Type": "application/json",
+          Authorization: " Bearer " + token,
+        },
       })
       .then((res) => {
-        const dt = res.data
+        const dt = res.data;
+        setMyInfo(dt);
         if (dt.is_admin) {
-          navigate('/admin')
+          navigate("/admin");
         }
-        seUserid(dt.id)
+        seUserid(dt.id);
       })
-      .catch((err) => console.log(err))
-  }, [])
+      .catch((err) => console.log(err));
+  }, []);
 
-
-const onFinish = (values) => {
+  const onFinish = (values) => {
     axios
-      .post("http://localhost:8000/post/", {
-        "title": values.title,
-        "content": values.content,
-        "post_time": dateCurrent,
-        "image": imagebase64,
-        "rating": 1,
-        "user_id" : userid,
-        "place_id": 1,
-      },{
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': ' Bearer ' + token
+      .post(
+        "http://localhost:8000/post/",
+        {
+          title: values.title,
+          content: values.content,
+          post_time: dateCurrent,
+          image: imagebase64,
+          rating: 1,
+          user_id: userid,
+          place_id: 1,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: " Bearer " + token,
+          },
         }
-      })
+      )
       .then((res) => {
-        window.location = "/"
+        window.location = "/";
       })
       .catch((err) => {
-      alert(err.response.data.detail)
-      console.log(err)
-    })
+        alert(err.response.data.detail);
+        console.log(err);
+      });
     setOpen(false);
   };
   let base64String = "";
   function imageUploaded() {
-      var file = document.querySelector(
-          'input[type=file]')['files'][0];
-    
-      var reader = new FileReader();
-      console.log("next");
-        
-      reader.onload = function () {
-          base64String = reader.result.replace("data:", "")
-              .replace(/^.+,/, "");
-              setImage(base64String)
-      }
-      reader.readAsDataURL(file);
+    var file = document.querySelector("input[type=file]")["files"][0];
+
+    var reader = new FileReader();
+    console.log("next");
+
+    reader.onload = function () {
+      base64String = reader.result.replace("data:", "").replace(/^.+,/, "");
+      setImage(base64String);
+    };
+    reader.readAsDataURL(file);
   }
-  
 
   const showModal = () => {
     setOpen(true);
@@ -96,57 +98,55 @@ const onFinish = (values) => {
     <div>
       <Stories />
       <>
-      <div className="createPost">
-        <div className="postContainer">
-          <Button className="btnCreate" onClick={showModal}>
-            Create Post
-          </Button>
+        <div className="createPost">
+          <div className="postContainer">
+            <Button className="btnCreate" onClick={showModal}>
+              Create Post
+            </Button>
+          </div>
         </div>
-      </div>
-      
-      <Modal
-        open={open}
-        title="Create post"
-        okButtonProps={{style: {display: "none"}}}
-        cancelButtonProps={{style: {display: "none"}}}
-        onCancel={handleCancel}
-      >   
-      <Form
-        name="create_post"
-        form={form}
-        className="create_post_form"
-        initialValues={{ remember: false }}
-        onFinish={onFinish}
-        scrollToFirstError
-      >   
-      <Form.Item
-          name="title"
-          label="Title"
+
+        <Modal
+          open={open}
+          title="Create post"
+          okButtonProps={{style: {display: "none"}}}
+          cancelButtonProps={{style: {display: "none"}}}
+          onCancel={handleCancel}
         >
-          <Input placeholder="Title..." className="title input-post" /> 
-        </Form.Item>
-      <Form.Item
-          name="content"
-          label="Content"
-        >
-          <TextArea rows={4} placeholder="Content..." className="content input-post" /> 
-        </Form.Item>
-        
-        <Form.Item
-        name="image"
-        label="Image"
-      >
-        <Input type='file' onChange={imageUploaded} className="content input-post"/>
-      </Form.Item>
-      <Form.Item>
-        <Button type="primary" htmlType="submit" className="submitButton">
-          Submit
-        </Button>
-      </Form.Item>
-      </Form> 
-      </Modal>
-      
-    </>
+          <Form
+            name="create_post"
+            form={form}
+            className="create_post_form"
+            initialValues={{remember: false}}
+            onFinish={onFinish}
+            scrollToFirstError
+          >
+            <Form.Item name="title" label="Title">
+              <Input placeholder="Title..." className="title input-post" />
+            </Form.Item>
+            <Form.Item name="content" label="Content">
+              <TextArea
+                rows={4}
+                placeholder="Content..."
+                className="content input-post"
+              />
+            </Form.Item>
+
+            <Form.Item name="image" label="Image">
+              <Input
+                type="file"
+                onChange={imageUploaded}
+                className="content input-post"
+              />
+            </Form.Item>
+            <Form.Item>
+              <Button type="primary" htmlType="submit" className="submitButton">
+                Submit
+              </Button>
+            </Form.Item>
+          </Form>
+        </Modal>
+      </>
       <Posts />
       <Footer />
     </div>

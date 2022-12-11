@@ -11,6 +11,8 @@ from app.models.user import User
 from app.schemas import login as login_schema
 from app.schemas import post as post_schema
 from app.schemas import user as user_schema
+from app.schemas import like as like_schema
+from app.schemas import comment as comment_schema
 from app.security import get_current_active_user, validate_token
 from app.seed import Seed_db
 from fastapi import Depends, FastAPI, HTTPException
@@ -132,7 +134,7 @@ def update_user(user_id: int, _user: user_schema.UserUpdate, db: Session = Depen
 @app.get("/posts/", response_model = List[post_schema.Post])
 def read_posts(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     posts = crud_post.get_posts(db, skip=skip, limit=limit)
-    return posts
+    return posts 
 
 @app.get("/postssearch/{value}", response_model = List[post_schema.Post])
 def read_posts_search(value:str, db: Session = Depends(get_db)):
@@ -143,6 +145,18 @@ def read_posts_search(value:str, db: Session = Depends(get_db)):
 @app.post("/post/", response_model=post_schema.Post, dependencies=[Depends(validate_token)])
 def create_post(post: post_schema.PostCreate, db: Session = Depends(get_db)):
     return crud_post.create_post(db=db, post=post)
+
+@app.post("/like/", response_model=like_schema.Like, dependencies=[Depends(validate_token)])
+def create_like(like: like_schema.LikeCreate, db: Session = Depends(get_db)):
+    return crud_like.create_like(db=db, like=like)
+
+@app.delete("/like/{post_id}/{user_like_id}", dependencies=[Depends(validate_token)])
+def handle_delete_like(post_id:int,like_user_id: int , db: Session = Depends(get_db)):
+    return crud_like.handle_delete_like(db=db, post_id=post_id, like_user_id=like_user_id)
+
+@app.post("/comment/", response_model=comment_schema.Comment, dependencies=[Depends(validate_token)])
+def create_comment(comment: comment_schema.CommentCreate, db: Session = Depends(get_db)):
+    return crud_comment.create_comment(db=db, comment=comment)
 
 @app.patch("/post/{post_id}", response_model=post_schema.Post, dependencies=[Depends(validate_token)])
 def update_post(post_id: int, _post: post_schema.PostUpdate, db: Session = Depends(get_db)):
