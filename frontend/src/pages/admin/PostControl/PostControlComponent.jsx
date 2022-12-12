@@ -40,7 +40,7 @@ export const PostControlComponent = () => {
           Authorization: " Bearer " + token,
         },
       })
-      .then((res) => console.log("res: ", res))
+      .then((res) => setData(res.data))
       .catch((err) => console.log("err: ", err))
   }, [])
 
@@ -75,8 +75,7 @@ export const PostControlComponent = () => {
           },
         }
       )
-      .then((res) => console.log(res.data))
-      .catch((res) => console.log(res))
+      .then((res) => console.log("res patch:", res.data))
   }
 
   const columns = [
@@ -220,6 +219,7 @@ export const PostControlComponent = () => {
   return (
     <>
       <div className="postContainer">
+        <p>asdfghjkl</p>
         <div className="inputSearch">
           <input className="input" type="text" placeholder="Search..." />
           <div className="btnSearch">
