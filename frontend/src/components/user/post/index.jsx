@@ -230,7 +230,7 @@ export const Post = ({ post }) => {
               <span className="date">{moment(post.post_time).fromNow()}</span>
             </div>
           </div>
-          {post.user_id == myId ? (
+          {post.user_id == myInfo?.id ? (
             <Dropdown.Button
               menu={{ items, onClick: handleAction }}
               className="action"

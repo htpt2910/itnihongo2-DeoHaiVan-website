@@ -81,7 +81,7 @@ export const Navbar = ({ postsSearch, setPostsSearch }) => {
       url: "http://localhost:8000/postssearch/" + valueInput,
     })
     setPost(data.data)
-    setPostsSearch(data.data)
+    setPostsSearch(data.data.reverse())
   }
 
   return (
