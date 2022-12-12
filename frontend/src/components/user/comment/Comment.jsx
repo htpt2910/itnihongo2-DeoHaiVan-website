@@ -1,15 +1,15 @@
-import axios from "axios";
-import {useEffect, useState} from "react";
-import useToken from "../../../useToken";
-import moment from "moment";
-import useMyInfo from "../../../useMyInfo";
-import {Popconfirm} from "antd";
-import {DeleteTwoTone} from "@ant-design/icons";
+import { DeleteTwoTone } from "@ant-design/icons"
+import { Popconfirm } from "antd"
+import axios from "axios"
+import moment from "moment"
+import { useEffect, useState } from "react"
+import useMyInfo from "../../../useMyInfo"
+import useToken from "../../../useToken"
 
-export const Comment = ({comment}) => {
-  const {token} = useToken();
-  const [user, setUser] = useState({});
-  const {myInfo} = useMyInfo();
+export const Comment = ({ comment, comments, setComments }) => {
+  const { token } = useToken()
+  const [user, setUser] = useState({})
+  const { myInfo } = useMyInfo()
 
   useEffect(() => {
     axios
@@ -20,10 +20,10 @@ export const Comment = ({comment}) => {
         },
       })
       .then((res) => {
-        setUser(res.data);
+        setUser(res.data)
       })
-      .catch((err) => console.log(err));
-  }, []);
+      .catch((err) => console.log(err))
+  }, [])
 
   const handleDelete = (id) => {
     axios
@@ -33,9 +33,9 @@ export const Comment = ({comment}) => {
           Authorization: " Bearer " + token,
         },
       })
-      .then((res) => console.log(res))
-      .catch((err) => console.log(err));
-  };
+      .then((res) => setComments(comments.filter((cmt) => cmt.id !== id)))
+      .catch((err) => console.log(err))
+  }
 
   return (
     <div className="comment" key={user.name}>
@@ -53,13 +53,12 @@ export const Comment = ({comment}) => {
         <Popconfirm
           title="Sure to delete?"
           onConfirm={() => {
-            handleDelete(comment.id);
-            window.location.reload();
+            handleDelete(comment.id)
           }}
         >
           <DeleteTwoTone />
         </Popconfirm>
       )}
     </div>
-  );
-};
+  )
+}

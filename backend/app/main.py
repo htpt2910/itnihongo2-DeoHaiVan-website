@@ -8,11 +8,11 @@ from app.db.databases import SessionLocal, engine
 from app.models import comment, place, post, user
 from app.models.post import Post
 from app.models.user import User
+from app.schemas import comment as comment_schema
+from app.schemas import like as like_schema
 from app.schemas import login as login_schema
 from app.schemas import post as post_schema
 from app.schemas import user as user_schema
-from app.schemas import like as like_schema
-from app.schemas import comment as comment_schema
 from app.security import get_current_active_user, validate_token
 from app.seed import Seed_db
 from fastapi import Depends, FastAPI, HTTPException

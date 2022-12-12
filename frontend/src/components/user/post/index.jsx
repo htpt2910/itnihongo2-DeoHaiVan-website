@@ -2,27 +2,27 @@ import {
   AliwangwangOutlined,
   HeartFilled,
   HeartOutlined,
-  ShareAltOutlined,
-} from "@ant-design/icons";
-import React, {useEffect, useState} from "react";
-import {Dropdown, Modal, Form, Input, Button} from "antd";
-import {Comments} from "../comment";
-import moment from "moment";
-import "./post.css";
-import axios from "axios";
-import useMyInfo from "../../../useMyInfo";
-import {useNavigate} from "react-router-dom";
-import useToken from "../../../useToken";
+} from "@ant-design/icons"
+import { Button, Dropdown, Form, Input, Modal } from "antd"
+import axios from "axios"
+import moment from "moment"
+import React, { useEffect, useState } from "react"
+import { useNavigate } from "react-router-dom"
+import useMyInfo from "../../../useMyInfo"
+import useToken from "../../../useToken"
+import { Comments } from "../comment"
+import "./post.css"
 
-export const Post = ({post}) => {
-  const [liked, setLiked] = useState(false);
-  const [commentOpen, setCommentOpen] = useState(false);
-  const navigate = useNavigate();
-  const {token} = useToken();
-  const {myInfo} = useMyInfo();
-  const [myId, setMyId] = useState(false);
+export const Post = ({ post }) => {
+  const [liked, setLiked] = useState(false)
+  const [commentOpen, setCommentOpen] = useState(false)
+  const navigate = useNavigate()
+  const { token } = useToken()
+  const { myInfo } = useMyInfo()
+  const [likes, setLikes] = useState(post.likes.length)
+  const [comments, setComments] = useState(post.comments)
 
-  const {TextArea} = Input;
+  const { TextArea } = Input
   const items = [
     {
       key: "1",
@@ -32,29 +32,14 @@ export const Post = ({post}) => {
       key: "2",
       label: "Delete",
     },
-  ];
+  ]
 
-  useEffect(() => {
-    axios
-      .get("http://localhost:8000/users/me", {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: " Bearer " + token,
-        },
-      })
-      .then((res) => {
-        const dt = res.data;
-        setMyId(dt.id);
-      })
-      .catch((err) => console.log(err));
-  }, []);
+  const d = new Date()
+  let month = d.getMonth() + 1
+  var date = d.getFullYear() + "-" + month + "-" + d.getDate()
+  var time = d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds()
 
-  const d = new Date();
-  let month = d.getMonth() + 1;
-  var date = d.getFullYear() + "-" + month + "-" + d.getDate();
-  var time = d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds();
-
-  const [imagebase64, setImage] = useState();
+  const [imagebase64, setImage] = useState()
   const [profile, setProfile] = useState({
     name: "",
     email: "",
@@ -62,19 +47,20 @@ export const Post = ({post}) => {
     gender: false,
     age: 0,
     image: "",
-  });
+  })
+
   useEffect(() => {
     if (myInfo) {
       post.likes.map((i) => {
         if (i.like_user_id === myInfo.id) {
-          setLiked(true);
+          setLiked(true)
         }
-      });
+      })
     }
-  }, []);
+  }, [])
 
-  const [open, setOpen] = useState(false);
-  const [form] = Form.useForm();
+  const [open, setOpen] = useState(false)
+  const [form] = Form.useForm()
   const [formData, setFormData] = useState({
     title: null,
     content: null,
@@ -83,13 +69,13 @@ export const Post = ({post}) => {
     rating: null,
     user_id: null,
     place_id: null,
-  });
-  var dateCurrent = date + " " + time;
-  let base64String = "";
+  })
+  var dateCurrent = date + " " + time
+  let base64String = ""
 
   const handleAction = async (e) => {
     if (e.key == 1) {
-      setOpen(true);
+      setOpen(true)
       try {
         await axios
           .get(`http://localhost:8000/posts/${post.id}`, {
@@ -99,15 +85,15 @@ export const Post = ({post}) => {
             },
           })
           .then((res) => {
-            setFormData(res.data);
-            console.log(res.data);
-          });
+            setFormData(res.data)
+            console.log(res.data)
+          })
       } catch (error) {
-        console.log(error);
+        console.log(error)
       }
     } else {
       try {
-        console.log(post.id);
+        console.log(post.id)
         axios
           .delete(`http://localhost:8000/post/${post.id}`, {
             headers: {
@@ -116,49 +102,47 @@ export const Post = ({post}) => {
             },
           })
           .then((res) => {
-            window.location = "/";
-          });
+            window.location = "/"
+          })
       } catch (error) {
-        console.log(error);
+        console.log(error)
       }
     }
-  };
+  }
 
   const handleCancel = () => {
-    setOpen(false);
-  };
+    setOpen(false)
+  }
 
   const onFinish = (values) => {
-    
-      axios
-        .patch(
-          `http://localhost:8000/post/${post.id}`,
-          {
-            title: values.title ? values.title : formData.title,
-            content: values.content ? values.content : formData.content,
-            post_time: dateCurrent,
-            image: imagebase64 ? imagebase64 : formData.image,
-            rating: 1,
-            user_id: formData.user_id,
-            place_id: 1,
+    axios
+      .patch(
+        `http://localhost:8000/post/${post.id}`,
+        {
+          title: values.title ? values.title : formData.title,
+          content: values.content ? values.content : formData.content,
+          post_time: dateCurrent,
+          image: imagebase64 ? imagebase64 : formData.image,
+          rating: 1,
+          user_id: formData.user_id,
+          place_id: 1,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: " Bearer " + token,
           },
-          {
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: " Bearer " + token,
-            },
-          }
-        )
-        .then((res) => {
-          window.location = "/";
-        })
-        .catch((err) => {
-          alert(err.response.data.detail);
-          console.log(err);
-        });
-      setOpen(false);
-
-  };
+        }
+      )
+      .then((res) => {
+        window.location = "/"
+      })
+      .catch((err) => {
+        alert(err.response.data.detail)
+        console.log(err)
+      })
+    setOpen(false)
+  }
 
   useEffect(() => {
     axios
@@ -169,20 +153,21 @@ export const Post = ({post}) => {
         },
       })
       .then(async (res) => {
-        const dt = res.data;
+        const dt = res.data
         setProfile({
           name: dt.name,
           email: dt.email,
           gender: dt.gender ? "Nam" : "Nữ",
           age: dt.age,
           image: dt.image,
-        });
-        setImage(dt.image);
+        })
+        setImage(dt.image)
       })
-      .catch((err) => console.log(err));
-  }, []);
+      .catch((err) => console.log(err))
+  }, [])
 
   const handleLike = (postId, userId) => {
+    setLikes(likes + 1)
     axios
       .post(
         "http://localhost:8000/like/",
@@ -197,11 +182,12 @@ export const Post = ({post}) => {
           },
         }
       )
-      .then((res) => console.log(res.data))
-      .catch((err) => console.log(err));
-  };
+      .then((res) => console.log("res: ", res))
+      .catch((err) => console.log(err))
+  }
 
-  const handleDelateLike = (postId, userId) => {
+  const handleDeleteLike = (postId, userId) => {
+    setLikes(likes - 1)
     axios
       .delete(
         `http://localhost:8000/like/${postId}/{user_like_id}?like_user_id=${userId}`,
@@ -213,20 +199,20 @@ export const Post = ({post}) => {
         }
       )
       .then((res) => console.log(res.data))
-      .catch((err) => console.log(err));
-  };
+      .catch((err) => console.log(err))
+  }
 
   function imageUploaded() {
-    var file = document.querySelector("input[type=file]")["files"][0];
+    var file = document.querySelector("input[type=file]")["files"][0]
     if (file) {
-      var reader = new FileReader();
+      var reader = new FileReader()
       reader.onload = function () {
-        base64String = reader.result.replace("data:", "").replace(/^.+,/, "");
-        setImage(base64String);
-      };
-      reader.readAsDataURL(file);
+        base64String = reader.result.replace("data:", "").replace(/^.+,/, "")
+        setImage(base64String)
+      }
+      reader.readAsDataURL(file)
     }
-    setImage(formData.image);
+    setImage(formData.image)
   }
 
   return (
@@ -244,20 +230,21 @@ export const Post = ({post}) => {
               <span className="date">{moment(post.post_time).fromNow()}</span>
             </div>
           </div>
-          {(post.user_id == myId)? 
-          <Dropdown.Button
-            menu={{items, onClick: handleAction}}
-            className="action"
-            onClick={handleAction}
-          />
-            :<></>
-        }
-          
+          {post.user_id == myId ? (
+            <Dropdown.Button
+              menu={{ items, onClick: handleAction }}
+              className="action"
+              onClick={handleAction}
+            />
+          ) : (
+            <></>
+          )}
+
           <Modal
             open={open}
             title="Edit post"
-            okButtonProps={{style: {display: "none"}}}
-            cancelButtonProps={{style: {display: "none"}}}
+            okButtonProps={{ style: { display: "none" } }}
+            cancelButtonProps={{ style: { display: "none" } }}
             onCancel={handleCancel}
           >
             {formData.title != null && (
@@ -265,7 +252,7 @@ export const Post = ({post}) => {
                 name="create_post"
                 form={form}
                 className="create_post_form"
-                initialValues={{remember: false}}
+                initialValues={{ remember: false }}
                 onFinish={onFinish}
                 scrollToFirstError
               >
@@ -321,33 +308,40 @@ export const Post = ({post}) => {
           <div className="item">
             {liked ? (
               <HeartFilled
-                style={{color: "red"}}
+                style={{ color: "red" }}
                 onClick={() => {
-                  handleDelateLike(post.id, myInfo.id);
-                  window.location.reload();
+                  handleDeleteLike(post.id, myInfo.id)
+                  setLiked(false)
                 }}
               />
             ) : (
               <HeartOutlined
                 onClick={() => {
                   if (myInfo === null) {
-                    navigate("/login");
+                    navigate("/login")
                   } else {
-                    handleLike(post.id, myInfo.id);
-                    window.location.reload();
+                    handleLike(post.id, myInfo.id)
+                    setLiked(true)
                   }
                 }}
               />
             )}
-            {post.likes.length} Likes
+            {/* {post.likes.length} Likes */}
+            {likes} Likes
           </div>
           <div className="item" onClick={() => setCommentOpen(!commentOpen)}>
             <AliwangwangOutlined />
-            {post.comments.length} Comments
+            {comments.length} Comments
           </div>
         </div>
-        {commentOpen && <Comments comments={post.comments} post_id={post.id} />}
+        {commentOpen && (
+          <Comments
+            comments={comments}
+            setComments={setComments}
+            post_id={post.id}
+          />
+        )}
       </div>
     </div>
-  );
-};
+  )
+}

@@ -1,26 +1,27 @@
-import axios from "axios";
-import React, {useEffect, useState} from "react";
-import useMyInfo from "../../../useMyInfo";
-import useToken from "../../../useToken";
-import {Comment} from "./Comment";
-import "./comments.css";
+import axios from "axios"
+import React, { useState } from "react"
+import useMyInfo from "../../../useMyInfo"
+import useToken from "../../../useToken"
+import { Comment } from "./Comment"
+import "./comments.css"
 
-export const Comments = ({comments, post_id}) => {
-  const {myInfo} = useMyInfo();
-  const {token} = useToken();
-  const [message, setMessage] = useState("");
+export const Comments = ({ comments, post_id, setComments }) => {
+  const { myInfo } = useMyInfo()
+  const { token } = useToken()
+  const [message, setMessage] = useState("")
 
-  const d = new Date();
-  let month = d.getMonth() + 1;
-  var date = d.getFullYear() + "-" + month + "-" + d.getDate();
-  var time = d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds();
-  var dateCurrent = date + " " + time;
+  const d = new Date()
+  let month = d.getMonth() + 1
+  var date = d.getFullYear() + "-" + month + "-" + d.getDate()
+  var time = d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds()
+  var dateCurrent = date + " " + time
 
   const handleChange = (event) => {
-    setMessage(event.target.value);
-  };
+    setMessage(event.target.value)
+  }
 
   const handleComment = (postId, userId, content) => {
+    console.log(dateCurrent)
     axios
       .post(
         "http://localhost:8000/comment/",
@@ -37,9 +38,10 @@ export const Comments = ({comments, post_id}) => {
           },
         }
       )
-      .then((res) => console.log(res.data))
-      .catch((err) => console.log(err));
-  };
+      .then((res) => setComments((prev) => [...prev, res.data]))
+      .then(() => setMessage(""))
+      .catch((err) => console.log(err))
+  }
 
   return (
     <div className="comments">
@@ -59,8 +61,8 @@ export const Comments = ({comments, post_id}) => {
           />
           <button
             onClick={() => {
-              handleComment(post_id, myInfo.id, message);
-              window.location.reload();
+              handleComment(post_id, myInfo.id, message)
+              // window.location.reload()
             }}
           >
             Send
@@ -68,8 +70,13 @@ export const Comments = ({comments, post_id}) => {
         </div>
       )}
       {comments.map((comment) => (
-        <Comment comment={comment} key={comment.id} />
+        <Comment
+          comment={comment}
+          key={comment.id}
+          comments={comments}
+          setComments={setComments}
+        />
       ))}
     </div>
-  );
-};
+  )
+}

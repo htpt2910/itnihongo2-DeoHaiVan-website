@@ -1,23 +1,24 @@
-import {DeleteTwoTone, SearchOutlined} from "@ant-design/icons";
-import {Modal, Popconfirm, Select, Space, Table} from "antd";
-import React, {useEffect, useState} from "react";
-import "./styles.css";
-import axios from "axios";
-import useToken from "../../../useToken";
+import { DeleteTwoTone, SearchOutlined } from "@ant-design/icons"
+import { Modal, Popconfirm, Select, Table } from "antd"
+import axios from "axios"
+import React, { useEffect, useState } from "react"
+import useToken from "../../../useToken"
+import "./styles.css"
 export const PostControlComponent = () => {
-  const [filteredInfo, setFilteredInfo] = useState({});
-  const [sortedInfo, setSortedInfo] = useState({});
-  const [data, setData] = useState([]);
-  const [modalData, setModalData] = useState([]);
-  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [filteredInfo, setFilteredInfo] = useState({})
+  const [sortedInfo, setSortedInfo] = useState({})
+  const [data, setData] = useState([])
+  const [modalData, setModalData] = useState([])
+  const [isModalVisible, setIsModalVisible] = useState(false)
 
-  const {token} = useToken();
+  const { token } = useToken()
+  console.log("token: ", token)
 
   const handleChange = (pagination, filters, sorter) => {
-    console.log("Various parameters", pagination, filters, sorter);
-    setFilteredInfo(filters);
-    setSortedInfo(sorter);
-  };
+    console.log("Various parameters", pagination, filters, sorter)
+    setFilteredInfo(filters)
+    setSortedInfo(sorter)
+  }
 
   const handleDelete = (id) => {
     axios
@@ -28,8 +29,8 @@ export const PostControlComponent = () => {
         },
       })
       .then(() => setData((preData) => preData.filter((m) => m.id !== id)))
-      .catch((err) => console.log(err));
-  };
+      .catch((err) => console.log(err))
+  }
 
   useEffect(() => {
     axios
@@ -40,8 +41,8 @@ export const PostControlComponent = () => {
         },
       })
       .then((res) => setData(res.data))
-      .catch((err) => console.log(err));
-  }, []);
+      .catch((err) => console.log("err: ", err))
+  }, [])
 
   const handleApprove = async (id, value) => {
     const res = await axios.get(`http://localhost:8000/posts/${id}`, {
@@ -49,9 +50,9 @@ export const PostControlComponent = () => {
         "Content-Type": "application/json",
         Authorization: " Bearer " + token,
       },
-    });
+    })
 
-    const post = res.data;
+    const post = res.data
 
     axios
       .patch(
@@ -74,9 +75,8 @@ export const PostControlComponent = () => {
           },
         }
       )
-      .then((res) => console.log(res.data))
-      .catch((res) => console.log(res));
-  };
+      .then((res) => console.log("res patch:", res.data))
+  }
 
   const columns = [
     {
@@ -152,16 +152,16 @@ export const PostControlComponent = () => {
         return (
           <div>
             <p
-              style={{color: "#3383FF"}}
+              style={{ color: "#3383FF" }}
               onClick={() => {
-                setModalData(record);
-                setIsModalVisible(true);
+                setModalData(record)
+                setIsModalVisible(true)
               }}
             >
               View
             </p>
           </div>
-        );
+        )
       },
       width: "7%",
     },
@@ -178,10 +178,10 @@ export const PostControlComponent = () => {
                 : "Denied"
               : "Awaiting"
           }
-          style={{width: 120}}
+          style={{ width: 120 }}
           onChange={(value) => {
-            console.log(value);
-            handleApprove(record.id, value);
+            console.log(value)
+            handleApprove(record.id, value)
           }}
           options={[
             {
@@ -215,10 +215,11 @@ export const PostControlComponent = () => {
         ) : null,
       width: "5%",
     },
-  ];
+  ]
   return (
     <>
       <div className="postContainer">
+        <p>asdfghjkl</p>
         <div className="inputSearch">
           <input className="input" type="text" placeholder="Search..." />
           <div className="btnSearch">
@@ -240,7 +241,7 @@ export const PostControlComponent = () => {
           onCancel={() => setIsModalVisible(false)}
           width="50%"
           height="70%"
-          okButtonProps={{style: {display: "none"}}}
+          okButtonProps={{ style: { display: "none" } }}
           bodyStyle={{
             overflowY: "auto",
             maxHeight: "calc(100vh - 250px)",
@@ -251,12 +252,12 @@ export const PostControlComponent = () => {
             <img
               src={"data:image/png;base64," + modalData.image}
               alt=""
-              style={{width: "100%", margin: "20px 0px"}}
+              style={{ width: "100%", margin: "20px 0px" }}
             />
             <p>{modalData.content}</p>
           </div>
         </Modal>
       </div>
     </>
-  );
-};
+  )
+}
