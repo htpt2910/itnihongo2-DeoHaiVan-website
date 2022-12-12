@@ -54,6 +54,7 @@
 
 .date {
   font-size: 12px;
+  width: 200px;
 }
 
 .action{
@@ -89,4 +90,9 @@
   gap: 10px;
   cursor: pointer;
   font-size: 14px;
+}
+
+.title-p {
+  font-weight: bold;
+  font-size: 20px;
 }
