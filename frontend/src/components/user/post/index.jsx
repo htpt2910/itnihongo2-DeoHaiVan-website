@@ -74,7 +74,7 @@ export const Post = ({ post }) => {
   let base64String = ""
 
   const handleAction = async (e) => {
-    if (e.key == 1) {
+    if (e.key === 1) {
       setOpen(true)
       try {
         await axios
@@ -230,7 +230,7 @@ export const Post = ({ post }) => {
               <span className="date">{moment(post.post_time).fromNow()}</span>
             </div>
           </div>
-          {post.user_id == myInfo?.id ? (
+          {post.user_id === myInfo?.id ? (
             <Dropdown.Button
               menu={{ items, onClick: handleAction }}
               className="action"
