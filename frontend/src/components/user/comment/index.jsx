@@ -1,7 +1,6 @@
 import axios from "axios"
 import React, { useState } from "react"
 import { useContext } from "react"
-import { useEffect } from "react"
 import { UserContext } from "../../../userContext"
 import useToken from "../../../useToken"
 import { Comment } from "./Comment"

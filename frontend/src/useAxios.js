@@ -1,18 +1,16 @@
 import { useState } from 'react';
 import axios from 'axios';
-// import useToken from './useToken';
 
 axios.defaults.baseURL = 'http://localhost:8000';
 
 export const useAxios = () => {
-    const [response, setResponse] = useState(null);
+    const [response, setResponse] = useState({is_admin:false});
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(true);
-    // const {token} = useToken(null)
-    // axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+
   
     const fetchData = ({url, headers, body, method}) => {
-          return axios[method](url, body, headers)
+          return axios({ method: method, url: url, data: body, headers: headers })
           .then((res) => {
               setResponse(res.data);
           })

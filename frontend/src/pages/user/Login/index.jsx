@@ -103,7 +103,7 @@ export const Login = () =>  {
                             extra={[
                               <Button type="primary" key="success" onClick={handleOk}>
                                 Go Home
-                              </Button>
+                              </Button>                            
                             ]}
                           />}
                     </div>
