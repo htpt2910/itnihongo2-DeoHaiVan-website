@@ -1,11 +1,12 @@
 import { Button, Form, Input, Modal } from "antd"
 import axios from "axios"
 import React, { useEffect, useState } from "react"
+import { useContext } from "react"
 import { useNavigate } from "react-router-dom"
 import { Footer } from "../../../components/user/Footer"
 import { Posts } from "../../../components/user/posts"
 import { Stories } from "../../../components/user/stories"
-import useMyInfo from "../../../useMyInfo"
+import { UserContext } from "../../../userContext"
 import useToken from "../../../useToken"
 import "./homepage.css"
 
@@ -19,11 +20,11 @@ export const Home = () => {
   const [userid, seUserid] = useState()
   const navigate = useNavigate()
   const { token } = useToken()
-  const { setMyInfo } = useMyInfo()
   const [open, setOpen] = useState(false)
 
   const [form] = Form.useForm()
   const [imagebase64, setImage] = useState()
+  const { setMyInfo } = useContext(UserContext)
   var dateCurrent = date + " " + time
 
   useEffect(() => {
@@ -36,10 +37,10 @@ export const Home = () => {
       })
       .then((res) => {
         const dt = res.data
-        setMyInfo(dt)
         if (dt.is_admin) {
           navigate("/admin")
         }
+        setMyInfo(dt)
         seUserid(dt.id)
       })
       .catch((err) => console.log(err))

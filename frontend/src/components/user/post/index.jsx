@@ -8,7 +8,6 @@ import axios from "axios"
 import moment from "moment"
 import React, { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
-import useMyInfo from "../../../useMyInfo"
 import useToken from "../../../useToken"
 import { Comments } from "../comment"
 import "./post.css"
@@ -18,7 +17,7 @@ export const Post = ({ post }) => {
   const [commentOpen, setCommentOpen] = useState(false)
   const navigate = useNavigate()
   const { token } = useToken()
-  const { myInfo } = useMyInfo()
+  const [ myInfo, setMyInfo ] = useState()
   const [likes, setLikes] = useState(post.likes.length)
   const [comments, setComments] = useState(post.comments)
 
@@ -50,6 +49,17 @@ export const Post = ({ post }) => {
   })
 
   useEffect(() => {
+    axios
+      .get("http://localhost:8000/users/me", {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: " Bearer " + token,
+        },
+      })
+      .then((res) => {
+        setMyInfo(res.data)
+      })
+      .catch((err) => console.log(err))
     if (myInfo) {
       post.likes.map((i) => {
         if (i.like_user_id === myInfo.id) {

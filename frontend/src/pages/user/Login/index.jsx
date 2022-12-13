@@ -17,9 +17,9 @@ export const Login = () =>  {
   const showModal = () => {
     setIsModalOpen(true);
   };
-  const handleOk = (token) => {
+  const handleOk = () => {
     setIsModalOpen(false);
-    setToken(token)
+    setToken(response)
     navigate('/')
     
   };
@@ -90,22 +90,22 @@ export const Login = () =>  {
                               status="warning"
                               title="There are some problems with your operation."
                               extra={
-                                <Button type="primary" key="console" onClick={handleCancel}>
+                                <Button type="primary" key="failed" onClick={handleCancel}>
                                   Check Again
                                 </Button>
                               }
                             />
                         )}
-                        <div>{response && 
+                        {response && 
                           <Result
                             status="success"
                             title="Successfully Logged!"
                             extra={[
-                              <Button type="primary" key="console" onClick={handleOk(response)}>
+                              <Button type="primary" key="success" onClick={handleOk}>
                                 Go Home
                               </Button>
                             ]}
-                          />}</div>
+                          />}
                     </div>
                 )}
           </Modal>          

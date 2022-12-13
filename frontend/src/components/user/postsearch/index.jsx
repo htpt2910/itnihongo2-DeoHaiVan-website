@@ -7,19 +7,19 @@ import {
 import { Button, Dropdown, Form, Input, Modal } from "antd"
 import axios from "axios"
 import moment from "moment"
-import React, { useEffect, useState } from "react"
+import React, { useContext, useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
-import useMyInfo from "../../../useMyInfo"
 import useToken from "../../../useToken"
 import { Comments } from "../comment"
 import "./post.css"
+import { UserContext } from "../../../userContext";
 
 export const Post_Search = ({ post }) => {
   const [liked, setLiked] = useState(false)
   const [commentOpen, setCommentOpen] = useState(false)
   const navigate = useNavigate()
   const { token } = useToken()
-  const { myInfo } = useMyInfo()
+  const { myInfo } = useContext(UserContext)
   const [likes, setLikes] = useState(post.likes.length)
   const [comments, setComments] = useState(post.comments)
 
