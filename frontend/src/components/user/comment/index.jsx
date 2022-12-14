@@ -1,6 +1,8 @@
-import axios from "axios"
+import { Spin } from "antd"
 import React, { useState } from "react"
+import { useEffect } from "react"
 import { useContext } from "react"
+import { useAxios } from "../../../useAxios"
 import { UserContext } from "../../../userContext"
 import useToken from "../../../useToken"
 import { Comment } from "./Comment"
@@ -10,6 +12,7 @@ export const Comments = ({ comments, post_id, setComments }) => {
   const { myInfo }  = useContext(UserContext)
   const { token } = useToken()
   const [message, setMessage] = useState("")
+  const { fetchData, response, loading} = useAxios();
 
   const d = new Date()
   let month = d.getMonth() + 1
@@ -20,32 +23,31 @@ export const Comments = ({ comments, post_id, setComments }) => {
   const handleChange = (event) => {
     setMessage(event.target.value)
   }
-
+  useEffect(() => {
+    if(response.content){
+    setComments((prev) => [...prev, response])
+    setMessage("")
+  }
+  }, [response])
   const handleComment = (postId, userId, content) => {
-    console.log(dateCurrent)
-    axios
-      .post(
-        "http://localhost:8000/comment/",
-        {
+    fetchData({
+        url:'/comment/',
+        method:'post',
+        body:{
           content: content,
           comment_time: dateCurrent,
           comment_user_id: userId,
           post_id: postId,
         },
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: " Bearer " + token,
-          },
-        }
-      )
-      .then((res) => setComments((prev) => [...prev, res.data]))
-      .then(() => setMessage(""))
-      .catch((err) => console.log(err))
+        headers:{
+          'Content-Type': 'application/json',
+          Authorization: ` Bearer ${token}`,
+        },
+      });
   }
   return (
     <div className="comments">
-      {myInfo !== null && (
+      {myInfo.email != null && (
         <div className="write">
           <img
             className="avatar"
@@ -63,7 +65,7 @@ export const Comments = ({ comments, post_id, setComments }) => {
             onClick={() => {
               handleComment(post_id, myInfo.id, message)
             }}
-          >
+          > 
             Send
           </button>
         </div>

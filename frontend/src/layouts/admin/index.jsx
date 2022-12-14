@@ -1,46 +1,33 @@
 import { MenuFoldOutlined, MenuUnfoldOutlined } from "@ant-design/icons"
-import { Layout, Menu } from "antd"
+import { Layout, Menu, Spin } from "antd"
 import { UserOutlined, VideoCameraOutlined, LogoutOutlined } from "@ant-design/icons"
 import "antd/dist/antd.css"
-import axios from "axios"
 import React, { useEffect, useState } from "react"
-import { Link, useNavigate } from "react-router-dom"
-import logo from "../../assets/mountain.png"
+import { Link } from "react-router-dom"
 import useToken from "../../useToken"
 import "./layout.css"
+import { useAxios } from "../../useAxios"
 
 const { Header, Sider, Content } = Layout
 const AdminLayout = ({ childcomp }) => {
-  let navigate = useNavigate()
   const [collapsed, setCollapsed] = useState(false)
   const { token } = useToken();
-  const [ admin, setAdmin] = useState()
+  const { fetchData:fetchInfo, response:info, loading:info_loading} = useAxios();
 
   useEffect(() => {
-  axios
-    .get("http://localhost:8000/users/me", {
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': ' Bearer ' + token
-      }
+    fetchInfo({
+      url:'/users/me',
+      method:'get',
+      headers:{
+        "Content-Type": "application/json",
+        Authorization: ` Bearer ${token}`,
+      },
     })
-    .then((res) => {
-      const dt = res.data
-      if (dt.is_admin)
-      {
-        setAdmin(dt.name)
-      }
-      else
-      {
-        navigate("/")
-        alert('Bạn không có quyền truy cập!!!')
-      }
-    })
-    .catch((err) =>{ navigate("/");alert('Bạn không có quyền truy cập!!')})
   }, [])
-  if(admin)
   return (
-    <Layout>
+    <>
+    {info_loading?<Spin />:
+    <Layout>  
       <Sider trigger={null} collapsible collapsed={collapsed} >
         <div className="logo-admin">
           
@@ -88,9 +75,8 @@ const AdminLayout = ({ childcomp }) => {
               onClick: () => setCollapsed(!collapsed),
             }
           )}
-          <img src={logo} alt="logo" className="logo" />
-          <a className="mount" href="/" style={{textDecoration:'None'}}>Deo Hai Van</a>
-          {<span className="userlogin" style={{color:'white',marginLeft: '700px'}}>{admin}</span>}
+          <img src={"data:image/png;base64," + info.image} alt="logo" className="logo" />
+          <a className="mount" href="/" style={{textDecoration:'None'}}>{info.name}</a>
         </Header>
         <Content  
           className="site-layout-background"
@@ -103,7 +89,8 @@ const AdminLayout = ({ childcomp }) => {
           {childcomp}
         </Content>
       </Layout>
-    </Layout>
+    </Layout>}
+    </>
   )
 }
 

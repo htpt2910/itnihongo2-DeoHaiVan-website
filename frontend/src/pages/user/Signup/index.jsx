@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Button,
   Checkbox,
@@ -12,6 +12,7 @@ import {
 import './signup.css'
 import { useAxios } from '../../../useAxios';
 import { useNavigate } from 'react-router-dom';
+import useToken from '../../../useToken';
 const { Option } = Select;
 
 const formItemLayout = {
@@ -38,11 +39,13 @@ const tailFormItemLayout = {
 };
 
 const SignupForm = () => {
+  const {token} = useToken()
   const [form] = Form.useForm();
   const [ imagebase64, setImage] = useState();
   const navigate = useNavigate()
   const { fetchData, response, error, loading } = useAxios();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const { fetchData:fetchUser, response:r_user, loading:l_user } = useAxios();
 
   const showModal = () => {
     setIsModalOpen(true);
@@ -101,9 +104,20 @@ const SignupForm = () => {
       </Select>
     </Form.Item>
   );
-
+  useEffect(() => {
+    fetchUser({
+        url:'/users/me',
+        method:'get',
+        headers:{
+          "Content-Type": "application/json",
+          Authorization: ` Bearer ${token}`,
+        },
+      })
+  }, [])
   return (
-    <div className='register'>
+    <>
+    {l_user ? <Spin />:(!r_user.email?
+    (<div className='register'>
     <Form
       {...formItemLayout}
       form={form}
@@ -272,7 +286,8 @@ const SignupForm = () => {
         Or <a href="\login">Login now!</a>
       </Form.Item>
     </Form>
-    </div>
+    </div>):(navigate('/')))}
+  </>
   );
 };
 

@@ -1,18 +1,17 @@
 import { DeleteTwoTone, SearchOutlined } from "@ant-design/icons"
-import { Modal, Popconfirm, Select, Table } from "antd"
-import axios from "axios"
+import { Modal, Popconfirm, Select, Spin, Table } from "antd"
 import React, { useEffect, useState } from "react"
+import { useAxios } from "../../../useAxios"
 import useToken from "../../../useToken"
 import "./styles.css"
 export const PostControlComponent = () => {
   const [filteredInfo, setFilteredInfo] = useState({})
   const [sortedInfo, setSortedInfo] = useState({})
-  const [data, setData] = useState([])
   const [modalData, setModalData] = useState([])
   const [isModalVisible, setIsModalVisible] = useState(false)
+  const {fetchData:fetchPost,response:r_post,loading:l_post} = useAxios()
 
   const { token } = useToken()
-  console.log("token: ", token)
 
   const handleChange = (pagination, filters, sorter) => {
     console.log("Various parameters", pagination, filters, sorter)
@@ -21,61 +20,49 @@ export const PostControlComponent = () => {
   }
 
   const handleDelete = (id) => {
-    axios
-      .delete(`http://localhost:8000/post/${id}`, {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: " Bearer " + token,
-        },
-      })
-      .then(() => setData((preData) => preData.filter((m) => m.id !== id)))
-      .catch((err) => console.log(err))
+    fetchPost({
+      url:`/post/${id}`,
+      method:'delete',
+      headers:{
+        "Content-Type": "application/json",
+        Authorization: ` Bearer ${token}`,
+      },
+    })
+    window.location.reload()
   }
 
   useEffect(() => {
-    axios
-      .get("http://localhost:8000/posts", {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: " Bearer " + token,
-        },
-      })
-      .then((res) => setData(res.data))
-      .catch((err) => console.log("err: ", err))
+    fetchPost({
+      url:`/posts`,
+      method:'get',
+      headers:{
+        'Content-Type': 'application/json',
+        Authorization: ` Bearer ${token}`,
+      },
+    });
   }, [])
 
-  const handleApprove = async (id, value) => {
-    const res = await axios.get(`http://localhost:8000/posts/${id}`, {
-      headers: {
+  const handleApprove = (record, value) => {
+    fetchPost({
+      url:`/post/${record.id}`,
+      method:'patch',
+      body:{
+        title: record.title,
+        content: record.content,
+        post_time: record.post_time,
+        image: record.image,
+        rating: record.rating,
+        user_id: record.user_id,
+        place_id: record.place_id,
+        is_active: value === "Awaiting" ? false : true,
+        is_verify: value === "Approved" ? true : false,
+      },
+      headers:{
         "Content-Type": "application/json",
         Authorization: " Bearer " + token,
       },
-    })
-
-    const post = res.data
-
-    axios
-      .patch(
-        `http://localhost:8000/post/${id}`,
-        {
-          title: post.title,
-          content: post.content,
-          post_time: post.post_time,
-          image: post.image,
-          rating: post.rating,
-          user_id: post.user_id,
-          place_id: post.place_id,
-          is_active: value === "Awaiting" ? false : true,
-          is_verify: value === "Approved" ? true : false,
-        },
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: " Bearer " + token,
-          },
-        }
-      )
-      .then((res) => console.log("res patch:", res.data))
+    });
+    window.location.reload()
   }
 
   const columns = [
@@ -180,8 +167,7 @@ export const PostControlComponent = () => {
           }
           style={{ width: 120 }}
           onChange={(value) => {
-            console.log(value)
-            handleApprove(record.id, value)
+            handleApprove(record, value)
           }}
           options={[
             {
@@ -205,7 +191,7 @@ export const PostControlComponent = () => {
       title: "Delete",
       key: "action",
       render: (_, record) =>
-        data.length >= 1 ? (
+        r_post.length >= 1 ? (
           <Popconfirm
             title="Sure to delete?"
             onConfirm={() => handleDelete(record.id)}
@@ -218,8 +204,8 @@ export const PostControlComponent = () => {
   ]
   return (
     <>
+    {l_post?<Spin />:
       <div className="postContainer">
-        <p>asdfghjkl</p>
         <div className="inputSearch">
           <input className="input" type="text" placeholder="Search..." />
           <div className="btnSearch">
@@ -229,7 +215,7 @@ export const PostControlComponent = () => {
         <div className="tableContainer">
           <Table
             columns={columns}
-            dataSource={data}
+            dataSource={r_post}
             onChange={handleChange}
             className="table"
           />
@@ -257,7 +243,7 @@ export const PostControlComponent = () => {
             <p>{modalData.content}</p>
           </div>
         </Modal>
-      </div>
+      </div>}
     </>
   )
 }

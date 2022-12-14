@@ -4,24 +4,25 @@ import {
   HeartFilled,
   HeartOutlined,
 } from "@ant-design/icons"
-import { Button, Dropdown, Form, Input, Modal } from "antd"
-import axios from "axios"
+import { Button, Dropdown, Form, Input, Modal, Spin } from "antd"
 import moment from "moment"
-import React, { useContext, useEffect, useState } from "react"
+import React, { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import useToken from "../../../useToken"
 import { Comments } from "../comment"
 import "./post.css"
-import { UserContext } from "../../../userContext";
+import { useAxios } from "../../../useAxios";
 
-export const Post_Search = ({ post }) => {
+export const Post_Search = ({ post, myInfo }) => {
   const [liked, setLiked] = useState(false)
   const [commentOpen, setCommentOpen] = useState(false)
   const navigate = useNavigate()
   const { token } = useToken()
-  const { myInfo } = useContext(UserContext)
   const [likes, setLikes] = useState(post.likes.length)
   const [comments, setComments] = useState(post.comments)
+  const { fetchData:fetchLike} = useAxios();
+  const { fetchData:fetchUser, response:r_user, loading:l_user} = useAxios();
+  const { fetchData:fetchPost, response:r_post} = useAxios();
 
   const { TextArea } = Input
   const items = [
@@ -41,14 +42,6 @@ export const Post_Search = ({ post }) => {
   var time = d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds()
 
   const [imagebase64, setImage] = useState()
-  const [profile, setProfile] = useState({
-    name: "",
-    email: "",
-    phone: "fake number",
-    gender: false,
-    age: 0,
-    image: "",
-  })
 
   useEffect(() => {
     if (myInfo) {
@@ -62,15 +55,7 @@ export const Post_Search = ({ post }) => {
 
   const [open, setOpen] = useState(false)
   const [form] = Form.useForm()
-  const [formData, setFormData] = useState({
-    title: null,
-    content: null,
-    post_time: null,
-    image: null,
-    rating: null,
-    user_id: null,
-    place_id: null,
-  })
+
   var dateCurrent = date + " " + time
   let base64String = ""
 
@@ -78,33 +63,28 @@ export const Post_Search = ({ post }) => {
     if (e.key === 1) {
       setOpen(true)
       try {
-        await axios
-          .get(`http://localhost:8000/posts/${post.id}`, {
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: " Bearer " + token,
-            },
-          })
-          .then((res) => {
-            setFormData(res.data)
-            console.log(res.data)
-          })
+        fetchPost({
+          url:`/posts/${post.id}`,
+          method:'get',
+          headers:{
+            'Content-Type': 'application/json',
+            Authorization: ` Bearer ${token}`,
+          },
+        });
       } catch (error) {
         console.log(error)
       }
     } else {
       try {
-        console.log(post.id)
-        axios
-          .delete(`http://localhost:8000/post/${post.id}`, {
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: " Bearer " + token,
-            },
-          })
-          .then((res) => {
-            window.location = "/"
-          })
+        fetchPost({
+          url:`/post/${post.id}`,
+          method:'delete',
+          headers:{
+            'Content-Type': 'application/json',
+            Authorization: ` Bearer ${token}`,
+          },
+        });
+        window.location.reload()
       } catch (error) {
         console.log(error)
       }
@@ -116,91 +96,64 @@ export const Post_Search = ({ post }) => {
   }
 
   const onFinish = (values) => {
-    axios
-      .patch(
-        `http://localhost:8000/post/${post.id}`,
-        {
-          title: values.title ? values.title : formData.title,
-          content: values.content ? values.content : formData.content,
-          post_time: dateCurrent,
-          image: imagebase64 ? imagebase64 : formData.image,
-          rating: 1,
-          user_id: formData.user_id,
-          place_id: 1,
-        },
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: " Bearer " + token,
-          },
-        }
-      )
-      .then((res) => {
-        window.location = "/"
-      })
-      .catch((err) => {
-        alert(err.response.data.detail)
-        console.log(err)
-      })
+    fetchPost({
+      url:`/post/${post.id}`,
+      method:'patch',
+      body:{
+        title: values.title ? values.title : r_post.title,
+        content: values.content ? values.content : r_post.content,
+        post_time: dateCurrent,
+        image: imagebase64 ? imagebase64 : r_post.image,
+        rating: 1,
+        user_id: r_post.user_id,
+        place_id: 1,
+      },
+      headers:{
+        'Content-Type': 'application/json',
+        Authorization: ` Bearer ${token}`,
+      },
+    });
     setOpen(false)
+    window.location.reload()
   }
 
   useEffect(() => {
-    axios
-      .get("http://localhost:8000/users/" + post.user_id, {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: " Bearer " + token,
-        },
-      })
-      .then(async (res) => {
-        const dt = res.data
-        setProfile({
-          name: dt.name,
-          email: dt.email,
-          gender: dt.gender ? "Nam" : "Nữ",
-          age: dt.age,
-          image: dt.image,
-        })
-        setImage(dt.image)
-      })
-      .catch((err) => console.log(err))
+    fetchUser({
+      url:`/users/${post.user_id}`,
+      method:'get',
+      headers:{
+        'Content-Type': 'application/json',
+        Authorization: ` Bearer ${token}`,
+      },
+    });
   }, [])
 
   const handleLike = (postId, userId) => {
     setLikes(likes + 1)
-    axios
-      .post(
-        "http://localhost:8000/like/",
-        {
-          like_user_id: userId,
-          post_id: postId,
-        },
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: " Bearer " + token,
-          },
-        }
-      )
-      .then((res) => console.log("res: ", res))
-      .catch((err) => console.log(err))
+    fetchLike({
+      url:'/like/',
+      method:'post',
+      body:{
+        like_user_id: userId,
+        post_id: postId,
+      },
+      headers:{
+        'Content-Type': 'application/json',
+        Authorization: ` Bearer ${token}`,
+      },
+    });
   }
 
   const handleDeleteLike = (postId, userId) => {
     setLikes(likes - 1)
-    axios
-      .delete(
-        `http://localhost:8000/like/${postId}/{user_like_id}?like_user_id=${userId}`,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: " Bearer " + token,
-          },
-        }
-      )
-      .then((res) => console.log(res.data))
-      .catch((err) => console.log(err))
+    fetchLike({
+      url:`/like/${postId}/{user_like_id}?like_user_id=${userId}`,
+      method:'delete',
+      headers:{
+        'Content-Type': 'application/json',
+        Authorization: ` Bearer ${token}`,
+      },
+    });
   }
 
   function imageUploaded() {
@@ -213,24 +166,25 @@ export const Post_Search = ({ post }) => {
       }
       reader.readAsDataURL(file)
     }
-    setImage(formData.image)
+    setImage(r_post.image)
   }
 
   return (
     <div className="post">
       <div className="post-container" key={post.id}>
         <div className="user">
+        {l_user ? <Spin />:
           <div className="userInfo">
             <img
               className="avatar"
-              src={"data:image/png;base64," + profile.image}
+              src={"data:image/png;base64," + r_user.image}
               alt=""
             />
             <div className="details">
-              <span className="name">{profile.name}</span>
+              <span className="name">{r_user.name}</span>
               <span className="date">{moment(post.post_time).fromNow()}</span>
             </div>
-          </div>
+          </div>}
           {post.user_id === myInfo?.id ? (
             <Dropdown.Button
               menu={{ items, onClick: handleAction }}
@@ -248,7 +202,7 @@ export const Post_Search = ({ post }) => {
             cancelButtonProps={{ style: { display: "none" } }}
             onCancel={handleCancel}
           >
-            {formData.title != null && (
+            {r_post.title != null && (
               <Form
                 name="create_post"
                 form={form}
@@ -262,7 +216,7 @@ export const Post_Search = ({ post }) => {
                     name="title"
                     placeholder="Title..."
                     className="title input-post"
-                    defaultValue={formData.title}
+                    defaultValue={r_post.title}
                   />
                 </Form.Item>
                 <Form.Item name="content" label="Content">
@@ -271,7 +225,7 @@ export const Post_Search = ({ post }) => {
                     rows={4}
                     placeholder="Content..."
                     className="content input-post"
-                    defaultValue={formData.content}
+                    defaultValue={r_post.content}
                   />
                 </Form.Item>
 
@@ -318,7 +272,7 @@ export const Post_Search = ({ post }) => {
             ) : (
               <HeartOutlined
                 onClick={() => {
-                  if (myInfo === null) {
+                  if (myInfo.email == null) {
                     navigate("/login")
                   } else {
                     handleLike(post.id, myInfo.id)

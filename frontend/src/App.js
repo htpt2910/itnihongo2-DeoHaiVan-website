@@ -10,21 +10,19 @@ import Signup from './pages/user/Signup'
 import { Login } from './pages/user/Login'
 import { PostsSearch } from './pages/user/PostsSearch'
 import ProfilePage from "./pages/user/profile"
-import { Navbar } from "./components/user/Navbar"
 import { useState } from "react"
 import NotFound from './components/user/NotFound';
 import { UserContext } from './userContext';
 
 function App() {
   const [postsSearch, setPostsSearch] = useState([])
-  const [myInfo, setMyInfo] = useState()
+  const [myInfo, setMyInfo] = useState({is_admin:false})
   const providerValue = useMemo(() => ({ myInfo, setMyInfo}), [myInfo, setMyInfo])
   return (
     <>
       <Router>
-        <Navbar postsSearch={postsSearch} setPostsSearch={setPostsSearch} />
         <Routes>
-          <Route path="/" exact="true" element={<UserContext.Provider value={providerValue}><Home /></UserContext.Provider>} />
+          <Route path="/" exact="true" element={<UserContext.Provider value={providerValue}><Home postsSearch={postsSearch} setPostsSearch={setPostsSearch}/></UserContext.Provider>} />
           <Route path="/logout" element={<Logout />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/postssearch" element={<PostsSearch postsSearch={postsSearch} setPostsSearch={setPostsSearch}/>} />

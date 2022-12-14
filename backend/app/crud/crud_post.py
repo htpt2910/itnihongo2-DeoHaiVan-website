@@ -24,8 +24,12 @@ def get_post(db: Session, post_id: int):
     return db.query(post_model.Post).filter(post_model.Post.id == post_id).first()
 def get_posts(db: Session, skip: int = 0, limit: int = 100):
     return db.query(post_model.Post).offset(skip).limit(limit).all()
+
+def get_posts_approve(db: Session, skip: int = 0, limit: int = 100):
+    return db.query(post_model.Post).filter(post_model.Post.is_active== True,post_model.Post.is_verify == True).offset(skip).limit(limit).all()
+
 def get_posts_search(db: Session, value:str):
-    return db.query(post_model.Post).filter(post_model.Post.title.contains(value.lower())).all()
+    return db.query(post_model.Post).filter(post_model.Post.title.contains(value.lower()),post_model.Post.is_active== True,post_model.Post.is_verify == True).all()
 
 def delete_post(db: Session, post_id):
     crud_comment.delete_comments(db=db, post_id=post_id)

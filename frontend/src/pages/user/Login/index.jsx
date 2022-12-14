@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
 import { Button, Checkbox, Form, Input, Modal, Result, Spin } from 'antd';
 
@@ -9,9 +9,10 @@ import useToken from '../../../useToken';
 
 
 export const Login = () =>  {
-  const {setToken} = useToken()
+  const {token, setToken} = useToken()
   const navigate = useNavigate()
   const { fetchData, response, error, loading } = useAxios();
+  const { fetchData:fetchUser, response:r_user, loading:l_user } = useAxios();
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const showModal = () => {
@@ -40,8 +41,20 @@ export const Login = () =>  {
       },
     });
   };
+  useEffect(() => {
+    fetchUser({
+        url:'/users/me',
+        method:'get',
+        headers:{
+          "Content-Type": "application/json",
+          Authorization: ` Bearer ${token}`,
+        },
+      })
+  }, [])
   return (
-  <div className="app">
+  <>
+  {l_user ? <Spin />:(!r_user.email?
+  (<div className="app">
     <div className="login-form">
     <a className='title' href='/'>Hải Vân Quán</a>
       <Form
@@ -113,7 +126,8 @@ export const Login = () =>  {
         </Form.Item>
       </Form>
     </div>
-  </div>
+  </div>):(navigate('/')))}
+  </>
   );
 };
 
