@@ -1,7 +1,6 @@
 import React from "react";
 import { Post_Search } from "../postsearch";
-import { useEffect, useState } from "react";
-import axios from "axios";
+import { useEffect } from "react";
 import "./posts.css";
 
 export const PostSearch = ({postsSearch,setPostsSearch}) => {

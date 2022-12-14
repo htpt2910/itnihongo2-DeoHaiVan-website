@@ -1,11 +1,13 @@
 import { Button, Form, Input, Modal } from "antd"
 import axios from "axios"
 import React, { useEffect, useState } from "react"
+import { useContext } from "react"
 import { useNavigate } from "react-router-dom"
 import { Footer } from "../../../components/user/Footer"
 import { Posts } from "../../../components/user/posts"
 import { Stories } from "../../../components/user/stories"
-import useMyInfo from "../../../useMyInfo"
+import { useAxios } from "../../../useAxios"
+import { UserContext } from "../../../userContext"
 import useToken from "../../../useToken"
 import "./homepage.css"
 
@@ -16,62 +18,49 @@ var date = d.getFullYear() + "-" + month + "-" + d.getDate()
 var time = d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds()
 
 export const Home = () => {
-  const [userid, seUserid] = useState()
   const navigate = useNavigate()
   const { token } = useToken()
-  const { setMyInfo } = useMyInfo()
   const [open, setOpen] = useState(false)
+  const { fetchData, response, error } = useAxios();
 
   const [form] = Form.useForm()
   const [imagebase64, setImage] = useState()
+  const { myInfo, setMyInfo } = useContext(UserContext)
   var dateCurrent = date + " " + time
 
   useEffect(() => {
-    axios
-      .get("http://localhost:8000/users/me", {
-        headers: {
+    const fetch = async () =>{
+      const data = await fetchData({
+        url:'/users/me',
+        method:'get',
+        headers:{
           "Content-Type": "application/json",
-          Authorization: " Bearer " + token,
+          Authorization: ` Bearer ${token}`,
         },
       })
-      .then((res) => {
-        const dt = res.data
-        setMyInfo(dt)
-        if (dt.is_admin) {
-          navigate("/admin")
-        }
-        seUserid(dt.id)
-      })
-      .catch((err) => console.log(err))
-  }, [])
+      setMyInfo(response)
+    }
+    fetch().catch(console.log(error))
+  }, [response])
 
   const onFinish = (values) => {
-    axios
-      .post(
-        "http://localhost:8000/post/",
-        {
-          title: values.title,
-          content: values.content,
-          post_time: dateCurrent,
-          image: imagebase64,
-          rating: 1,
-          user_id: userid,
-          place_id: 1,
-        },
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: " Bearer " + token,
-          },
-        }
-      )
-      .then((res) => {
-        window.location = "/"
-      })
-      .catch((err) => {
-        alert(err.response.data.detail)
-        console.log(err)
-      })
+    fetchData({
+      url:'/post/',
+      method:'post',
+      body:{
+        title: values.title,
+        content: values.content,
+        post_time: dateCurrent,
+        image: imagebase64,
+        rating: 1,
+        user_id: myInfo.id,
+        place_id: 1,
+      },
+      headers:{
+        "Content-Type": "application/json",
+        Authorization: ` Bearer ${token}`,
+      },
+    })
     setOpen(false)
   }
   let base64String = ""
@@ -95,7 +84,7 @@ export const Home = () => {
     setOpen(false)
   }
   return (
-    <div>
+    <div>{!response.is_admin && (<div>
       <Stories />
       <>
         <div className="createPost">
@@ -153,6 +142,8 @@ export const Home = () => {
       </>
       <Posts />
       <Footer />
+    </div>)}
+    {response.is_admin && navigate('/admin')}
     </div>
   )
 }

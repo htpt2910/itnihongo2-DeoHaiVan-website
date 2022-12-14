@@ -7,19 +7,19 @@ import {
 import { Button, Dropdown, Form, Input, Modal } from "antd"
 import axios from "axios"
 import moment from "moment"
-import React, { useEffect, useState } from "react"
+import React, { useContext, useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
-import useMyInfo from "../../../useMyInfo"
 import useToken from "../../../useToken"
 import { Comments } from "../comment"
 import "./post.css"
+import { UserContext } from "../../../userContext";
 
 export const Post_Search = ({ post }) => {
   const [liked, setLiked] = useState(false)
   const [commentOpen, setCommentOpen] = useState(false)
   const navigate = useNavigate()
   const { token } = useToken()
-  const { myInfo } = useMyInfo()
+  const { myInfo } = useContext(UserContext)
   const [likes, setLikes] = useState(post.likes.length)
   const [comments, setComments] = useState(post.comments)
 
@@ -75,7 +75,7 @@ export const Post_Search = ({ post }) => {
   let base64String = ""
 
   const handleAction = async (e) => {
-    if (e.key == 1) {
+    if (e.key === 1) {
       setOpen(true)
       try {
         await axios
@@ -231,7 +231,7 @@ export const Post_Search = ({ post }) => {
               <span className="date">{moment(post.post_time).fromNow()}</span>
             </div>
           </div>
-          {post.user_id == myInfo?.id ? (
+          {post.user_id === myInfo?.id ? (
             <Dropdown.Button
               menu={{ items, onClick: handleAction }}
               className="action"

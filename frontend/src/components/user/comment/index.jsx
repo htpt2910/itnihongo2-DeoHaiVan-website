@@ -1,12 +1,13 @@
 import axios from "axios"
 import React, { useState } from "react"
-import useMyInfo from "../../../useMyInfo"
+import { useContext } from "react"
+import { UserContext } from "../../../userContext"
 import useToken from "../../../useToken"
 import { Comment } from "./Comment"
 import "./comments.css"
 
 export const Comments = ({ comments, post_id, setComments }) => {
-  const { myInfo } = useMyInfo()
+  const { myInfo }  = useContext(UserContext)
   const { token } = useToken()
   const [message, setMessage] = useState("")
 
@@ -42,7 +43,6 @@ export const Comments = ({ comments, post_id, setComments }) => {
       .then(() => setMessage(""))
       .catch((err) => console.log(err))
   }
-
   return (
     <div className="comments">
       {myInfo !== null && (
@@ -62,7 +62,6 @@ export const Comments = ({ comments, post_id, setComments }) => {
           <button
             onClick={() => {
               handleComment(post_id, myInfo.id, message)
-              // window.location.reload()
             }}
           >
             Send

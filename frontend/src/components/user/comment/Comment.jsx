@@ -2,14 +2,14 @@ import { DeleteTwoTone } from "@ant-design/icons"
 import { Popconfirm } from "antd"
 import axios from "axios"
 import moment from "moment"
-import { useEffect, useState } from "react"
-import useMyInfo from "../../../useMyInfo"
+import { useContext, useEffect, useState } from "react"
+import { UserContext } from "../../../userContext"
 import useToken from "../../../useToken"
 
 export const Comment = ({ comment, comments, setComments }) => {
   const { token } = useToken()
   const [user, setUser] = useState({})
-  const { myInfo } = useMyInfo()
+  const { myInfo } = useContext(UserContext)
 
   useEffect(() => {
     axios

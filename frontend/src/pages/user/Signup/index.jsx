@@ -4,10 +4,14 @@ import {
   Checkbox,
   Form,
   Input,
+  Modal,
+  Result,
   Select,
+  Spin,
 } from 'antd';
 import './signup.css'
-import axios from 'axios';
+import { useAxios } from '../../../useAxios';
+import { useNavigate } from 'react-router-dom';
 const { Option } = Select;
 
 const formItemLayout = {
@@ -36,29 +40,40 @@ const tailFormItemLayout = {
 const SignupForm = () => {
   const [form] = Form.useForm();
   const [ imagebase64, setImage] = useState();
+  const navigate = useNavigate()
+  const { fetchData, response, error, loading } = useAxios();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const showModal = () => {
+    setIsModalOpen(true);
+  };
+  const handleOk = () => {
+    setIsModalOpen(false);
+    navigate('/login')
+    
+  };
+  const handleCancel = () => {
+    setIsModalOpen(false);
+  };
 
   const onFinish = (values) => {
     console.log('Received values of form: ', values);
-    axios
-      .post("http://localhost:8000/user/", {
-        'email': values.email,
-        'username': values.nickname,
-        'name': values.realname,
-        'gender': (values.gender==='male')?true:false,
-        'age': values.age,
-        'image': imagebase64,
-        'password': values.password
-      },{
-        headers: {
-          'Content-Type': 'application/json',
-        }
-      })
-      .then((res) => {
-        (res.data.username)?(window.location = "/login"):(alert('Sign Up Failed !!!'))
-      })
-      .catch((err) => {
-      alert(err.response.data.detail)
-    })
+    fetchData({
+      url:'/user/',
+      method:'post',
+      body:{
+        email: values.email,
+        username: values.nickname,
+        name: values.realname,
+        gender: (values.gender==='male')?true:false,
+        age: values.age,
+        image: imagebase64,
+        password: values.password
+      },
+      headers:{
+        'Content-Type': 'application/json',
+      },
+    });
   };
 
   let base64String = "";
@@ -218,13 +233,42 @@ const SignupForm = () => {
         {...tailFormItemLayout}
       >
         <Checkbox>
-          I have read the <a href="">agreement</a>
+          I have read the <a href="#/">agreement</a>
         </Checkbox>
       </Form.Item>
       <Form.Item {...tailFormItemLayout}>
-        <Button type="primary" htmlType="submit">
+        <Button type="primary" htmlType="submit" onClick={showModal}>
           Register
         </Button>
+        <Modal open={isModalOpen} footer={null}>
+        {loading ? (
+                <Spin size="large"/>
+            ) : (
+                <div>
+                    {error && (
+                        <Result
+                          status="warning"
+                          title="There are some problems with your operation."
+                          extra={
+                            <Button type="primary" key="console" onClick={handleCancel}>
+                              Check Again
+                            </Button>
+                          }
+                        />
+                    )}
+                    <div>{response && 
+                      <Result
+                        status="success"
+                        title="Successfully Created!"
+                        extra={[
+                          <Button type="primary" key="console" onClick={handleOk}>
+                            Go Login
+                          </Button>
+                        ]}
+                      />}</div>
+                </div>
+            )}
+      </Modal>
         Or <a href="\login">Login now!</a>
       </Form.Item>
     </Form>
