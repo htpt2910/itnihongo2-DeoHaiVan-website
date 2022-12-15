@@ -1,5 +1,5 @@
 import { DeleteTwoTone, SearchOutlined } from "@ant-design/icons"
-import { Modal, Popconfirm, Select, Spin, Table } from "antd"
+import { Modal, notification, Popconfirm, Select, Spin, Table } from "antd"
 import React, { useEffect, useState } from "react"
 import { useAxios } from "../../../useAxios"
 import useToken from "../../../useToken"
@@ -28,21 +28,45 @@ export const PostControlComponent = () => {
         Authorization: ` Bearer ${token}`,
       },
     })
-    window.location.reload()
   }
 
   useEffect(() => {
-    fetchPost({
-      url:`/posts`,
-      method:'get',
-      headers:{
-        'Content-Type': 'application/json',
-        Authorization: ` Bearer ${token}`,
-      },
-    });
+    async function fetchpost(){
+      await fetchPost({
+        url:`/posts/`,
+        method:'get',
+        headers:{
+          'Content-Type': 'application/json',
+          Authorization: ` Bearer ${token}`,
+        },
+      });
+    }
+    fetchpost()
   }, [])
-
+  const openNotification = (data) => {
+    notification.info({
+      message: 'Thông Báo',
+      description:
+        `${data.name} vừa mới tạo một bài đăng mới vào lúc ${data.post_time}, hãy kiểm duyệt ngay.`,
+      duration:10,
+    });
+  };
+  const [websckt, setWebsckt] = useState();
+  useEffect(() => {
+    const url = `ws://localhost:8000/ws/${token}`;
+    const ws = new WebSocket(url);
+    ws.onmessage = (e) => {
+      const msg = JSON.parse(e.data)
+      if(msg.name){
+        openNotification(msg)
+      }
+    };
+    setWebsckt(ws)
+    return () => ws.close();
+  }, []);
   const handleApprove = (record, value) => {
+    (value != "Awaiting" && value == "Approved")?
+    websckt.send(JSON.stringify({user_id:record.user_id,status:true,title:record.title, post_time:record.post_time})):websckt.send(JSON.stringify({user_id:record.user_id,status:false,title:record.title,post_time:record.post_time}))
     fetchPost({
       url:`/post/${record.id}`,
       method:'patch',
@@ -54,14 +78,14 @@ export const PostControlComponent = () => {
         rating: record.rating,
         user_id: record.user_id,
         place_id: record.place_id,
-        is_active: value === "Awaiting" ? false : true,
-        is_verify: value === "Approved" ? true : false,
+        is_active: value == "Approved" ? true : false,
+        is_verify: value == "Awaiting" ? false : true,
       },
       headers:{
         "Content-Type": "application/json",
         Authorization: " Bearer " + token,
       },
-    });
+    })
     window.location.reload()
   }
 
@@ -159,10 +183,10 @@ export const PostControlComponent = () => {
       render: (_, record) => (
         <Select
           defaultValue={
-            record.is_active
-              ? record.is_verify
+            record.is_verify
+              ? (record.is_active
                 ? "Approved"
-                : "Denied"
+                : "Denied")
               : "Awaiting"
           }
           style={{ width: 120 }}

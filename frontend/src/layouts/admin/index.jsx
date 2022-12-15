@@ -1,9 +1,9 @@
 import { MenuFoldOutlined, MenuUnfoldOutlined } from "@ant-design/icons"
-import { Layout, Menu, Spin } from "antd"
+import { Layout, Menu, notification, Spin } from "antd"
 import { UserOutlined, VideoCameraOutlined, LogoutOutlined } from "@ant-design/icons"
 import "antd/dist/antd.css"
 import React, { useEffect, useState } from "react"
-import { Link } from "react-router-dom"
+import { Link, Navigate } from "react-router-dom"
 import useToken from "../../useToken"
 import "./layout.css"
 import { useAxios } from "../../useAxios"
@@ -27,7 +27,7 @@ const AdminLayout = ({ childcomp }) => {
   return (
     <>
     {info_loading?<Spin />:
-    <Layout>  
+    (info.is_admin?<Layout>  
       <Sider trigger={null} collapsible collapsed={collapsed} >
         <div className="logo-admin">
           
@@ -89,7 +89,7 @@ const AdminLayout = ({ childcomp }) => {
           {childcomp}
         </Content>
       </Layout>
-    </Layout>}
+    </Layout>:<Navigate to={'/'} replace/>)}
     </>
   )
 }

@@ -98,18 +98,19 @@ export const Login = () =>  {
                     <Spin size="large"/>
                 ) : (
                     <div>
-                        {error && (
+                      {!response.token?
+                        (
                             <Result
-                              status="warning"
-                              title="There are some problems with your operation."
+                              status="error"
+                              title={error.response.data.detail}
                               extra={
                                 <Button type="primary" key="failed" onClick={handleCancel}>
                                   Check Again
                                 </Button>
                               }
                             />
-                        )}
-                        {response && 
+                        ):
+                        (
                           <Result
                             status="success"
                             title="Successfully Logged!"
@@ -118,7 +119,7 @@ export const Login = () =>  {
                                 Go Home
                               </Button>                            
                             ]}
-                          />}
+                          />)}
                     </div>
                 )}
           </Modal>          
