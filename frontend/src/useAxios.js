@@ -4,7 +4,7 @@ import axios from 'axios';
 axios.defaults.baseURL = 'http://localhost:8000';
 
 export const useAxios = () => {
-    const [response, setResponse] = useState({is_admin:false});
+    const [response, setResponse] = useState([]);
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(true);
 

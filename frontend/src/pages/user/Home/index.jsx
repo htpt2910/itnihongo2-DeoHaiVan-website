@@ -1,9 +1,9 @@
-import { Button, Form, Input, Modal } from "antd"
-import axios from "axios"
+import { Button, Form, Input, Modal, Spin } from "antd"
 import React, { useEffect, useState } from "react"
 import { useContext } from "react"
 import { useNavigate } from "react-router-dom"
 import { Footer } from "../../../components/user/Footer"
+import { Navbar } from "../../../components/user/Navbar"
 import { Posts } from "../../../components/user/posts"
 import { Stories } from "../../../components/user/stories"
 import { useAxios } from "../../../useAxios"
@@ -17,11 +17,12 @@ let month = d.getMonth() + 1
 var date = d.getFullYear() + "-" + month + "-" + d.getDate()
 var time = d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds()
 
-export const Home = () => {
+export const Home = ({ postsSearch, setPostsSearch }) => {
   const navigate = useNavigate()
   const { token } = useToken()
   const [open, setOpen] = useState(false)
-  const { fetchData, response, error } = useAxios();
+  const { fetchData:createPost} = useAxios();
+  const { fetchData:fetchInfo, response:info, loading:info_loading} = useAxios();
 
   const [form] = Form.useForm()
   const [imagebase64, setImage] = useState()
@@ -29,8 +30,7 @@ export const Home = () => {
   var dateCurrent = date + " " + time
 
   useEffect(() => {
-    const fetch = async () =>{
-      const data = await fetchData({
+    fetchInfo({
         url:'/users/me',
         method:'get',
         headers:{
@@ -38,13 +38,10 @@ export const Home = () => {
           Authorization: ` Bearer ${token}`,
         },
       })
-      setMyInfo(response)
-    }
-    fetch().catch(console.log(error))
-  }, [response])
+  }, [])
 
   const onFinish = (values) => {
-    fetchData({
+    createPost({
       url:'/post/',
       method:'post',
       body:{
@@ -83,8 +80,14 @@ export const Home = () => {
   const handleCancel = () => {
     setOpen(false)
   }
+
   return (
-    <div>{!response.is_admin && (<div>
+    <div>
+    <div>
+      {info_loading ? (<Spin size="large"/>):(setMyInfo(info))}
+    </div>
+    <div>{!myInfo.is_admin && (<div>
+      <Navbar postsSearch={postsSearch} setPostsSearch={setPostsSearch} />
       <Stories />
       <>
         <div className="createPost">
@@ -143,7 +146,8 @@ export const Home = () => {
       <Posts />
       <Footer />
     </div>)}
-    {response.is_admin && navigate('/admin')}
+    {myInfo.is_admin && navigate('/admin')}
+    </div>
     </div>
   )
 }

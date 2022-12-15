@@ -1,20 +1,20 @@
 import {
   DeleteTwoTone, SearchOutlined
 } from '@ant-design/icons';
-import {Modal, Popconfirm, Table} from 'antd';
+import {Modal, Popconfirm, Spin, Table} from 'antd';
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import "./styles.css";
 import useToken from '../../../useToken';
+import { useAxios } from '../../../useAxios';
 
 const UserControlComponent = () => {
   const {token} = useToken()
   const [filteredInfo, setFilteredInfo] = useState({});
   const [sortedInfo, setSortedInfo] = useState({});
-  const [users, setUsers] = useState([]);
-  const [data, setData] = useState([]);
   const [modalData, setModalData] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const { fetchData:fetchUsers, response:r_users, loading:l_users} = useAxios();
 
   const handleChange = (pagination, filters, sorter) => {
     console.log('Various parameters', pagination, filters, sorter);
@@ -22,41 +22,25 @@ const UserControlComponent = () => {
     setSortedInfo(sorter);
   };
   const handleDelete = (id) => {
-    axios
-      .delete(`http://localhost:8000/user/${id}`, {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: " Bearer " + token,
-        },
-      })
-      .then(() => setData((preData) => preData.filter((m) => m.id !== id)))
-      .catch((err) => console.log(err));
+    fetchUsers({
+      url:`/user/${id}`,
+      method:'delete',
+      headers:{
+        "Content-Type": "application/json",
+        Authorization: ` Bearer ${token}`,
+      },
+    })
+    window.location.reload()
   };
   useEffect(() => {
-    axios
-      .get("http://localhost:8000/users",{
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: " Bearer " + token,
-        },
-      })
-      .then(async (res) => {
-        const dt = await res.data
-        setData(dt)
-        dt.map((user, index) => setUsers((prevValue) => 
-          [...prevValue, {
-            id: user.id,
-            username: user.username,
-            email: user.email,
-            gender: user.gender,
-            age: user.age,
-            image: user.image
-          }]
-        ))
-        
-        console.log("users: ", users)
-      })
-      .catch((err) => console.log(err))
+    fetchUsers({
+      url:'/users/',
+      method:'get',
+      headers:{
+        "Content-Type": "application/json",
+        Authorization: ` Bearer ${token}`,
+      },
+    })
   }, []);
 
   const columns = [
@@ -116,7 +100,7 @@ const UserControlComponent = () => {
       title: 'Delete',
       key: 'action',
       render: (_, record) => 
-        data.length >= 1 ? 
+        r_users.length >= 1 ? 
           (
             <Popconfirm
               title="Sure to delete?"
@@ -132,6 +116,7 @@ const UserControlComponent = () => {
 
   return (
     <>
+    {l_users?<Spin />:
       <div className="userContainer">
         <div className="inputSearch">
           <input className='input' type="text" placeholder='Search...' />
@@ -142,7 +127,7 @@ const UserControlComponent = () => {
         <div className="tableContainer">
           <Table 
           columns={columns} 
-          dataSource={data} 
+          dataSource={r_users} 
           onChange={handleChange} 
           className="table" 
           />
@@ -166,7 +151,7 @@ const UserControlComponent = () => {
           (<>
             <p>Username: {modalData.username}</p>
             <img
-              src={modalData.image}
+              src={"data:image/png;base64," + modalData.image}
               alt="img"
               style={{width: "50%", height: "50%", margin: "20px 0px"}}
             /> 
@@ -177,7 +162,7 @@ const UserControlComponent = () => {
             
           </div>
         </Modal>
-    </div>
+    </div>}
   </>
   );
 };

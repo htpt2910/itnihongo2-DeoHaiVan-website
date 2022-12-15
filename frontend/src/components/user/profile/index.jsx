@@ -1,11 +1,10 @@
-import axios from "axios"
+import { Spin } from "antd"
 import "bootstrap/dist/css/bootstrap.css"
 import { useEffect, useState } from "react"
-import { useNavigate } from "react-router-dom"
+import { useAxios } from "../../../useAxios"
 import useToken from "../../../useToken"
 import AppButton from "./Button"
 const Profile = () => {
-  let navigate = useNavigate()
   const [profile, setProfile] = useState({
     name: "",
     email: "",
@@ -14,12 +13,11 @@ const Profile = () => {
     age: 0,
     image: "",
   })
-  const { token, setToken } = useToken()
+  const { fetchData, response, loading} = useAxios()
+  const { token } = useToken()
 
   const [editMode, setEditMode] = useState(false)
   const [imagebase64, setImage] = useState()
-  const [userID, setUserID] = useState(0)
-  const [hajimete_email, setHajimete_email] = useState("")
 
   function handleChange(event) {
     const { name, value } = event.target
@@ -43,7 +41,6 @@ const Profile = () => {
     reader.onload = function () {
       base64String = reader.result.replace("data:", "").replace(/^.+,/, "")
       setImage(base64String)
-      console.log("hihhhhhhh", imagebase64)
     }
 
     reader.readAsDataURL(file)
@@ -51,72 +48,45 @@ const Profile = () => {
 
   function handleSaveChanges(event) {
     setEditMode(false)
-    console.log("user id: ", userID)
-    axios
-      .patch(
-        `http://localhost:8000/users/${userID}`,
-        {
-          email: profile.email,
-          username: profile.name,
-          name: profile.name,
-          gender: profile.gender === "Nữ" ? false : true,
-          age: profile.age,
-          image: imagebase64,
-        },
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: " Bearer " + token,
-          },
-        }
-      )
-      .then(async (res) => {
-        console.los(res)
-      })
-
-      .catch((err) => console.log("err: ", err))
-      .finally(() => {
-        if (profile.email !== hajimete_email) {
-          setToken("")
-          navigate("/")
-        }
-      })
+    fetchData({
+      url:`/users/${response.id}`,
+      method:'patch',
+      body:{
+        email: profile.email?profile.email:response.email,
+        username: profile.username?profile.username:response.username,
+        name: profile.name?profile.name:response.name,
+        gender: profile.gender?profile.gender:response.gender,
+        age: profile.age?profile.age:response.age,
+        image: imagebase64?imagebase64:response.image,
+      },
+      headers:{
+        "Content-Type": "application/json",
+        Authorization: " Bearer " + token,
+      },
+    });
   }
 
   useEffect(() => {
-    axios
-      .get("http://localhost:8000/users/me", {
-        headers: {
+      fetchData({
+        url:'/users/me',
+        method:'get',
+        headers:{
           "Content-Type": "application/json",
-          Authorization: " Bearer " + token,
+          Authorization: ` Bearer ${token}`,
         },
       })
-      .then(async (res) => {
-        const dt = res.data
-        console.log("data: ", dt)
-        setUserID(dt.id)
-        setProfile({
-          name: dt.name,
-          email: dt.email,
-          gender: dt.gender ? "Nam" : "Nữ",
-          age: dt.age,
-          image: dt.image,
-        })
-        setImage(dt.image)
-        setHajimete_email(dt.email)
-      })
-
-      .catch((err) => console.log(err))
   }, [])
 
   return (
+    <>
+    {loading ? <Spin />:
     <div className="container py-5">
       <div className="row">
         <div className="col-lg-4">
           <div className="card mb-4">
             <div className="card-body text-center">
               <img
-                src={"data:image/png;base64," + imagebase64}
+                src={"data:image/png;base64," + response.image}
                 alt="avatar"
                 className="img-fluid"
               />
@@ -125,7 +95,7 @@ const Profile = () => {
               ) : (
                 <></>
               )}
-              <h5 className="my-3">{profile.name}</h5>
+              <h5 className="my-3">{response.name}</h5>
             </div>
           </div>
         </div>
@@ -138,12 +108,12 @@ const Profile = () => {
                 </div>
                 <div className="col-sm-9">
                   {!editMode ? (
-                    <p className="text-muted mb-0">{profile.name}</p>
+                    <p className="text-muted mb-0">{response.name}</p>
                   ) : (
                     <input
                       name="name"
                       className="text-muted mb-0"
-                      value={profile.name}
+                      defaultValue={response.name}
                       onChange={handleChange}
                     />
                   )}
@@ -156,12 +126,13 @@ const Profile = () => {
                 </div>
                 <div className="col-sm-9">
                   {!editMode ? (
-                    <p className="text-muted mb-0">{profile.email}</p>
+                    <p className="text-muted mb-0">{response.email}</p>
                   ) : (
                     <input
+                      disabled
                       name="email"
                       className="text-muted mb-0"
-                      value={profile.email}
+                      defaultValue={response.email}
                       onChange={handleChange}
                     />
                   )}
@@ -174,12 +145,14 @@ const Profile = () => {
                 </div>
                 <div className="col-sm-9">
                   {!editMode ? (
-                    <p className="text-muted mb-0">{profile.gender}</p>
+                    <>
+                    {response.gender?<p className="text-muted mb-0">Nam</p>:<p className="text-muted mb-0">Nữ</p>}
+                    </>
                   ) : (
                     <input
                       name="gender"
                       className="text-muted mb-0"
-                      value={profile.gender}
+                      defaultValue={response.gender}
                       onChange={handleChange}
                     />
                   )}
@@ -192,12 +165,12 @@ const Profile = () => {
                 </div>
                 <div className="col-sm-9">
                   {!editMode ? (
-                    <p className="text-muted mb-0">{profile.age}</p>
+                    <p className="text-muted mb-0">{response.age}</p>
                   ) : (
                     <input
                       name="age"
                       className="text-muted mb-0"
-                      value={profile.age}
+                      defaultValue={response.age}
                       onChange={handleChange}
                     />
                   )}
@@ -212,7 +185,8 @@ const Profile = () => {
           />
         </div>
       </div>
-    </div>
+    </div>}
+    </>
   )
 }
 

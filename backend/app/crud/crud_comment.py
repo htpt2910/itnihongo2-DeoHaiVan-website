@@ -24,6 +24,11 @@ def delete_comment(db:Session, comment_id: int):
     db.commit()
     return None
 
+def delete_comments_user(db:Session, user_id: int):
+    db.query(comment_model.Comment).filter(comment_model.Comment.comment_user_id==user_id).delete()
+    db.commit()
+    return None
+
 def delete_comments(db: Session,post_id):
     db.query(comment_model.Comment).filter(comment_model.Comment.post_id==post_id).delete()
     db.commit()

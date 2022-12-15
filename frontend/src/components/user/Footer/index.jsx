@@ -5,9 +5,9 @@ export const Footer = () => {
     <div className="footer_wrapper">
       <div className="container">
         <div className="footer">
-          <h1 className="title">Hai Van Quan</h1>
+          <a className="title" href="/">Hải Vân Quán</a>
           <p className="desc">
-            Lorem ipsum dolor sit amet consectetur adipisicing elit.
+            Nơi chia sẻ những hành trình.
           </p>
           <div className="input-container">
             <input className="input" type="text" placeholder="Your email" />

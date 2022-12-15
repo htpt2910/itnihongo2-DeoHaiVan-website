@@ -1,34 +1,38 @@
-import axios from "axios";
-import React, { useState } from "react";
+import { Spin } from "antd";
+import React from "react";
+import { useState } from "react";
 import { useEffect } from "react";
+import { useAxios } from "../../../useAxios";
 import useToken from "../../../useToken";
 import { Post } from "../post";
 import "./posts.css";
 
 export const Posts = () => {
 
-  const [posts, setPosts] = useState([])
   const { token } = useToken();
+  const { fetchData, response, loading} = useAxios();
 
   useEffect(() => {
-    axios.get(`http://localhost:8000/posts?skip=0&limit=10`,{
-      headers: {
-          'Content-Type': 'application/json',
-          'Authorization': ' Bearer ' + token
-        }
-    }).then((res) =>{
-      setPosts(res.data.reverse())
-      console.log(res.data);
-    }).catch((error) => {
-      console.log(error);
+  fetchData({
+      url:'/posts-approve/',
+      method:'get',
+      headers:{
+        "Content-Type": "application/json",
+        Authorization: ` Bearer ${token}`,
+      },
     })
   },[])
 
   return (
-    <div className="posts">
-      {posts?.map((post) => (
+    <>
+    {loading ? (<Spin size="large"/>):
+
+    (<div className="posts">
+
+      {response.reverse()?.map((post) => (
         <Post post={post} key={post.id} />
       ))}
-    </div>
+    </div>)}
+    </>
   );
 };
