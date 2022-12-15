@@ -1,9 +1,8 @@
-import { Footer } from "../../../components/user/Footer";
-import { PostSearch } from "../../../components/user/postssearch";
+import {Footer} from "../../../components/user/Footer";
+import {PostSearch} from "../../../components/user/postssearch";
 import "./homepage.css";
 
-export const PostsSearch = ({postsSearch,setPostsSearch}) => {
-
+export const PostsSearch = ({postsSearch, setPostsSearch}) => {
   return (
     <div>
       <PostSearch postsSearch={postsSearch} setPostsSearch={setPostsSearch} />
@@ -11,4 +10,3 @@ export const PostsSearch = ({postsSearch,setPostsSearch}) => {
     </div>
   );
 };
-// export default PostsSearch;
