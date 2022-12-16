@@ -25,7 +25,7 @@ function App() {
           <Route path="/" exact="true" element={<UserContext.Provider value={providerValue}><Home postsSearch={postsSearch} setPostsSearch={setPostsSearch}/></UserContext.Provider>} />
           <Route path="/logout" element={<Logout />} />
           <Route path="/signup" element={<Signup />} />
-          <Route path="/postssearch" element={<PostsSearch postsSearch={postsSearch} setPostsSearch={setPostsSearch}/>} />
+          <Route path="/postssearch" element={<UserContext.Provider value={providerValue}><PostsSearch postsSearch={postsSearch} setPostsSearch={setPostsSearch}/> </UserContext.Provider>} />
           <Route path="/admin" exact="true" element={<Dashboard />} />
           <Route path="/admin/usercontrol" exact="true" element={<AdminLayout childcomp={<UserControlComponent />} />} />
           <Route path="/admin/postcontrol" exact="true" element={<AdminLayout childcomp={<PostControlComponent />} />} />
