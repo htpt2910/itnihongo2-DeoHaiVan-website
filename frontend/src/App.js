@@ -30,7 +30,7 @@ function App() {
           <Route path="/admin/usercontrol" exact="true" element={<AdminLayout childcomp={<UserControlComponent />} />} />
           <Route path="/admin/postcontrol" exact="true" element={<AdminLayout childcomp={<PostControlComponent />} />} />
           <Route path="/login" exact="true" element={<Login />} />
-          <Route path="/prof  ile" exact="true" element={<ProfilePage />} />
+          <Route path="/profile" exact="true" element={<ProfilePage />} />
           <Route path='*' element={<NotFound />} />
         </Routes>
       </Router>

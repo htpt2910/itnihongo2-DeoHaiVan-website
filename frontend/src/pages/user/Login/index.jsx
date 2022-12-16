@@ -21,8 +21,8 @@ export const Login = () =>  {
   const handleOk = () => {
     setIsModalOpen(false);
     setToken(response)
-    navigate('/')
-    
+    r_user.is_admin?navigate('/admin/usercontrol'):navigate('/')
+
   };
   const handleCancel = () => {
     setIsModalOpen(false);
