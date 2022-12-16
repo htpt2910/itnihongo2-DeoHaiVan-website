@@ -42,8 +42,8 @@ export const PostControlComponent = () => {
         "Content-Type": "application/json",
         Authorization: ` Bearer ${token}`,
       },
-      window.location.reload()
     })
+    window.location.reload()
   }
 
   useEffect(() => {
