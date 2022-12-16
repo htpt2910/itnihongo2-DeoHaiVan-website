@@ -21,9 +21,9 @@ export const Post = ({ post }) => {
   const { myInfo } = useContext(UserContext)
   const [likes, setLikes] = useState(post.likes.length)
   const [comments, setComments] = useState(post.comments)
-  const { fetchData:fetchLike} = useAxios();
-  const { fetchData:fetchUser, response:r_user, loading:l_user} = useAxios();
-  const { fetchData:fetchPost, response:r_post} = useAxios();
+  const { fetchData: fetchLike } = useAxios()
+  const { fetchData: fetchUser, response: r_user, loading: l_user } = useAxios()
+  const { fetchData: fetchPost, response: r_post } = useAxios()
 
   const { TextArea } = Input
   const items = [
@@ -62,32 +62,23 @@ export const Post = ({ post }) => {
   const handleAction = async (e) => {
     if (e.key == 1) {
       setOpen(true)
-      try {
-        fetchPost({
-          url:`/posts/${post.id}`,
-          method:'get',
-          headers:{
-            'Content-Type': 'application/json',
-            Authorization: ` Bearer ${token}`,
-          },
-        });
-      } catch (error) {
-        console.log(error)
-      }
+      fetchPost({
+        url: `/posts/${post.id}`,
+        method: "get",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: ` Bearer ${token}`,
+        },
+      })
     } else {
-      try {
-        fetchPost({
-          url:`/post/${post.id}`,
-          method:'delete',
-          headers:{
-            'Content-Type': 'application/json',
-            Authorization: ` Bearer ${token}`,
-          },
-        });
-        window.location.reload()
-      } catch (error) {
-        console.log(error)
-      }
+      fetchPost({
+        url: `/post/${post.id}`,
+        method: "delete",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: ` Bearer ${token}`,
+        },
+      }).then(() => window.location.reload())
     }
   }
 
@@ -97,9 +88,9 @@ export const Post = ({ post }) => {
 
   const onFinish = (values) => {
     fetchPost({
-      url:`/post/${post.id}`,
-      method:'patch',
-      body:{
+      url: `/post/${post.id}`,
+      method: "patch",
+      body: {
         title: values.title ? values.title : r_post.title,
         content: values.content ? values.content : r_post.content,
         post_time: dateCurrent,
@@ -108,52 +99,53 @@ export const Post = ({ post }) => {
         user_id: r_post.user_id,
         place_id: 1,
       },
-      headers:{
-        'Content-Type': 'application/json',
+      headers: {
+        "Content-Type": "application/json",
         Authorization: ` Bearer ${token}`,
       },
-    });
-    setOpen(false)
-    window.location.reload()
+    }).then(() => {
+      setOpen(false)
+      window.location.reload()
+    })
   }
 
   useEffect(() => {
     fetchUser({
-      url:`/users/${post.user_id}`,
-      method:'get',
-      headers:{
-        'Content-Type': 'application/json',
+      url: `/users/${post.user_id}`,
+      method: "get",
+      headers: {
+        "Content-Type": "application/json",
         Authorization: ` Bearer ${token}`,
       },
-    });
+    })
   }, [])
 
   const handleLike = (postId, userId) => {
     setLikes(likes + 1)
     fetchLike({
-      url:'/like/',
-      method:'post',
-      body:{
+      url: "/like/",
+      method: "post",
+      body: {
         like_user_id: userId,
         post_id: postId,
       },
-      headers:{
-        'Content-Type': 'application/json',
+      headers: {
+        "Content-Type": "application/json",
         Authorization: ` Bearer ${token}`,
       },
-    });
+    })
   }
 
   const handleDeleteLike = (postId, userId) => {
     setLikes(likes - 1)
     fetchLike({
-      url:`/like/${postId}/{user_like_id}?like_user_id=${userId}`,
-      method:'delete',
-      headers:{
-        'Content-Type': 'application/json',
+      url: `/like/${postId}/{user_like_id}?like_user_id=${userId}`,
+      method: "delete",
+      headers: {
+        "Content-Type": "application/json",
         Authorization: ` Bearer ${token}`,
       },
-    });
+    })
   }
 
   function imageUploaded() {
@@ -173,18 +165,21 @@ export const Post = ({ post }) => {
     <div className="post">
       <div className="post-container" key={post.id}>
         <div className="user">
-          {l_user ? <Spin />:
-          <div className="userInfo">
-            <img
-              className="avatar"
-              src={"data:image/png;base64," + r_user.image}
-              alt=""
-            />
-            <div className="details">
-              <span className="name">{r_user.name}</span>
-              <span className="date">{moment(post.post_time).fromNow()}</span>
+          {l_user ? (
+            <Spin />
+          ) : (
+            <div className="userInfo">
+              <img
+                className="avatar"
+                src={"data:image/png;base64," + r_user.image}
+                alt=""
+              />
+              <div className="details">
+                <span className="name">{r_user.name}</span>
+                <span className="date">{moment(post.post_time).fromNow()}</span>
+              </div>
             </div>
-          </div>}
+          )}
           {post.user_id === myInfo?.id ? (
             <Dropdown.Button
               menu={{ items, onClick: handleAction }}

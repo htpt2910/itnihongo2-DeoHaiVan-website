@@ -1,26 +1,27 @@
-import {MenuFoldOutlined, MenuUnfoldOutlined} from "@ant-design/icons";
-import {Layout, Menu, Spin} from "antd";
 import {
+  LogoutOutlined,
+  MenuFoldOutlined,
+  MenuUnfoldOutlined,
   UserOutlined,
   VideoCameraOutlined,
-  LogoutOutlined,
-} from "@ant-design/icons";
-import "antd/dist/antd.css";
-import React, {useEffect, useState} from "react";
-import {Link, Navigate} from "react-router-dom";
-import useToken from "../../useToken";
-import "./layout.css";
-import {useAxios} from "../../useAxios";
+} from "@ant-design/icons"
+import { Layout, Menu, Spin } from "antd"
+import "antd/dist/antd.css"
+import React, { useEffect, useState } from "react"
+import { Link, Navigate } from "react-router-dom"
+import { useAxios } from "../../useAxios"
+import useToken from "../../useToken"
+import "./layout.css"
 
-const {Header, Sider, Content} = Layout;
-const AdminLayout = ({childcomp}) => {
-  const [collapsed, setCollapsed] = useState(false);
-  const {token} = useToken();
+const { Header, Sider, Content } = Layout
+const AdminLayout = ({ childcomp }) => {
+  const [collapsed, setCollapsed] = useState(false)
+  const { token } = useToken()
   const {
     fetchData: fetchInfo,
     response: info,
     loading: info_loading,
-  } = useAxios();
+  } = useAxios()
 
   useEffect(() => {
     fetchInfo({
@@ -30,8 +31,8 @@ const AdminLayout = ({childcomp}) => {
         "Content-Type": "application/json",
         Authorization: ` Bearer ${token}`,
       },
-    });
-  }, []);
+    })
+  }, [])
   return (
     <>
       {info_loading ? (
@@ -45,7 +46,7 @@ const AdminLayout = ({childcomp}) => {
                 <UserOutlined />
                 <Link
                   to={"/admin/usercontrol"}
-                  style={{color: "white", textDecoration: "none"}}
+                  style={{ color: "white", textDecoration: "none" }}
                 >
                   User Management
                 </Link>
@@ -54,51 +55,60 @@ const AdminLayout = ({childcomp}) => {
                 <VideoCameraOutlined />
                 <Link
                   to="/admin/postcontrol"
-                  style={{color: "white", textDecoration: "none"}}
+                  style={{ color: "white", textDecoration: "none" }}
                 >
                   Post Management
                 </Link>
               </Menu.Item>
-              <Menu.Item key="3" style={{color: "gray"}}>
+              <Menu.Item key="3" style={{ color: "gray" }}>
                 <LogoutOutlined />
                 <Link
                   to="/logout"
-                  style={{color: "white", textDecoration: "none"}}
+                  style={{ color: "white", textDecoration: "none" }}
                 >
                   Logout
                 </Link>
               </Menu.Item>
             </Menu>
           </Sider>
-      <Layout className="site-layout">
-        <Header
-          className="site-layout-background"
-          style={{ padding: 0, height: 67}}
-        >
-          {React.createElement(
-            collapsed ? MenuUnfoldOutlined : MenuFoldOutlined,
-            {
-              className: "trigger",
-              onClick: () => setCollapsed(!collapsed),
-            }
-          )}
-          <img src={"data:image/png;base64," + info.image} alt="logo" className="logo" />
-          <a className="mount" href="/" style={{textDecoration:'None'}}>{info.name}</a>
-        </Header>
-        <Content  
-          className="site-layout-background"
-          style={{
-            margin: "24px 16px",
-            padding: 24,
-            minHeight: 720,
-          }}
-        >
-          {childcomp}
-        </Content>
-      </Layout>
-    </Layout>:<Navigate to={'/'} replace/>)}
+          <Layout className="site-layout">
+            <Header
+              className="site-layout-background"
+              style={{ padding: 0, height: 67 }}
+            >
+              {React.createElement(
+                collapsed ? MenuUnfoldOutlined : MenuFoldOutlined,
+                {
+                  className: "trigger",
+                  onClick: () => setCollapsed(!collapsed),
+                }
+              )}
+              <img
+                src={"data:image/png;base64," + info.image}
+                alt="logo"
+                className="logo"
+              />
+              <a className="mount" href="/" style={{ textDecoration: "None" }}>
+                {info.name}
+              </a>
+            </Header>
+            <Content
+              className="site-layout-background"
+              style={{
+                margin: "24px 16px",
+                padding: 24,
+                minHeight: 720,
+              }}
+            >
+              {childcomp}
+            </Content>
+          </Layout>
+        </Layout>
+      ) : (
+        <Navigate to={"/"} replace />
+      )}
     </>
-  );
-};
+  )
+}
 
-export default AdminLayout;
+export default AdminLayout

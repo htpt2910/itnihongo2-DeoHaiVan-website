@@ -5,22 +5,22 @@ import { useAxios } from "../../../useAxios"
 import useToken from "../../../useToken"
 import "./styles.css"
 export const PostControlComponent = () => {
-  const [filteredInfo, setFilteredInfo] = useState({});
-  const [sortedInfo, setSortedInfo] = useState({});
-  const [modalData, setModalData] = useState([]);
-  const [isModalVisible, setIsModalVisible] = useState(false);
-  const {fetchData: fetchPost, response: r_post, loading: l_post} = useAxios();
+  const [filteredInfo, setFilteredInfo] = useState({})
+  const [sortedInfo, setSortedInfo] = useState({})
+  const [modalData, setModalData] = useState([])
+  const [isModalVisible, setIsModalVisible] = useState(false)
+  const { fetchData: fetchPost, response: r_post, loading: l_post } = useAxios()
 
-  const {token} = useToken();
+  const { token } = useToken()
 
   const handleChange = (pagination, filters, sorter) => {
-    console.log("Various parameters", pagination, filters, sorter);
-    setFilteredInfo(filters);
-    setSortedInfo(sorter);
-  };
+    console.log("Various parameters", pagination, filters, sorter)
+    setFilteredInfo(filters)
+    setSortedInfo(sorter)
+  }
 
-  const Username = ({id}) => {
-    const {fetchData: fetchUser, response: r_user} = useAxios();
+  const Username = ({ id }) => {
+    const { fetchData: fetchUser, response: r_user } = useAxios()
     useEffect(() => {
       fetchUser({
         url: `/users/${id}`,
@@ -29,10 +29,10 @@ export const PostControlComponent = () => {
           "Content-Type": "application/json",
           Authorization: ` Bearer ${token}`,
         },
-      });
-    }, []);
-    return <span>{r_user.name}</span>;
-  };
+      })
+    }, [])
+    return <span>{r_user.name}</span>
+  }
 
   const handleDelete = (id) => {
     fetchPost({
@@ -42,48 +42,61 @@ export const PostControlComponent = () => {
         "Content-Type": "application/json",
         Authorization: ` Bearer ${token}`,
       },
-    })
-    window.location.reload()
+    }).then(() => window.location.reload())
   }
 
   useEffect(() => {
-    async function fetchpost(){
+    async function fetchpost() {
       await fetchPost({
-        url:`/posts/`,
-        method:'get',
-        headers:{
-          'Content-Type': 'application/json',
+        url: `/posts/`,
+        method: "get",
+        headers: {
+          "Content-Type": "application/json",
           Authorization: ` Bearer ${token}`,
         },
-      });
+      })
     }
     fetchpost()
   }, [])
   const openNotification = (data) => {
     notification.info({
-      message: 'Thông Báo',
-      description:
-        `${data.name} vừa mới tạo một bài đăng mới vào lúc ${data.post_time}, hãy kiểm duyệt ngay.`,
-      duration:10,
-    });
-  };
-  const [websckt, setWebsckt] = useState();
+      message: "Thông Báo",
+      description: `${data.name} vừa mới tạo một bài đăng mới vào lúc ${data.post_time}, hãy kiểm duyệt ngay.`,
+      duration: 10,
+    })
+  }
+  const [websckt, setWebsckt] = useState()
   useEffect(() => {
-    const url = `ws://localhost:8000/ws/${token}`;
-    const ws = new WebSocket(url);
+    const url = `ws://34.28.129.205:8000/ws/${token}`
+    const ws = new WebSocket(url)
     ws.onmessage = (e) => {
       const msg = JSON.parse(e.data)
-      if(msg.name){
+      if (msg.name) {
         openNotification(msg)
       }
-    };
+    }
     setWebsckt(ws)
-    return () => ws.close();
-  }, []);
+    return () => ws.close()
+  }, [])
 
   const handleApprove = (record, value) => {
-    (value != "Awaiting" && value == "Approved")?
-    websckt.send(JSON.stringify({user_id:record.user_id,status:true,title:record.title, post_time:record.post_time})):websckt.send(JSON.stringify({user_id:record.user_id,status:false,title:record.title,post_time:record.post_time}))
+    value != "Awaiting" && value == "Approved"
+      ? websckt.send(
+          JSON.stringify({
+            user_id: record.user_id,
+            status: true,
+            title: record.title,
+            post_time: record.post_time,
+          })
+        )
+      : websckt.send(
+          JSON.stringify({
+            user_id: record.user_id,
+            status: false,
+            title: record.title,
+            post_time: record.post_time,
+          })
+        )
     fetchPost({
       url: `/post/${record.id}`,
       method: "patch",
@@ -102,8 +115,7 @@ export const PostControlComponent = () => {
         "Content-Type": "application/json",
         Authorization: " Bearer " + token,
       },
-    })
-    window.location.reload()
+    }).then(() => window.location.reload())
   }
 
   const columns = [
@@ -147,16 +159,16 @@ export const PostControlComponent = () => {
         return (
           <div>
             <p
-              style={{color: "#3383FF", cursor: "pointer"}}
+              style={{ color: "#3383FF", cursor: "pointer" }}
               onClick={() => {
-                setModalData(record);
-                setIsModalVisible(true);
+                setModalData(record)
+                setIsModalVisible(true)
               }}
             >
               View
             </p>
           </div>
-        );
+        )
       },
       width: "7%",
     },
@@ -168,14 +180,14 @@ export const PostControlComponent = () => {
         <Select
           defaultValue={
             record.is_verify
-              ? (record.is_active
+              ? record.is_active
                 ? "Approved"
-                : "Denied")
+                : "Denied"
               : "Awaiting"
           }
-          style={{width: 120}}
+          style={{ width: 120 }}
           onChange={(value) => {
-            handleApprove(record, value);
+            handleApprove(record, value)
           }}
           options={[
             {
@@ -209,7 +221,7 @@ export const PostControlComponent = () => {
         ) : null,
       width: "5%",
     },
-  ];
+  ]
   return (
     <>
       {l_post ? (
@@ -237,7 +249,7 @@ export const PostControlComponent = () => {
             onCancel={() => setIsModalVisible(false)}
             width="50%"
             height="70%"
-            okButtonProps={{style: {display: "none"}}}
+            okButtonProps={{ style: { display: "none" } }}
             bodyStyle={{
               overflowY: "auto",
               maxHeight: "calc(100vh - 250px)",
@@ -249,12 +261,12 @@ export const PostControlComponent = () => {
               <img
                 src={"data:image/png;base64," + modalData.image}
                 alt=""
-                style={{width: "100%", margin: "20px 0px"}}
+                style={{ width: "100%", margin: "20px 0px" }}
               />
             </div>
           </Modal>
         </div>
       )}
     </>
-  );
-};
+  )
+}

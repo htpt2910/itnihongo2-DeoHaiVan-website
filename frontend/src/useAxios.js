@@ -1,25 +1,25 @@
-import {useState} from "react";
-import axios from "axios";
+import axios from "axios"
+import { useState } from "react"
 
-axios.defaults.baseURL = "http://localhost:8000";
+axios.defaults.baseURL = "http://34.28.129.205:8000"
 
 export const useAxios = () => {
-  const [response, setResponse] = useState([]);
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(true);
+  const [response, setResponse] = useState([])
+  const [error, setError] = useState("")
+  const [loading, setLoading] = useState(true)
 
-  const fetchData = ({url, headers, body, method}) => {
-    return axios({method: method, url: url, data: body, headers: headers})
+  const fetchData = ({ url, headers, body, method }) => {
+    return axios({ method: method, url: url, data: body, headers: headers })
       .then((res) => {
-        setResponse(res.data);
+        setResponse(res.data)
       })
       .catch((err) => {
-        setError(err);
+        setError(err)
       })
       .finally(() => {
-        setLoading(false);
-      });
-  };
+        setLoading(false)
+      })
+  }
 
-  return {fetchData, response, error, loading};
-};
+  return { fetchData, response, error, loading }
+}
