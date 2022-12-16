@@ -10,3 +10,4 @@ Pillow
 python-multipart
 python-dotenv
 psycopg2
+websockets

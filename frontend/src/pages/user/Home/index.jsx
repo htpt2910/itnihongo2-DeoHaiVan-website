@@ -1,4 +1,5 @@
-import { Button, Form, Input, Modal, Spin } from "antd"
+import { Button, Form, Input, Modal, notification, Spin } from "antd"
+import axios from "axios"
 import React, { useEffect, useState } from "react"
 import { useContext } from "react"
 import { useNavigate } from "react-router-dom"
@@ -27,6 +28,7 @@ export const Home = ({ postsSearch, setPostsSearch }) => {
   const [form] = Form.useForm()
   const [imagebase64, setImage] = useState()
   const { myInfo, setMyInfo } = useContext(UserContext)
+  const [ id, setId] = useState()
   var dateCurrent = date + " " + time
 
   useEffect(() => {
@@ -39,6 +41,50 @@ export const Home = ({ postsSearch, setPostsSearch }) => {
         },
       })
   }, [])
+  useEffect(() =>{
+    axios
+      .get("http://localhost:8000/users/me", {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': ' Bearer ' + token
+        }
+      })
+      .then((res) => {
+        setId(res.data.id)
+      })
+      .catch((err) => console.log(err))
+  })
+  const [websckt, setWebsckt] = useState();
+  const openNotification = (data) => {
+    if(data.status)
+    notification.success({
+      message: 'Thông Báo',
+      description:
+        `Bài đăng ${data.title} được bạn tạo vào lúc ${data.post_time} đã được chấp thuận, hãy tải lại trang để kiểm tra hoặc bấm vào để chuyển thẳng đến bài đăng.`,
+      duration:10,
+    })
+    else{
+      notification.error({
+        message: 'Thông Báo',
+        description:
+          `Bài đăng ${data.title} được bạn tạo vào lúc ${data.post_time} đã bị từ chối vì đã bị vi phạm tiêu chuẩn cộng đồng.`,
+        duration:10,
+      })
+    }
+  };
+  useEffect(() => {
+    const url = `ws://localhost:8000/ws/${token}`;
+    const ws = new WebSocket(url);
+    ws.onmessage = (e) => {
+      console.log(JSON.parse(e.data))
+          const msg = JSON.parse(e.data)
+          if(msg.user_id == id){
+            openNotification(msg)
+          }
+        };
+    setWebsckt(ws);
+        return () => ws.close();
+  }, []);
 
   const onFinish = (values) => {
     createPost({
@@ -58,6 +104,8 @@ export const Home = ({ postsSearch, setPostsSearch }) => {
         Authorization: ` Bearer ${token}`,
       },
     })
+    websckt.send(JSON.stringify({id:token,name:myInfo.name,post_time:dateCurrent}))
+    form.resetFields();
     setOpen(false)
   }
   let base64String = ""
@@ -146,7 +194,7 @@ export const Home = ({ postsSearch, setPostsSearch }) => {
       <Posts />
       <Footer />
     </div>)}
-    {myInfo.is_admin && navigate('/admin')}
+    {myInfo.is_admin && navigate('/admin/postcontrol')}
     </div>
     </div>
   )
