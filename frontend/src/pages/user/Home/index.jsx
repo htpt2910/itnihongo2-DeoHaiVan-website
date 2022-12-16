@@ -28,7 +28,6 @@ export const Home = ({ postsSearch, setPostsSearch }) => {
   const [form] = Form.useForm()
   const [imagebase64, setImage] = useState()
   const { myInfo, setMyInfo } = useContext(UserContext)
-  const [ id, setId] = useState()
   var dateCurrent = date + " " + time
 
   useEffect(() => {
@@ -41,19 +40,6 @@ export const Home = ({ postsSearch, setPostsSearch }) => {
         },
       })
   }, [])
-  useEffect(() =>{
-    axios
-      .get("http://localhost:8000/users/me", {
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': ' Bearer ' + token
-        }
-      })
-      .then((res) => {
-        setId(res.data.id)
-      })
-      .catch((err) => console.log(err))
-  })
   const [websckt, setWebsckt] = useState();
   const openNotification = (data) => {
     if(data.status)
@@ -76,12 +62,9 @@ export const Home = ({ postsSearch, setPostsSearch }) => {
     const url = `ws://localhost:8000/ws/${token}`;
     const ws = new WebSocket(url);
     ws.onmessage = (e) => {
-      console.log(JSON.parse(e.data))
-          const msg = JSON.parse(e.data)
-          if(msg.user_id == id){
-            openNotification(msg)
-          }
-        };
+      if(JSON.parse(e.data).user_id)
+      openNotification(JSON.parse(e.data))
+      };
     setWebsckt(ws);
         return () => ws.close();
   }, []);
