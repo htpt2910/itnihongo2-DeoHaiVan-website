@@ -115,8 +115,7 @@ export const PostControlComponent = () => {
         "Content-Type": "application/json",
         Authorization: " Bearer " + token,
       },
-    })
-    window.location.reload()
+    }).then(() => window.location.reload())
   }
 
   const columns = [
