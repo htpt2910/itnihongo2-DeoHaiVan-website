@@ -1,7 +1,7 @@
 import axios from "axios"
 import { useState } from "react"
 
-axios.defaults.baseURL = "http://localhost:8000"
+axios.defaults.baseURL = "http://34.28.129.205:8000"
 
 export const useAxios = () => {
   const [response, setResponse] = useState([])

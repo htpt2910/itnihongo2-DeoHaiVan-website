@@ -15,7 +15,8 @@ from app.schemas import post as post_schema
 from app.schemas import user as user_schema
 from app.security import get_current_active_user, validate_token
 from app.seed import Seed_db
-from fastapi import Depends, FastAPI, HTTPException, WebSocket, WebSocketDisconnect
+from fastapi import (Depends, FastAPI, HTTPException, WebSocket,
+                     WebSocketDisconnect)
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 
@@ -35,8 +36,8 @@ except:
 app = FastAPI()
 
 origins = [
-  "http://localhost:3001",
-  "http://localhost:3000",
+  "http://34.28.129.205:3001",
+  "http://34.28.129.205:3000",
 ]
 
 app.add_middleware(

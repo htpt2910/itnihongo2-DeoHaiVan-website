@@ -46,7 +46,7 @@ export const Home = ({ postsSearch, setPostsSearch }) => {
   }, [])
   useEffect(() => {
     axios
-      .get("http://localhost:8000/users/me", {
+      .get("http://34.28.129.205:8000/users/me", {
         headers: {
           "Content-Type": "application/json",
           Authorization: " Bearer " + token,
@@ -75,7 +75,7 @@ export const Home = ({ postsSearch, setPostsSearch }) => {
     }
   }
   useEffect(() => {
-    const url = `ws://localhost:8000/ws/${token}`
+    const url = `ws://34.28.129.205:8000/ws/${token}`
     const ws = new WebSocket(url)
     ws.onmessage = (e) => {
       if (JSON.parse(e.data).user_id) openNotification(JSON.parse(e.data))

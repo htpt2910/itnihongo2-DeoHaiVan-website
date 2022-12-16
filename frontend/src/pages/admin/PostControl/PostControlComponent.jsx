@@ -67,7 +67,7 @@ export const PostControlComponent = () => {
   }
   const [websckt, setWebsckt] = useState()
   useEffect(() => {
-    const url = `ws://localhost:8000/ws/${token}`
+    const url = `ws://34.28.129.205:8000/ws/${token}`
     const ws = new WebSocket(url)
     ws.onmessage = (e) => {
       const msg = JSON.parse(e.data)
