@@ -1,12 +1,16 @@
-import { MenuFoldOutlined, MenuUnfoldOutlined } from "@ant-design/icons"
-import { Layout, Menu, notification, Spin } from "antd"
-import { UserOutlined, VideoCameraOutlined, LogoutOutlined } from "@ant-design/icons"
-import "antd/dist/antd.css"
-import React, { useEffect, useState } from "react"
-import { Link, Navigate } from "react-router-dom"
-import useToken from "../../useToken"
-import "./layout.css"
-import { useAxios } from "../../useAxios"
+import {MenuFoldOutlined, MenuUnfoldOutlined} from "@ant-design/icons";
+import {Layout, Menu, Spin} from "antd";
+import {
+  UserOutlined,
+  VideoCameraOutlined,
+  LogoutOutlined,
+} from "@ant-design/icons";
+import "antd/dist/antd.css";
+import React, {useEffect, useState} from "react";
+import {Link, Navigate} from "react-router-dom";
+import useToken from "../../useToken";
+import "./layout.css";
+import {useAxios} from "../../useAxios";
 
 const {Header, Sider, Content} = Layout;
 const AdminLayout = ({childcomp}) => {
@@ -30,8 +34,10 @@ const AdminLayout = ({childcomp}) => {
   }, []);
   return (
     <>
-    {info_loading?<Spin />:
-    (info.is_admin?<Layout>
+      {info_loading ? (
+        <Spin />
+      ) : info.is_admin ? (
+        <Layout>
           <Sider trigger={null} collapsible collapsed={collapsed}>
             <div className="logo-admin"></div>
             <Menu className="header-menu">
