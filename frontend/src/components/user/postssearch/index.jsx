@@ -21,7 +21,6 @@ export const PostSearch = ({ postsSearch, setPostsSearch }) => {
 
   return (
     <div className="posts">
-      <Navbar postsSearch={postsSearch} setPostsSearch={setPostsSearch} />
       {postsSearch.map((post) => (
         <Post_Search post={post} key={post.id} myInfo={info} />
       ))}

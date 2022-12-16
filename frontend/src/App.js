@@ -49,6 +49,18 @@ function App() {
               </UserContext.Provider>
             }
           />
+          <Route
+            path="/profile"
+            exact="true"
+            element={
+              <UserContext.Provider value={providerValue}>
+                <ProfilePage
+                  postsSearch={postsSearch}
+                  setPostsSearch={setPostsSearch}
+                />
+              </UserContext.Provider>
+            }
+          />
           <Route path="/admin" exact="true" element={<Dashboard />} />
           <Route
             path="/admin/usercontrol"
@@ -61,7 +73,7 @@ function App() {
             element={<AdminLayout childcomp={<PostControlComponent />} />}
           />
           <Route path="/login" exact="true" element={<Login />} />
-          <Route path="/profile" exact="true" element={<ProfilePage />} />
+
           <Route path="*" element={<NotFound />} />
         </Routes>
       </Router>
